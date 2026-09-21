@@ -1,0 +1,52 @@
+services:
+  qalbu-api:
+    build:
+      context: .
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:3b-instruct}
+      OLLAMA_NUM_CTX: ${OLLAMA_NUM_CTX:-2048}
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-5m}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      QF_CLIENT_ID: ${QF_CLIENT_ID:-}
+      QF_CLIENT_SECRET: ${QF_CLIENT_SECRET:-}
+      QF_ENV: ${QF_ENV:-prelive}
+      GROQ_MODEL: ${GROQ_MODEL:-openai/gpt-oss-20b}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-local_e5}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-intfloat/multilingual-e5-base}
+      EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-768}
+      MIN_RETRIEVAL_SCORE: ${MIN_RETRIEVAL_SCORE:-0.55}
+      RETRIEVAL_CANDIDATE_K: ${RETRIEVAL_CANDIDATE_K:-12}
+      RETRIEVAL_PARENT_K: ${RETRIEVAL_PARENT_K:-2}
+      CHAT_RATE_LIMIT_PER_MINUTE: ${CHAT_RATE_LIMIT_PER_MINUTE:-10}
+      RAG_CACHE_VERSION: ${RAG_CACHE_VERSION:-sample-v1}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8000}
+      QALBU_PROFILE: ${QALBU_PROFILE:-local}
+      CRISIS_LINE: ${CRISIS_LINE:-}
+      CRISIS_LINE_LABEL: ${CRISIS_LINE_LABEL:-Layanan darurat setempat}
+      MAX_QUEUE: ${MAX_QUEUE:-3}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/service
+      # Keep Hugging Face E5 weights across container rebuilds/restarts.
+      - qalbu-huggingface-cache:/root/.cache/huggingface
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  qalbu-huggingface-cache:

@@ -1,0 +1,2 @@
+# Keep container CPU-only. Avoid PyPI Torch wheels that bundle NVIDIA/CUDA packages.
+torch==2.5.1+cpu

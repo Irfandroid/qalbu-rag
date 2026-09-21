@@ -1,0 +1,511 @@
+{
+  "configuration": {
+    "models": [
+      "qwen2.5:3b-instruct",
+      "qwen3:1.7b"
+    ],
+    "queries": 3,
+    "max_tokens": 72,
+    "num_ctx": 2048,
+    "temperature": 0.2,
+    "thinking": false
+  },
+  "results": [
+    {
+      "model": "qwen2.5:3b-instruct",
+      "cases": [
+        {
+          "query": "Aku sedang menghadapi ujian.",
+          "expected_mode": "grounded",
+          "retrieved_parent_ids": [
+            "quran-com-en-070-005",
+            "quran-com-en-051-014"
+          ],
+          "response": {
+            "answer": "Apa yang kamu hadapi adalah bagian dari ujian yang Allah berikan, bukanlah ujian yang akan mengakhiri hidupmu.",
+            "references": [
+              {
+                "parent_id": "quran-com-en-029-002",
+                "surah_number": 29,
+                "surah_name": "Al-'Ankabut",
+                "ayah_start": 2,
+                "ayah_end": 2
+              },
+              {
+                "parent_id": "quran-com-en-002-214",
+                "surah_number": 2,
+                "surah_name": "Al-Baqarah",
+                "ayah_start": 214,
+                "ayah_end": 214
+              }
+            ],
+            "safety_note": null,
+            "evidence": [
+              {
+                "parent_id": "quran-com-en-029-002",
+                "surah_number": 29,
+                "surah_name": "Al-'Ankabut",
+                "ayah_start": 2,
+                "ayah_end": 2,
+                "arabic_text": "أَحَسِبَ ٱلنَّاسُ أَن يُتْرَكُوٓا۟ أَن يَقُولُوٓا۟ ءَامَنَّا وَهُمْ لَا يُفْتَنُونَ",
+                "translation": "Do the people think that they will be left to say, \"We believe\" and they will not be tried?",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": "أَظَنَّ الناسُ أنهم بقولهم: آمنا بالله، يُتْركون دون اختبار يبين حقيقة ما قالوا، هل هم مؤمنون حقًّا؟! ليس الأمر كما ظنوا.",
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              },
+              {
+                "parent_id": "quran-com-en-002-214",
+                "surah_number": 2,
+                "surah_name": "Al-Baqarah",
+                "ayah_start": 214,
+                "ayah_end": 214,
+                "arabic_text": "أَمْ حَسِبْتُمْ أَن تَدْخُلُوا۟ ٱلْجَنَّةَ وَلَمَّا يَأْتِكُم مَّثَلُ ٱلَّذِينَ خَلَوْا۟ مِن قَبْلِكُم ۖ مَّسَّتْهُمُ ٱلْبَأْسَآءُ وَٱلضَّرَّآءُ وَزُلْزِلُوا۟ حَتَّىٰ يَقُولَ ٱلرَّسُولُ وَٱلَّذِينَ ءَامَنُوا۟ مَعَهُۥ مَتَىٰ نَصْرُ ٱللَّهِ ۗ أَلَآ إِنَّ نَصْرَ ٱللَّهِ قَرِيبٌ",
+                "translation": "Or do you think that you will enter Paradise while such [trial] has not yet come to you as came to those who passed on before you? They were touched by poverty and hardship and were shaken until [even their] messenger and those who believed with him said, \"When is the help of Allāh?\" Unquestionably, the help of Allāh is near.",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": "أم ظننتم - أيها المؤمنون - أن تدخلوا الجنة ولم يصبكم ابتلاءٌ مثل ابتلاء الماضين من قبلكم، حيث أصابهم شدة الفقر والمرض، وزلزلتهم المخاوف، حتى بلغ بهم البلاء أن يستعجلوا نصر الله، فيقول الرسول والمؤمنون معه: متى يأتي نصر الله؟ ألا إن نصر الله قريب من المؤمنين به، المتوكلين عليه.",
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              }
+            ]
+          },
+          "criteria": {
+            "retrieval_quality": {
+              "score": 1,
+              "has_error": true,
+              "reason": "Expected source not retrieved."
+            },
+            "faithfulness": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Every citation matches retrieved parent metadata."
+            },
+            "answer_relevance": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Answer has grounded references."
+            },
+            "domain_tone": {
+              "score": 5,
+              "has_error": false,
+              "reason": "No diagnosis, treatment claim, or fatwa marker."
+            },
+            "format_clarity": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Readable non-empty answer."
+            }
+          },
+          "overall_score": 4.2,
+          "priority_fix": "retrieval_quality",
+          "valid_output": true,
+          "generation_ms": 83822.21,
+          "total_ms": 98181.23,
+          "reference_count": 2
+        },
+        {
+          "query": "Aku sedih dan kehilangan harapan.",
+          "expected_mode": "grounded",
+          "retrieved_parent_ids": [
+            "quran-com-en-054-018",
+            "quran-com-en-054-030"
+          ],
+          "response": {
+            "answer": "Aku hanya mengeluhkan masalah dan kekecewaan kepada Allah, dan aku tahu lebih banyak daripada yang kamu tahu.",
+            "references": [
+              {
+                "parent_id": "quran-com-en-012-086",
+                "surah_number": 12,
+                "surah_name": "Yusuf",
+                "ayah_start": 86,
+                "ayah_end": 86
+              }
+            ],
+            "safety_note": null,
+            "evidence": [
+              {
+                "parent_id": "quran-com-en-012-086",
+                "surah_number": 12,
+                "surah_name": "Yusuf",
+                "ayah_start": 86,
+                "ayah_end": 86,
+                "arabic_text": "قَالَ إِنَّمَآ أَشْكُوا۟ بَثِّى وَحُزْنِىٓ إِلَى ٱللَّهِ وَأَعْلَمُ مِنَ ٱللَّهِ مَا لَا تَعْلَمُونَ",
+                "translation": "He said, \"I only complain of my suffering and my grief to Allāh, and I know from Allāh that which you do not know.",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": "قال لهم أبوهم: ما أشكو ما أصابني من الهم والحزن إلا إلى الله وحده، وأعلم من لطف الله وإحسانه وإجابته للمضطر وجزائه للمصاب ما لا تعلمونه أنتم.",
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              }
+            ]
+          },
+          "criteria": {
+            "retrieval_quality": {
+              "score": 1,
+              "has_error": true,
+              "reason": "Expected source not retrieved."
+            },
+            "faithfulness": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Every citation matches retrieved parent metadata."
+            },
+            "answer_relevance": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Answer has grounded references."
+            },
+            "domain_tone": {
+              "score": 5,
+              "has_error": false,
+              "reason": "No diagnosis, treatment claim, or fatwa marker."
+            },
+            "format_clarity": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Readable non-empty answer."
+            }
+          },
+          "overall_score": 4.2,
+          "priority_fix": "retrieval_quality",
+          "valid_output": true,
+          "generation_ms": 45811.84,
+          "total_ms": 46635.21,
+          "reference_count": 1
+        },
+        {
+          "query": "Aku bingung dengan tujuan hidup.",
+          "expected_mode": "grounded",
+          "retrieved_parent_ids": [
+            "quran-com-en-069-027",
+            "quran-com-en-089-024"
+          ],
+          "response": {
+            "answer": "Dalam Al-Mu'minun (23):115, Allah menegaskan bahwa dirimu diciptakan bukan tanpa tujuan. Dalam Al-Dhariyat (51):56, Allah juga menegaskan bahwa dirimu diciptakan untuk mengagungkan-Nya sendiri. Jadi, hidupmu memiliki tujuan untuk mengagumi dan beribadah kepada-Nya.",
+            "references": [
+              {
+                "parent_id": "quran-com-en-023-115",
+                "surah_number": 23,
+                "surah_name": "Al-Mu'minun",
+                "ayah_start": 115,
+                "ayah_end": 115
+              },
+              {
+                "parent_id": "quran-com-en-051-056",
+                "surah_number": 51,
+                "surah_name": "Adh-Dhariyat",
+                "ayah_start": 56,
+                "ayah_end": 56
+              }
+            ],
+            "safety_note": null,
+            "evidence": [
+              {
+                "parent_id": "quran-com-en-023-115",
+                "surah_number": 23,
+                "surah_name": "Al-Mu'minun",
+                "ayah_start": 115,
+                "ayah_end": 115,
+                "arabic_text": "أَفَحَسِبْتُمْ أَنَّمَا خَلَقْنَـٰكُمْ عَبَثًا وَأَنَّكُمْ إِلَيْنَا لَا تُرْجَعُونَ",
+                "translation": "Then did you think that We created you uselessly and that to Us you would not be returned?\"",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": null,
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              },
+              {
+                "parent_id": "quran-com-en-051-056",
+                "surah_number": 51,
+                "surah_name": "Adh-Dhariyat",
+                "ayah_start": 56,
+                "ayah_end": 56,
+                "arabic_text": "وَمَا خَلَقْتُ ٱلْجِنَّ وَٱلْإِنسَ إِلَّا لِيَعْبُدُونِ",
+                "translation": "And I did not create the jinn and mankind except to worship Me.",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": "وما خلقت الجن والإنس إلا لعبادتي وحدي، ما خلقتهم ليجعلوا لي شريكًا.",
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              }
+            ]
+          },
+          "criteria": {
+            "retrieval_quality": {
+              "score": 1,
+              "has_error": true,
+              "reason": "Expected source not retrieved."
+            },
+            "faithfulness": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Every citation matches retrieved parent metadata."
+            },
+            "answer_relevance": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Answer has grounded references."
+            },
+            "domain_tone": {
+              "score": 5,
+              "has_error": false,
+              "reason": "No diagnosis, treatment claim, or fatwa marker."
+            },
+            "format_clarity": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Readable non-empty answer."
+            }
+          },
+          "overall_score": 4.2,
+          "priority_fix": "retrieval_quality",
+          "valid_output": true,
+          "generation_ms": 44367.4,
+          "total_ms": 45343.81,
+          "reference_count": 2
+        }
+      ],
+      "summary": {
+        "valid_outputs": 3,
+        "mean_score": 4.2,
+        "mean_generation_ms": 58000.48,
+        "median_generation_ms": 45811.84,
+        "cold_generation_ms": 83822.21,
+        "warm_mean_generation_ms": 45089.62
+      }
+    },
+    {
+      "model": "qwen3:1.7b",
+      "cases": [
+        {
+          "query": "Aku sedang menghadapi ujian.",
+          "expected_mode": "grounded",
+          "retrieved_parent_ids": [
+            "quran-com-en-070-005",
+            "quran-com-en-051-014"
+          ],
+          "response": {
+            "answer": "Ujian adalah ujian Allah. Selalu berdoa dan tetap berpegang pada kebenaran.",
+            "references": [
+              {
+                "parent_id": "quran-com-en-002-214",
+                "surah_number": 2,
+                "surah_name": "Al-Baqarah",
+                "ayah_start": 214,
+                "ayah_end": 214
+              }
+            ],
+            "safety_note": null,
+            "evidence": [
+              {
+                "parent_id": "quran-com-en-002-214",
+                "surah_number": 2,
+                "surah_name": "Al-Baqarah",
+                "ayah_start": 214,
+                "ayah_end": 214,
+                "arabic_text": "أَمْ حَسِبْتُمْ أَن تَدْخُلُوا۟ ٱلْجَنَّةَ وَلَمَّا يَأْتِكُم مَّثَلُ ٱلَّذِينَ خَلَوْا۟ مِن قَبْلِكُم ۖ مَّسَّتْهُمُ ٱلْبَأْسَآءُ وَٱلضَّرَّآءُ وَزُلْزِلُوا۟ حَتَّىٰ يَقُولَ ٱلرَّسُولُ وَٱلَّذِينَ ءَامَنُوا۟ مَعَهُۥ مَتَىٰ نَصْرُ ٱللَّهِ ۗ أَلَآ إِنَّ نَصْرَ ٱللَّهِ قَرِيبٌ",
+                "translation": "Or do you think that you will enter Paradise while such [trial] has not yet come to you as came to those who passed on before you? They were touched by poverty and hardship and were shaken until [even their] messenger and those who believed with him said, \"When is the help of Allāh?\" Unquestionably, the help of Allāh is near.",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": "أم ظننتم - أيها المؤمنون - أن تدخلوا الجنة ولم يصبكم ابتلاءٌ مثل ابتلاء الماضين من قبلكم، حيث أصابهم شدة الفقر والمرض، وزلزلتهم المخاوف، حتى بلغ بهم البلاء أن يستعجلوا نصر الله، فيقول الرسول والمؤمنون معه: متى يأتي نصر الله؟ ألا إن نصر الله قريب من المؤمنين به، المتوكلين عليه.",
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              }
+            ]
+          },
+          "criteria": {
+            "retrieval_quality": {
+              "score": 1,
+              "has_error": true,
+              "reason": "Expected source not retrieved."
+            },
+            "faithfulness": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Every citation matches retrieved parent metadata."
+            },
+            "answer_relevance": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Answer has grounded references."
+            },
+            "domain_tone": {
+              "score": 5,
+              "has_error": false,
+              "reason": "No diagnosis, treatment claim, or fatwa marker."
+            },
+            "format_clarity": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Readable non-empty answer."
+            }
+          },
+          "overall_score": 4.2,
+          "priority_fix": "retrieval_quality",
+          "valid_output": true,
+          "generation_ms": 46086.57,
+          "total_ms": 46933.73,
+          "reference_count": 1
+        },
+        {
+          "query": "Aku sedih dan kehilangan harapan.",
+          "expected_mode": "grounded",
+          "retrieved_parent_ids": [
+            "quran-com-en-054-018",
+            "quran-com-en-054-030"
+          ],
+          "response": {
+            "answer": "Aku sedih dan kehilangan harapan. Kehilangan itu menyedihkan, tetapi Allah mencintai yang berharap. Semua yang terjadi adalah untuk kebaikan. Kau tidak sendirian, karena Allah mendengar keluhanmu dan memberi kekuatan untuk melanjutkan perjalanan hidupmu.",
+            "references": [
+              {
+                "parent_id": "quran-com-en-012-086",
+                "surah_number": 12,
+                "surah_name": "Yusuf",
+                "ayah_start": 86,
+                "ayah_end": 86
+              }
+            ],
+            "safety_note": null,
+            "evidence": [
+              {
+                "parent_id": "quran-com-en-012-086",
+                "surah_number": 12,
+                "surah_name": "Yusuf",
+                "ayah_start": 86,
+                "ayah_end": 86,
+                "arabic_text": "قَالَ إِنَّمَآ أَشْكُوا۟ بَثِّى وَحُزْنِىٓ إِلَى ٱللَّهِ وَأَعْلَمُ مِنَ ٱللَّهِ مَا لَا تَعْلَمُونَ",
+                "translation": "He said, \"I only complain of my suffering and my grief to Allāh, and I know from Allāh that which you do not know.",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": "قال لهم أبوهم: ما أشكو ما أصابني من الهم والحزن إلا إلى الله وحده، وأعلم من لطف الله وإحسانه وإجابته للمضطر وجزائه للمصاب ما لا تعلمونه أنتم.",
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              }
+            ]
+          },
+          "criteria": {
+            "retrieval_quality": {
+              "score": 1,
+              "has_error": true,
+              "reason": "Expected source not retrieved."
+            },
+            "faithfulness": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Every citation matches retrieved parent metadata."
+            },
+            "answer_relevance": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Answer has grounded references."
+            },
+            "domain_tone": {
+              "score": 5,
+              "has_error": false,
+              "reason": "No diagnosis, treatment claim, or fatwa marker."
+            },
+            "format_clarity": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Readable non-empty answer."
+            }
+          },
+          "overall_score": 4.2,
+          "priority_fix": "retrieval_quality",
+          "valid_output": true,
+          "generation_ms": 34336.28,
+          "total_ms": 34696.92,
+          "reference_count": 1
+        },
+        {
+          "query": "Aku bingung dengan tujuan hidup.",
+          "expected_mode": "grounded",
+          "retrieved_parent_ids": [
+            "quran-com-en-069-027",
+            "quran-com-en-089-024"
+          ],
+          "response": {
+            "answer": "Tujuan hidup adalah untuk beriman, beramal, dan berakhlak. Karena Allah menciptakan manusia untuk menghargai kehidupan dan berakhlak kepada sesama manusia. Semoga kamu bisa mencapai tujuan itu dengan baik.",
+            "references": [
+              {
+                "parent_id": "quran-com-en-023-115",
+                "surah_number": 23,
+                "surah_name": "Al-Mu'minun",
+                "ayah_start": 115,
+                "ayah_end": 115
+              }
+            ],
+            "safety_note": null,
+            "evidence": [
+              {
+                "parent_id": "quran-com-en-023-115",
+                "surah_number": 23,
+                "surah_name": "Al-Mu'minun",
+                "ayah_start": 115,
+                "ayah_end": 115,
+                "arabic_text": "أَفَحَسِبْتُمْ أَنَّمَا خَلَقْنَـٰكُمْ عَبَثًا وَأَنَّكُمْ إِلَيْنَا لَا تُرْجَعُونَ",
+                "translation": "Then did you think that We created you uselessly and that to Us you would not be returned?\"",
+                "translation_language": "en",
+                "translation_name": "Saheeh International",
+                "tafsir": null,
+                "source_status": "Arabic and English translation: Quran.com, Saheeh International. Arabic tafsir, when shown: community dataset. Not Kemenag.",
+                "themes": [],
+                "score": null
+              }
+            ]
+          },
+          "criteria": {
+            "retrieval_quality": {
+              "score": 1,
+              "has_error": true,
+              "reason": "Expected source not retrieved."
+            },
+            "faithfulness": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Every citation matches retrieved parent metadata."
+            },
+            "answer_relevance": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Answer has grounded references."
+            },
+            "domain_tone": {
+              "score": 5,
+              "has_error": false,
+              "reason": "No diagnosis, treatment claim, or fatwa marker."
+            },
+            "format_clarity": {
+              "score": 5,
+              "has_error": false,
+              "reason": "Readable non-empty answer."
+            }
+          },
+          "overall_score": 4.2,
+          "priority_fix": "retrieval_quality",
+          "valid_output": true,
+          "generation_ms": 23584.31,
+          "total_ms": 24406.64,
+          "reference_count": 1
+        }
+      ],
+      "summary": {
+        "valid_outputs": 3,
+        "mean_score": 4.2,
+        "mean_generation_ms": 34669.05,
+        "median_generation_ms": 34336.28,
+        "cold_generation_ms": 46086.57,
+        "warm_mean_generation_ms": 28960.29
+      }
+    }
+  ]
+}

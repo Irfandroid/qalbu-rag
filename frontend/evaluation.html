@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173A31">
+  <title>Evaluasi Qalbu</title>
+  <style>
+    :root{--canvas:#f4f1e8;--paper:#fffdf7;--ink:#173a31;--muted:#66736d;--line:#d3d6cb;--accent:#55724e;--soft:#e3ebdd;--warn:#765822}*{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 Arial,sans-serif}a{color:inherit}.shell{width:min(1040px,calc(100% - 32px));margin:auto;padding:32px 0 64px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line)}.back{min-height:44px;display:inline-flex;align-items:center}.status{padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:13px}.intro{max-width:700px;padding:48px 0 30px}.intro h1{margin:0 0 12px;font-size:clamp(30px,6vw,52px);line-height:1.05;letter-spacing:-.04em}.intro p{margin:0;color:var(--muted)}.primary{display:grid;grid-template-columns:minmax(220px,1fr) 2fr;gap:24px;align-items:start}.hero-metric,.panel{border:1px solid var(--line);border-radius:12px;background:var(--paper)}.hero-metric{padding:24px}.label{color:var(--muted);font-size:13px;font-weight:600}.value{display:block;margin:10px 0 4px;font-size:52px;line-height:1;font-weight:700;color:var(--accent)}.panel{padding:0 20px}.metric{display:grid;grid-template-columns:1fr auto;gap:16px;padding:17px 0;border-bottom:1px solid var(--line)}.metric:last-child{border-bottom:0}.metric strong{font-variant-numeric:tabular-nums}.limits{margin-top:24px;padding:20px 24px;border-left:4px solid var(--warn);background:#f4ecd8}.limits h2{margin:0 0 8px;font-size:18px}.limits ul{margin:0;padding-left:20px}.meta{margin-top:24px;color:var(--muted);font-size:13px}@media(max-width:700px){.primary{grid-template-columns:1fr}.intro{padding-top:32px}.shell{width:min(100% - 24px,1040px)}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><a class="back" href="/">Kembali ke ruang refleksi</a><span class="status" id="status">Memuat laporan</span></header>
+    <section class="intro"><h1>Evaluasi yang bisa diperiksa</h1><p>Angka hanya muncul jika sudah diukur. Laporan sampel tidak dianggap sebagai bukti siap produksi.</p></section>
+    <section class="primary" aria-live="polite">
+      <article class="hero-metric"><span class="label">Retrieval hit@5</span><strong class="value" id="hit">Belum diukur</strong><span class="label" id="scope">Tidak ada laporan</span></article>
+      <div class="panel">
+        <div class="metric"><span>MRR</span><strong id="mrr">Belum diukur</strong></div>
+        <div class="metric"><span>Crisis recall</span><strong id="recall">Belum diukur</strong></div>
+        <div class="metric"><span>False-positive crisis</span><strong id="fp">Belum diukur</strong></div>
+        <div class="metric"><span>Retrieval p50</span><strong id="p50">Belum diukur</strong></div>
+        <div class="metric"><span>Retrieval p95</span><strong id="p95">Belum diukur</strong></div>
+        <div class="metric"><span>Faithfulness</span><strong id="faith">Belum diukur</strong></div>
+        <div class="metric"><span>Citation validity</span><strong id="citation">Belum diukur</strong></div>
+        <div class="metric"><span>Peak memory</span><strong id="memory">Belum diukur</strong></div>
+      </div>
+    </section>
+    <section class="limits"><h2>Batas laporan</h2><ul id="limitations"><li>Belum ada laporan.</li></ul></section>
+    <p class="meta" id="generated"></p>
+  </main>
+  <script>
+    const $=id=>document.getElementById(id),fmt=value=>value==null?'Belum diukur':Number(value).toLocaleString('id-ID',{maximumFractionDigits:4}),pct=value=>value==null?'Belum diukur':(Number(value)*100).toLocaleString('id-ID',{maximumFractionDigits:1})+'%',ms=value=>value==null?'Belum diukur':Number(value).toLocaleString('id-ID',{maximumFractionDigits:1})+' ms';
+    fetch('/api/v1/eval/report').then(response=>response.json()).then(report=>{if(report.status==='not_measured')throw Error('Laporan belum dibuat');const retrieval=report.metrics?.retrieval||{},safety=report.metrics?.safety||{},generation=report.metrics?.generation||{};$('status').textContent=report.release_ready?'Lulus release gate':'Belum siap rilis';$('hit').textContent=fmt(retrieval.hit_at_5);$('scope').textContent='Cakupan: '+(report.scope||'tidak diketahui')+' · '+(retrieval.cases||0)+' kasus';$('mrr').textContent=fmt(retrieval.mrr);$('recall').textContent=pct(safety.crisis_recall);$('fp').textContent=pct(safety.false_positive_rate);$('p50').textContent=ms(retrieval.latency_p50_ms);$('p95').textContent=ms(retrieval.latency_p95_ms);$('faith').textContent=fmt(generation.faithfulness);$('citation').textContent=fmt(generation.citation_validity);$('memory').textContent=generation.peak_rss_mb==null?'Belum diukur':fmt(generation.peak_rss_mb)+' MB';$('limitations').replaceChildren(...(report.limitations||[]).map(text=>{const item=document.createElement('li');item.textContent=text;return item}));$('generated').textContent=report.generated_at?'Dibuat '+new Date(report.generated_at).toLocaleString('id-ID'):''}).catch(error=>{$('status').textContent='Belum diukur';$('limitations').innerHTML='<li>'+error.message+'</li>'});
+  </script>
+</body>
+</html>
