@@ -1,0 +1,9 @@
+{
+  "dataset": "qalbu_quran_ayat_id.json",
+  "record_count": 111,
+  "sha256": "44136d9022e98c84bfd992fc38173cfa2840d7702d9fc0b086aad04457d58cd4",
+  "language": "id",
+  "provided_by": "project owner",
+  "provenance_status": "unverified",
+  "usage_note": "Do not label this snapshot as official Kemenag data until source metadata is verified."
+}

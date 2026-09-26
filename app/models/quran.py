@@ -23,11 +23,3 @@ class QuranDocument(BaseModel):
         if not self.source.get("quran"):
             raise ValueError("source.quran is required")
         return self
-
-
-class QuranChunk(BaseModel):
-    id: str
-    parent_id: str
-    chunk_type: str
-    content: str = Field(min_length=1)
-    metadata: dict[str, Any] = Field(default_factory=dict)

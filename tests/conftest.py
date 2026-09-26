@@ -16,10 +16,10 @@ def document() -> QuranDocument:
 
 
 class FakeEmbeddings:
-    def embed_query(self, text: str) -> list[float]:
+    async def embed_query(self, text: str) -> list[float]:
         return [0.1, 0.2]
 
-    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+    async def embed_documents(self, texts: list[str]) -> list[list[float]]:
         return [[0.1, 0.2] for _ in texts]
 
 

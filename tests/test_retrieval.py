@@ -1,7 +1,6 @@
 import pytest
 
 from app.models.rag import RetrievalResult
-from app.rag.parent_retriever import ParentRetriever
 from app.rag.retriever import QuranRetriever
 from tests.conftest import FakeEmbeddings, FakeRepository
 
@@ -19,7 +18,7 @@ def retrieval_result(parent_id: str, score: float) -> RetrievalResult:
         child_id=f"{parent_id}:{score}",
         parent_id=parent_id,
         score=score,
-        chunk_type="tafsir",
+        chunk_type="ayah",
         surah_number=2,
         surah_name="Al-Baqarah",
         ayah_start=286,
@@ -28,30 +27,21 @@ def retrieval_result(parent_id: str, score: float) -> RetrievalResult:
 
 
 @pytest.mark.asyncio
-async def test_retrieval_returns_children_then_parent():
-    repo = FakeRepository()
-    children = await QuranRetriever(FakeEmbeddings(), repo).search("hidup berat")
-    parents = await ParentRetriever(repo).get_parents(children)
-    assert children[0].parent_id == parents[0].id
-
-
-@pytest.mark.asyncio
-async def test_parent_ids_deduplicated():
-    repo = FakeRepository()
-    children = await QuranRetriever(FakeEmbeddings(), repo).search("hidup berat")
-    parents = await ParentRetriever(repo).get_parents(children + children)
-    assert len(parents) == 1
+async def test_retrieval_returns_vector_parent():
+    results = await QuranRetriever(FakeEmbeddings(), FakeRepository()).search("hidup berat")
+    assert results[0].parent_id == "al-baqarah-286"
 
 
 @pytest.mark.asyncio
 async def test_low_score_results_are_refused():
-    repo = FakeRepository()
-    results = await QuranRetriever(FakeEmbeddings(), repo, min_score=0.95).search("harga Bitcoin")
+    results = await QuranRetriever(
+        FakeEmbeddings(), FakeRepository(), min_score=0.95
+    ).search("aku sedang sedih")
     assert results == []
 
 
 @pytest.mark.asyncio
-async def test_retrieval_deduplicates_children_by_parent_and_limits_context():
+async def test_retrieval_deduplicates_parent_and_limits_results():
     repo = MultiResultRepository(
         [
             retrieval_result("al-baqarah-286", 0.91),

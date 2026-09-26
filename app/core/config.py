@@ -7,34 +7,26 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    groq_api_key: str | None = None
-    groq_model: str = "openai/gpt-oss-20b"
-    llm_provider: str = "ollama"
-    ollama_base_url: str = "http://host.docker.internal:11434"
-    ollama_model: str = "qwen2.5:3b-instruct"
-    # 8 GB CPU profile: smaller KV cache; retain model briefly to avoid a
-    # multi-second reload on every consecutive chat turn.
-    ollama_num_ctx: int = 2048
-    ollama_keep_alive: str = "5m"
+    app_env: str = "development"
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-3.5-flash-lite"
     supabase_url: str | None = None
     supabase_secret_key: str | None = None
     supabase_service_role_key: str | None = None
-    embedding_provider: str = "local_e5"
-    embedding_model: str = "intfloat/multilingual-e5-base"
+    jina_api_key: str | None = None
+    jina_embedding_model: str = "jina-embeddings-v5-text-small"
     embedding_dimensions: int = 768
-    min_retrieval_score: float = 0.55
-    retrieval_candidate_k: int = 12
-    retrieval_parent_k: int = 2
+    min_retrieval_score: float = 0.32
+    top_k_retrieval: int = 15
+    retrieval_parent_k: int = 4
+    max_context_tokens: int = 1800
+    request_timeout_seconds: float = 30
     chat_rate_limit_per_minute: int = 10
-    rag_cache_version: str = "sample-v1"
+    rag_cache_version: str = "qalbu-mvp-v1"
     allowed_origins: str = "http://localhost:8000"
-    qf_client_id: str | None = None
-    qf_client_secret: str | None = None
-    qf_env: str = "prelive"
     qalbu_profile: str = "local"
     crisis_line: str | None = None
     crisis_line_label: str = "Layanan darurat setempat"
-    max_queue: int = 3
     log_level: str = "INFO"
 
     @model_validator(mode="after")
@@ -48,12 +40,12 @@ class Settings(BaseSettings):
 
     @property
     def configured_for_rag(self) -> bool:
-        llm_ready = (
-            bool(self.ollama_base_url and self.ollama_model)
-            if self.llm_provider == "ollama"
-            else bool(self.groq_api_key)
+        return bool(
+            self.gemini_api_key
+            and self.jina_api_key
+            and self.supabase_url
+            and self.supabase_server_key
         )
-        return bool(llm_ready and self.supabase_url and self.supabase_server_key)
 
     @property
     def supabase_server_key(self) -> str | None:

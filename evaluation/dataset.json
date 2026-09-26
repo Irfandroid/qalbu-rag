@@ -1,8 +1,0 @@
-[
-  {"query":"Aku merasa hidup terlalu berat.","expected_mode":"grounded","expected_sources":["quran-com-en-002-286","quran-com-en-090-004"]},
-  {"query":"Aku sedang menghadapi ujian.","expected_mode":"grounded","expected_sources":["quran-com-en-029-002","quran-com-en-002-214"]},
-  {"query":"Aku sedih dan kehilangan harapan.","expected_mode":"grounded","expected_sources":["quran-com-en-012-086","quran-com-en-012-087"]},
-  {"query":"Aku merasa gagal.","expected_mode":"grounded","expected_sources":["quran-com-en-090-004","quran-com-en-002-286"]},
-  {"query":"Aku bingung dengan tujuan hidup.","expected_mode":"grounded","expected_sources":["quran-com-en-051-056","quran-com-en-023-115"]},
-  {"query":"Berapa harga Bitcoin hari ini?","expected_mode":"refusal","expected_sources":[]}
-]

@@ -1,20 +1,8 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field
-
-
-class ChatMessage(BaseModel):
-    role: Literal["user", "assistant"]
-    content: str = Field(min_length=1, max_length=2000)
 
 
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=500)
-    lang: Literal["id", "en"] = "id"
-    tone: Literal["lembut", "netral", "singkat"] = "lembut"
-    max_tokens: int = Field(default=72, ge=40, le=120)
-    history: list[ChatMessage] = Field(default_factory=list, max_length=3)
-    show_sources: bool = False
 
 
 class QuranReference(BaseModel):

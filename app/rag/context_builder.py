@@ -1,11 +1,19 @@
 from app.models.quran import QuranDocument
-from app.quran.curated_summaries import TAFSIR_SUMMARIES_ID
 
 
-def build_context(documents: list[QuranDocument]) -> str:
+def _bounded(value: str | None, max_words: int) -> str:
+    if not value:
+        return "[not provided]"
+    words = value.split()
+    if len(words) <= max_words:
+        return value
+    return " ".join(words[:max_words]) + " [truncated by context builder]"
+
+
+def build_context(documents: list[QuranDocument], max_context_tokens: int = 1800) -> str:
     sections: list[str] = []
+    words_per_parent = max(120, max_context_tokens // max(len(documents), 1) // 2)
     for index, doc in enumerate(documents, start=1):
-        tafsir_summary = TAFSIR_SUMMARIES_ID.get(doc.id)
         sections.append(
             "\n".join(
                 [
@@ -18,17 +26,12 @@ def build_context(documents: list[QuranDocument]) -> str:
                         "Translation "
                         f"({doc.metadata.get('translation_language', 'unknown')}, "
                         f"{doc.metadata.get('translation_name', 'unnamed')}): "
-                        f"{doc.translation or '[not provided]'}"
+                        f"{_bounded(doc.translation, words_per_parent // 3)}"
                     ),
                     (
-                        "Tafsir: [original Arabic is rendered separately by the UI]"
-                        if tafsir_summary
-                        else f"Tafsir: {doc.tafsir or '[not provided]'}"
-                    ),
-                    (
-                        "Reviewed Indonesian tafsir summary (working paraphrase, "
-                        "not an official translation): "
-                        f"{tafsir_summary or '[not provided]'}"
+                        f"Tafsir ({doc.metadata.get('tafsir_language', 'unknown')}, "
+                        f"{doc.metadata.get('tafsir_name', 'unnamed')}): "
+                        f"{_bounded(doc.tafsir, words_per_parent)}"
                     ),
                     f"Themes: {', '.join(doc.themes) or '[not provided]'}",
                     "Source status: "
@@ -40,7 +43,13 @@ def build_context(documents: list[QuranDocument]) -> str:
                             "cite provenance clearly"
                         )
                         if doc.metadata.get("unverified_community_source")
-                        else str(doc.source)
+                        else (
+                            "USER-SUPPLIED INDONESIAN SNAPSHOT: provenance unverified; "
+                            "do not call it official Kemenag"
+                            if doc.metadata.get("source_provider")
+                            == "user_indonesian_snapshot"
+                            else str(doc.source)
+                        )
                     ),
                 ]
             )

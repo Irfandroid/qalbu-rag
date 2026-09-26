@@ -1,43 +1,8 @@
-# Data sources
+# Data MVP
 
-Source corpora are intentionally not committed. They retain separate provenance,
-attribution, and licensing requirements.
+`external/indonesian-quran/` menyimpan snapshot ayat Indonesia yang dipakai sebagai artefak
+referensi/seed. Runtime chat tidak membaca file ini langsung; runtime mengambil corpus
+`qalbu-seed-v1` dari Supabase.
 
-## Quran.com snapshot
-
-Generate the Arabic Uthmani + attributed Saheeh International snapshot:
-
-```bash
-python scripts/fetch_quran_com.py
-```
-
-Expected output:
-
-```text
-data/external/quran-com/saheeh-international.json
-```
-
-The script verifies all 6,236 ayahs before saving the snapshot.
-
-## Community Arabic tafsir
-
-Download the community dataset from Kaggle:
-
-```bash
-curl -L -o data/external/quran-tafseer/quranic-ayahs-with-tafseer-json-dataset.zip \
-  https://www.kaggle.com/api/v1/datasets/download/abdelrahmanahmed110/quranic-ayahs-with-tafseer-json-dataset
-```
-
-Extract its JSON files into:
-
-```text
-data/external/quran-tafseer/raw/
-```
-
-Current local corpus contains 103 of 114 surahs. Qalbu labels this source as
-an unverified community dataset, never as Kemenag or an official tafsir.
-
-## Temporary sample
-
-`data/temporary/` is a small development sample. It is not an official Quran
-source and must not be presented as one.
+Setiap respons tetap menampilkan Arab, terjemahan, tafsir, dan provenance dari row Supabase.
+Jangan menaruh credential atau percakapan pengguna di folder data.

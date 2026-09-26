@@ -33,11 +33,15 @@ class SafetyGuardrails:
         "nggak sanggup": "tidak sanggup",
     }
     _immediate_patterns = (
-        ("suicide_id", re.compile(r"\b(bunuh diri|mengakhiri hidup|ingin mati|pengen mati)\b")),
+        (
+            "suicide_id",
+            re.compile(
+                r"\b(bunuh diri|mengakhiri hidup|ingin mati|pengen mati|"
+                r"lebih baik aku tidak ada|menghilang selamanya)\b"
+            ),
+        ),
         ("self_harm_id", re.compile(r"\b(menyakiti|melukai) diri(?: sendiri)?\b")),
         ("harm_other_id", re.compile(r"\b(melukai|membunuh) orang\b")),
-        ("suicide_en", re.compile(r"\b(kill myself|end my life|want to die|suicide)\b")),
-        ("self_harm_en", re.compile(r"\b(self harm|hurt myself)\b")),
     )
     _hard_negative_patterns = (
         re.compile(r"\b(tidak|nggak|gak|bukan) (ingin |mau )?(bunuh diri|mati|menyakiti diri)\b"),
@@ -68,10 +72,13 @@ class SafetyGuardrails:
 
     def check(self, message: str) -> SafetyDecision:
         normalized = self.normalize(message)
-        if any(pattern.search(normalized) for pattern in self._hard_negative_patterns):
-            return SafetyDecision(SafetyLevel.NORMAL)
+        # Remove only the explicitly negated/reported clause. Returning early
+        # here used to hide a second, real threat in the same message.
+        danger_candidate = normalized
+        for hard_negative in self._hard_negative_patterns:
+            danger_candidate = hard_negative.sub(" ", danger_candidate)
         for pattern_id, pattern in self._immediate_patterns:
-            if pattern.search(normalized):
+            if pattern.search(danger_candidate):
                 return SafetyDecision(
                     SafetyLevel.IMMEDIATE_DANGER,
                     (

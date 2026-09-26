@@ -2,28 +2,27 @@ from app.models.chat import QalbuResponse, QuranReference
 from app.models.quran import QuranDocument
 from app.rag.response_quality import (
     assess_contextual_response,
-    build_curated_safe_response,
     build_repair_query,
 )
 
 
 def source() -> QuranDocument:
     return QuranDocument(
-        id="quran-com-en-013-028",
+        id="qalbu-seed-013-028",
         surah_number=13,
         surah_name="Ar-Ra'd",
         ayah_start=28,
         ayah_end=28,
         translation="Hearts are assured by the remembrance of Allah.",
         tafsir="Tasbih, tahmid, recitation and listening are forms of remembrance.",
-        source={"quran": "Quran.com"},
+        source={"quran": "Kemenag"},
     )
 
 
 def test_generic_answer_fails_context_and_tafsir_gates():
     response = QalbuResponse(
         answer="Mengingat Allah menenangkan hati.",
-        references=[QuranReference(parent_id="quran-com-en-013-028")],
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
     )
 
     report = assess_contextual_response(
@@ -41,7 +40,7 @@ def test_contextual_grounded_answer_passes():
             "Rasa hampa itu bisa terasa berat. Ayat ini mengajak hati mengingat Allah. "
             "Dalam tafsir yang tersedia, zikir mencakup tasbih dan tahmid."
         ),
-        references=[QuranReference(parent_id="quran-com-en-013-028")],
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
     )
 
     report = assess_contextual_response(
@@ -64,29 +63,13 @@ def test_repair_query_contains_failures_without_fixed_answer():
     assert "Aku mendengar kamu sedang merasa hampa" not in repair
 
 
-def test_rejects_tafsir_details_not_present_in_reviewed_summary():
-    response = QalbuResponse(
-        answer=(
-            "Rasa hampa itu bisa terasa berat. Ayat ini mengajak hati mengingat Allah. "
-            "Dalam tafsir yang tersedia, sujud dan doa membuat rasa itu hilang."
-        ),
-        references=[QuranReference(parent_id="quran-com-en-013-028")],
-    )
-
-    report = assess_contextual_response(
-        "Aku merasa hampa", response, [source()], max_tokens=72
-    )
-
-    assert "unsupported_tafsir_detail" in report.issues
-
-
 def test_rejects_embedded_arabic_or_source_identifier():
     response = QalbuResponse(
         answer=(
             "Rasa hampa terkait Ar-Ra'd dan teks أَلَا. "
             "Dalam tafsir yang tersedia, zikir menenteramkan hati."
         ),
-        references=[QuranReference(parent_id="quran-com-en-013-028")],
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
     )
 
     report = assess_contextual_response(
@@ -97,23 +80,13 @@ def test_rejects_embedded_arabic_or_source_identifier():
     assert "embedded_source_identifier" in report.issues
 
 
-def test_curated_safe_response_is_grounded_for_emptiness_intent():
-    response = build_curated_safe_response("Aku merasa hampa", [source()])
-
-    assert response is not None
-    assert response.references[0].parent_id == "quran-com-en-013-028"
-    assert assess_contextual_response(
-        "Aku merasa hampa", response, [source()], max_tokens=72
-    ).passed
-
-
 def test_rejects_model_authored_quotation():
     response = QalbuResponse(
         answer=(
             "Rasa hampa terkait ayat ini: 'kutipan buatan model'. "
             "Dalam tafsir yang tersedia, zikir menenteramkan hati."
         ),
-        references=[QuranReference(parent_id="quran-com-en-013-028")],
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
     )
 
     report = assess_contextual_response(

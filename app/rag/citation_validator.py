@@ -3,7 +3,11 @@ from app.models.quran import QuranDocument
 
 
 class CitationValidator:
-    def validate(self, response: QalbuResponse, retrieved: list[QuranDocument]) -> QalbuResponse:
+    def validate(
+        self,
+        response: QalbuResponse,
+        retrieved: list[QuranDocument],
+    ) -> QalbuResponse:
         allowed = {document.id: document for document in retrieved}
         valid: list[QuranReference] = []
         for reference in response.references:
@@ -48,20 +52,17 @@ class CitationValidator:
                 arabic_text=allowed[reference.parent_id].arabic_text,
                 translation=allowed[reference.parent_id].translation,
                 translation_language=allowed[reference.parent_id].metadata.get(
-                    "translation_language"
+                    "translation_language", "id"
                 ),
-                translation_name=allowed[reference.parent_id].metadata.get("translation_name"),
+                translation_name=(
+                    allowed[reference.parent_id].metadata.get("translation_name")
+                    or "Terjemahan Indonesia"
+                ),
                 tafsir=allowed[reference.parent_id].tafsir,
                 source_status=(
-                    "Arabic and English translation: Quran.com, Saheeh International. "
-                    "Arabic tafsir, when shown: community dataset. Not Kemenag."
-                    if allowed[reference.parent_id].metadata.get("source_provider")
-                    == "quran_com_english_snapshot"
-                    else (
-                        "Dataset komunitas; bukan sumber resmi Kemenag."
-                        if allowed[reference.parent_id].metadata.get("unverified_community_source")
-                        else "Sumber terverifikasi dalam basis pengetahuan Qalbu."
-                    )
+                    "Dataset komunitas; bukan sumber resmi Kemenag."
+                    if allowed[reference.parent_id].metadata.get("unverified_community_source")
+                    else "Sumber terverifikasi dalam basis pengetahuan Qalbu."
                 ),
             )
             for reference in valid

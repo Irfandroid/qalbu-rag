@@ -6,8 +6,6 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.chat import router as chat_router
 from app.api.routes.health import router as health_router
-from app.api.routes.system import router as system_router
-from app.api.routes.themes import router as themes_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -33,6 +31,4 @@ app.add_middleware(
 )
 app.include_router(chat_router)
 app.include_router(health_router)
-app.include_router(themes_router)
-app.include_router(system_router)
 app.mount("/", StaticFiles(directory=Path("frontend"), html=True), name="frontend")
