@@ -4,6 +4,9 @@ Qalbu adalah chat refleksi Al-Qur'an berbahasa Indonesia. User menulis kondisi e
 sistem menjalankan safety check deterministik, mencari ayat relevan dari satu corpus Indonesia,
 lalu Gemini menyusun refleksi singkat berdasarkan sumber tersebut.
 
+Penjelasan arsitektur lengkap ada di [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): data-flow,
+workflow request, parent-child chunking, cache, safety, provenance, fallback, dan batasan MVP.
+
 Qalbu bukan diagnosis, terapi, fatwa, atau pengganti manusia tepercaya dan tenaga profesional.
 
 ## Jalur runtime
