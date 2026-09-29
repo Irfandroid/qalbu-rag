@@ -24,8 +24,8 @@ flowchart LR
 
 Runtime sengaja hanya punya satu bahasa, satu corpus, satu embedding provider (Jina), dan satu
 LLM provider (Gemini). Vector search memakai child chunks yang sudah ada di Supabase untuk
-menemukan parent ayat; tidak ada reranker atau routing corpus kedua. Percakapan tidak disimpan;
-cache hanya process-local dan TTL.
+menemukan parent ayat; tidak ada reranker atau routing corpus kedua. Riwayat chat disimpan lokal
+di browser untuk fitur New Chat; server tidak menyimpan percakapan. Cache tetap process-local dan TTL.
 
 ## Jalankan lokal
 
@@ -40,6 +40,9 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Buka [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+Jika muncul `Failed to fetch`, cek [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
+dan pastikan proses Uvicorn masih berjalan di port 8000.
 
 Docker:
 
@@ -74,7 +77,7 @@ Payload chat minimum:
 ```
 
 Tidak ada endpoint auth, history, feedback, export, evaluation, English corpus, atau scraper
-di jalur MVP.
+di jalur MVP. History hanya fitur frontend berbasis `localStorage`, bukan persistence server.
 
 ## Data dan provenance
 
