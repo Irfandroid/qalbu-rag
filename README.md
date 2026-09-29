@@ -109,3 +109,7 @@ Gemini output, API SSE, dan konfigurasi minimum.
 - Tidak ada dashboard evaluasi otomatis; review ayat/tafsir dilakukan manual.
 - Kontak krisis harus diverifikasi sebelum deployment publik.
 - Latency bergantung pada Jina, Supabase, dan Gemini.
+
+## Lisensi
+
+Project ini dirilis di bawah [MIT License](LICENSE).
