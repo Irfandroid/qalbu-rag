@@ -1,34 +1,52 @@
-# Qalbu MVP
+# Qalbu
 
-Qalbu adalah chat refleksi Al-Qur'an berbahasa Indonesia. User menulis kondisi emosional;
-sistem menjalankan safety check deterministik, mencari ayat relevan dari satu corpus Indonesia,
-lalu Gemini menyusun refleksi singkat berdasarkan sumber tersebut.
+Qalbu adalah aplikasi chat refleksi Al-Qur'an berbahasa Indonesia. User menulis kondisi
+emosional, aplikasi mencari sumber yang relevan dari corpus Quran di Supabase, lalu Gemini
+menyusun refleksi singkat yang tetap terhubung ke sumber tersebut.
 
-Penjelasan arsitektur lengkap ada di [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): data-flow,
-workflow request, parent-child chunking, cache, safety, provenance, fallback, dan batasan MVP.
+Qalbu bukan alat diagnosis, terapi, fatwa, layanan krisis, atau pengganti manusia tepercaya dan
+tenaga profesional.
 
-Qalbu bukan diagnosis, terapi, fatwa, atau pengganti manusia tepercaya dan tenaga profesional.
+## Cara kerja
 
-## Jalur runtime
-
-```mermaid
-flowchart LR
-  U[Pesan Indonesia] --> S[Safety deterministik]
-  S -->|krisis| C[Respons tetap + kontak CRISIS_LINE]
-  S -->|aman| E[Jina query embedding]
-  E --> V[Supabase pgvector: qalbu-seed-v1]
-  V --> P[Ambil parent ayat]
-  P --> G[Gemini JSON, konteks terbatas]
-  G --> X[Validasi citation + quality gate]
-  X --> O[Refleksi + Arab + terjemahan + tafsir + provenance]
-  V -->|kosong / skor rendah| F[Fallback jujur]
-  G -->|gagal / tidak grounded| F
+```text
+Pesan user
+  -> safety check deterministik
+  -> embedding query dengan Jina
+  -> pencarian vector di Supabase pgvector
+  -> ambil parent ayat lengkap
+  -> Gemini membuat JSON refleksi
+  -> validasi citation dan kualitas
+  -> SSE response ke browser
 ```
 
-Runtime sengaja hanya punya satu bahasa, satu corpus, satu embedding provider (Jina), dan satu
-LLM provider (Gemini). Vector search memakai child chunks yang sudah ada di Supabase untuk
-menemukan parent ayat; tidak ada reranker atau routing corpus kedua. Riwayat chat disimpan lokal
-di browser untuk fitur New Chat; server tidak menyimpan percakapan. Cache tetap process-local dan TTL.
+Untuk risiko segera, aplikasi langsung mengirim respons krisis tetap dan tidak memanggil Jina
+atau Gemini. Jika retrieval gagal, sumber tidak cukup relevan, atau jawaban AI tidak lolos
+validasi, aplikasi menampilkan fallback jujur atau sources-only response.
+
+Runtime MVP sengaja sederhana: satu bahasa, satu corpus aktif (`qalbu-seed-v1`), satu provider
+embedding (Jina), dan satu provider LLM (Gemini). Riwayat chat hanya disimpan di `localStorage`
+browser; server tidak menyimpan percakapan.
+
+## Struktur project
+
+| Path | Tanggung jawab |
+|---|---|
+| `frontend/index.html` | UI chat, pembaca SSE, evidence Quran, history lokal |
+| `app/main.py` | Bootstrap FastAPI dan static frontend |
+| `app/api/routes/chat.py` | Endpoint chat, SSE, timeout, rate limit |
+| `app/safety/guardrails.py` | Safety gate sebelum network call |
+| `app/rag/pipeline.py` | Orkestrasi safety, retrieval, generation, fallback |
+| `app/rag/retriever.py` | Embedding, threshold, dedup parent |
+| `app/providers/embeddings/jina.py` | Adapter Jina embeddings |
+| `app/providers/llm/gemini.py` | Adapter Gemini structured JSON |
+| `app/rag/citation_validator.py` | Validasi provenance dan evidence |
+| `app/rag/response_quality.py` | Quality gate dan repair prompt |
+| `supabase/migrations/` | Schema, pgvector index, RPC, dan akses server-only |
+| `tests/` | Test safety, retrieval, provider, API, citation, dan frontend |
+
+Penjelasan alur dan keputusan arsitektur yang lebih lengkap ada di
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Jalankan lokal
 
@@ -44,53 +62,65 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 Buka [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
-Jika muncul `Failed to fetch`, cek [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
-dan pastikan proses Uvicorn masih berjalan di port 8000.
-
 Docker:
 
 ```powershell
 docker compose up --build
 ```
 
-## Environment MVP
+Health check:
 
-Isi hanya di `.env` atau secret manager:
+```powershell
+Invoke-WebRequest http://127.0.0.1:8000/api/health
+```
+
+`status=ok` berarti proses hidup. `rag=configured` hanya berarti credential server terbaca; itu
+belum membuktikan corpus Supabase berisi data.
+
+## Konfigurasi
+
+Salin [`.env.example`](.env.example) menjadi `.env`. Isi secret hanya di `.env` atau secret
+manager, jangan commit ke Git.
 
 | Variabel | Fungsi |
 |---|---|
-| `GEMINI_API_KEY`, `GEMINI_MODEL` | Refleksi grounded |
-| `JINA_API_KEY`, `JINA_EMBEDDING_MODEL` | Query embedding |
-| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Server-side vector/database access |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Membuat refleksi grounded |
+| `JINA_API_KEY`, `JINA_EMBEDDING_MODEL` | Membuat query embedding |
+| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Akses database/vector search dari server |
 | `MIN_RETRIEVAL_SCORE`, `TOP_K_RETRIEVAL`, `RETRIEVAL_PARENT_K` | Batas retrieval |
-| `CRISIS_LINE`, `CRISIS_LINE_LABEL` | Kontak bantuan terverifikasi |
+| `CRISIS_LINE`, `CRISIS_LINE_LABEL` | Kontak bantuan yang harus diverifikasi |
 
-Secret Supabase tidak boleh dikirim ke browser atau di-commit. `SUPABASE_SERVICE_ROLE_KEY`
-masih diterima sebagai kompatibilitas lama.
+`SUPABASE_SERVICE_ROLE_KEY` masih diterima untuk kompatibilitas lama, tetapi key server tidak boleh
+dikirim ke browser.
 
-## Endpoint
+## API
 
-- `GET /api/health` — health/config status.
-- `POST /api/v1/chat` — SSE berisi `response`, `crisis`, `error`, lalu `done`.
+### `GET /api/health`
 
-Payload chat minimum:
+Mengembalikan status proses dan status konfigurasi RAG.
+
+### `POST /api/v1/chat`
+
+Request:
 
 ```json
 {"message":"Aku merasa hampa"}
 ```
 
-Tidak ada endpoint auth, history, feedback, export, evaluation, English corpus, atau scraper
-di jalur MVP. History hanya fitur frontend berbasis `localStorage`, bukan persistence server.
+Response berupa Server-Sent Events dengan event `response`, `crisis`, `error`, dan `done`.
 
 ## Data dan provenance
 
-Runtime membaca `qalbu-seed-v1` dari tabel Supabase `quran_documents` dan `quran_chunks`.
-Response hanya menampilkan teks yang berasal dari row retrieved; LLM tidak membuat teks Arab,
-terjemahan, nomor ayat, atau sitasi. Jika source/context gagal atau tidak cukup relevan, UI
-menampilkan fallback jujur. Jika source ditandai komunitas, label nonresmi tetap ditampilkan.
+Runtime membaca corpus `qalbu-seed-v1` dari tabel Supabase `quran_documents` dan `quran_chunks`.
+Folder [`data/external/indonesian-quran/`](data/external/indonesian-quran/) hanya menyimpan
+snapshot/seed referensi dan tidak dibaca langsung oleh chat runtime.
 
-Migration Supabase di `supabase/migrations/` dipertahankan, termasuk schema parent/chunk dan
-RPC vector search yang sudah dipakai corpus aktif.
+Snapshot Indonesia saat ini berstatus `unverified`; jangan menyebutnya sebagai terjemahan resmi
+Kemenag sebelum metadata sumber diverifikasi. Evidence Arab, terjemahan, tafsir, dan provenance
+yang dikirim ke UI berasal dari row database, bukan dibuat oleh Gemini.
+
+Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Model serta
+dimensi embedding saat indexing harus sama dengan runtime (`768` dimensi).
 
 ## Verifikasi
 
@@ -100,15 +130,13 @@ python -m ruff check app tests
 python -m mypy app
 ```
 
-Test fokus pada safety, retrieval threshold/dedup, citation/provenance, fallback, structured
-Gemini output, API SSE, dan konfigurasi minimum.
-
 ## Batasan MVP
 
-- Coverage/relevansi bergantung pada isi dan embedding corpus `qalbu-seed-v1`.
-- Tidak ada dashboard evaluasi otomatis; review ayat/tafsir dilakukan manual.
+- Coverage dan relevansi bergantung pada isi corpus serta kualitas embedding.
+- Cache dan rate limiter hanya berlaku dalam satu proses.
+- Tidak ada authentication, server-side history, reranker, atau dashboard evaluasi.
 - Kontak krisis harus diverifikasi sebelum deployment publik.
-- Latency bergantung pada Jina, Supabase, dan Gemini.
+- Latency bergantung pada Jina, Supabase, Gemini, dan cold start host.
 
 ## Lisensi
 

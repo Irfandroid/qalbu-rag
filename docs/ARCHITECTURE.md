@@ -197,9 +197,10 @@ Response Gemini dicache in-memory 1 jam berdasarkan model, query, context, dan t
 4. Evidence (Arab, translation, tafsir, status sumber) disalin dari row Supabase, bukan dari LLM.
 5. Metadata komunitas menambahkan peringatan provenance.
 
-`assess_contextual_response` menolak draft jika tidak mengakui konteks user, tidak mencantumkan
-parent utama, tidak mengatribusikan tafsir, membuat janji hasil, menyisipkan Arab/kutipan/nama
-surah/nomor ayat/wording Inggris, atau melebihi budget.
+`assess_contextual_response` menolak draft jika tidak mengakui konteks user, tidak menunjukkan
+empati, tidak mencantumkan parent utama, tidak menghubungkan answer ke gagasan nyata dari
+Translation/Tafsir/Themes, tidak mengatribusikan tafsir, memakai bahasa menggurui atau janji hasil,
+menyisipkan Arab/kutipan/nama surah/nomor ayat/wording Inggris, atau melebihi budget.
 
 Jika gagal, Gemini mendapat satu repair prompt. Jika percobaan kedua tetap gagal, UI menerima
 `sources-only response`: teks singkat bahwa refleksi AI tidak tersedia, tetapi evidence sumber tetap

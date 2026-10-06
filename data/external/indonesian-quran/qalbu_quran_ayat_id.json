@@ -272,6 +272,14 @@
     "translation_id": "Wahai orang-orang yang beriman, mengapa ketika dikatakan kepada kamu, “Berangkatlah (untuk berperang) di jalan Allah,” kamu merasa berat dan cenderung pada (kehidupan) dunia? Apakah kamu lebih menyenangi kehidupan dunia daripada akhirat? Padahal, kenikmatan hidup di dunia ini (dibandingkan dengan kehidupan) di akhirat hanyalah sedikit."
   },
   {
+    "surah_number": 9,
+    "surah_name": "At-Taubah",
+    "ayah_number": 40,
+    "verse_key": "9:40",
+    "arabic": "اِلَّا تَنْصُرُوْهُ فَقَدْ نَصَرَهُ اللّٰهُ اِذْ اَخْرَجَهُ الَّذِيْنَ كَفَرُوا ثَانِيَ اثْنَيْنِ اِذْ هُمَا فِى الْغَارِ اِذْ يَقُوْلُ لِصَاحِبِهٖ لَا تَحْزَنْ اِنَّ اللّٰهَ مَعَنَاۚ فَاَنْزَلَ اللّٰهُ سَكِيْنَتَهٗ عَلَيْهِ وَاَيَّدَهٗ بِجُنُوْدٍ لَّمْ تَرَوْهَا وَجَعَلَ كَلِمَةَ الَّذِيْنَ كَفَرُوا السُّفْلٰىۗ وَكَلِمَةُ اللّٰهِ هِيَ الْعُلْيَاۗ وَاللّٰهُ عَزِيْزٌ حَكِيْمٌ",
+    "translation_id": "Jika kamu tidak menolongnya (Nabi Muhammad), sungguh Allah telah menolongnya, (yaitu) ketika orang-orang kafir mengusirnya (dari Makkah), sedangkan dia salah satu dari dua orang, ketika keduanya berada dalam gua, ketika dia berkata kepada sahabatnya, “Janganlah engkau bersedih, sesungguhnya Allah bersama kita.” Maka, Allah menurunkan ketenangan kepadanya (Nabi Muhammad), memperkuatnya dengan bala tentara (malaikat) yang tidak kamu lihat, dan Dia menjadikan seruan orang-orang kafir itu seruan yang paling rendah. (Sebaliknya,) firman Allah itulah yang paling tinggi. Allah Maha Perkasa lagi Maha Bijaksana."
+  },
+  {
     "surah_number": 10,
     "surah_name": "Yūnus",
     "ayah_number": 44,
@@ -542,6 +550,14 @@
     "verse_key": "38:44",
     "arabic": "وَخُذْ بِيَدِكَ ضِغْثًا فَاضْرِبْ بِّهٖ وَلَا تَحْنَثْ ۗاِنَّا وَجَدْنٰهُ صَابِرًا ۗنِعْمَ الْعَبْدُ ۗاِنَّهٗٓ اَوَّابٌ",
     "translation_id": "Ambillah dengan tanganmu seikat rumput, lalu pukullah (istrimu) dengannya dan janganlah engkau melanggar sumpah. Sesungguhnya Kami dapati dia (Ayyub) seorang yang sabar. Dialah sebaik-baik hamba. Sesungguhnya dia selalu kembali (kepada Allah dan sangat taat kepadanya)."
+  },
+  {
+    "surah_number": 10,
+    "surah_name": "Yūnus",
+    "ayah_number": 57,
+    "verse_key": "10:57",
+    "arabic": "يٰٓاَيُّهَا النَّاسُ قَدْ جَاۤءَتْكُمْ مَّوْعِظَةٌ مِّنْ رَّبِّكُمْ وَشِفَاۤءٌ لِّمَا فِى الصُّدُوْرِۙ وَهُدًى وَّرَحْمَةٌ لِّلْمُؤْمِنِيْنَ",
+    "translation_id": "Wahai manusia, sungguh telah datang kepadamu pelajaran (Al-Qur’an) dari Tuhanmu, penyembuh bagi sesuatu (penyakit) yang terdapat dalam dada, dan petunjuk serta rahmat bagi orang-orang mukmin."
   },
   {
     "surah_number": 39,
@@ -886,5 +902,1157 @@
     "verse_key": "94:6",
     "arabic": "اِنَّ مَعَ الْعُسْرِ يُسْرًاۗ",
     "translation_id": "Sesungguhnya beserta kesulitan ada kemudahan."
+  },
+  {
+    "surah_number": 39,
+    "surah_name": "Az-Zumar",
+    "ayah_number": 53,
+    "verse_key": "39:53",
+    "arabic": "۞ قُلْ يٰعِبَادِيَ الَّذِيْنَ اَسْرَفُوْا عَلٰٓى اَنْفُسِهِمْ لَا تَقْنَطُوْا مِنْ رَّحْمَةِ اللّٰهِ ۗاِنَّ اللّٰهَ يَغْفِرُ الذُّنُوْبَ جَمِيْعًا ۗاِنَّهٗ هُوَ الْغَفُوْرُ الرَّحِيْمُ",
+    "translation_id": "Katakanlah (Nabi Muhammad), “Wahai hamba-hamba-Ku yang melampaui batas (dengan menzalimi) dirinya sendiri, janganlah berputus asa dari rahmat Allah. Sesungguhnya Allah mengampuni dosa semuanya. Sesungguhnya Dialah Yang Maha Pengampun lagi Maha Penyayang."
+  },
+  {
+    "surah_number": 1,
+    "surah_name": "Al-Fātiḥah",
+    "ayah_number": 1,
+    "verse_key": "1:1",
+    "arabic": "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+    "translation_id": "Dengan nama Allah Yang Maha Pengasih lagi Maha Penyayang."
+  },
+  {
+    "surah_number": 1,
+    "surah_name": "Al-Fātiḥah",
+    "ayah_number": 2,
+    "verse_key": "1:2",
+    "arabic": "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ",
+    "translation_id": "Segala puji bagi Allah, Tuhan1) semesta alam"
+  },
+  {
+    "surah_number": 1,
+    "surah_name": "Al-Fātiḥah",
+    "ayah_number": 3,
+    "verse_key": "1:3",
+    "arabic": "الرَّحْمٰنِ الرَّحِيْمِۙ",
+    "translation_id": "Yang Maha Pengasih lagi Maha Penyayang,"
+  },
+  {
+    "surah_number": 1,
+    "surah_name": "Al-Fātiḥah",
+    "ayah_number": 4,
+    "verse_key": "1:4",
+    "arabic": "مٰلِكِ يَوْمِ الدِّيْنِۗ",
+    "translation_id": "Pemilik hari Pembalasan.2)"
+  },
+  {
+    "surah_number": 1,
+    "surah_name": "Al-Fātiḥah",
+    "ayah_number": 6,
+    "verse_key": "1:6",
+    "arabic": "اِهْدِنَا الصِّرَاطَ الْمُسْتَقِيْمَۙ",
+    "translation_id": "Bimbinglah kami ke jalan yang lurus,3)"
+  },
+  {
+    "surah_number": 1,
+    "surah_name": "Al-Fātiḥah",
+    "ayah_number": 7,
+    "verse_key": "1:7",
+    "arabic": "صِرَاطَ الَّذِيْنَ اَنْعَمْتَ عَلَيْهِمْ ەۙ غَيْرِ الْمَغْضُوْبِ عَلَيْهِمْ وَلَا الضَّاۤلِّيْنَ ࣖ",
+    "translation_id": "(yaitu) jalan orang-orang yang telah Engkau beri nikmat, bukan (jalan) mereka yang dimurkai dan bukan (pula jalan) orang-orang yang sesat."
+  },
+  {
+    "surah_number": 2,
+    "surah_name": "Al-Baqarah",
+    "ayah_number": 201,
+    "verse_key": "2:201",
+    "arabic": "وَمِنْهُمْ مَّنْ يَّقُوْلُ رَبَّنَآ اٰتِنَا فِى الدُّنْيَا حَسَنَةً وَّفِى الْاٰخِرَةِ حَسَنَةً وَّقِنَا عَذَابَ النَّارِ",
+    "translation_id": "Di antara mereka ada juga yang berdoa, “Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat serta lindungilah kami dari azab neraka.”"
+  },
+  {
+    "surah_number": 2,
+    "surah_name": "Al-Baqarah",
+    "ayah_number": 250,
+    "verse_key": "2:250",
+    "arabic": "وَلَمَّا بَرَزُوْا لِجَالُوْتَ وَجُنُوْدِهٖ قَالُوْا رَبَّنَآ اَفْرِغْ عَلَيْنَا صَبْرًا وَّثَبِّتْ اَقْدَامَنَا وَانْصُرْنَا عَلَى الْقَوْمِ الْكٰفِرِيْنَ ۗ",
+    "translation_id": "Ketika mereka maju melawan Jalut dan bala tentaranya, mereka berdoa, “Ya Tuhan kami, limpahkanlah kesabaran kepada kami, kukuhkanlah langkah kami, dan menangkanlah kami atas kaum yang kafir.”"
+  },
+  {
+    "surah_number": 3,
+    "surah_name": "Āli ‘Imrān",
+    "ayah_number": 139,
+    "verse_key": "3:139",
+    "arabic": "وَلَا تَهِنُوْا وَلَا تَحْزَنُوْا وَاَنْتُمُ الْاَعْلَوْنَ اِنْ كُنْتُمْ مُّؤْمِنِيْنَ",
+    "translation_id": "Janganlah kamu (merasa) lemah dan jangan (pula) bersedih hati, padahal kamu paling tinggi (derajatnya) jika kamu orang-orang mukmin."
+  },
+  {
+    "surah_number": 3,
+    "surah_name": "Āli ‘Imrān",
+    "ayah_number": 147,
+    "verse_key": "3:147",
+    "arabic": "وَمَا كَانَ قَوْلَهُمْ اِلَّآ اَنْ قَالُوْا رَبَّنَا اغْفِرْ لَنَا ذُنُوْبَنَا وَاِسْرَافَنَا فِيْٓ اَمْرِنَا وَثَبِّتْ اَقْدَامَنَا وَانْصُرْنَا عَلَى الْقَوْمِ الْكٰفِرِيْنَ",
+    "translation_id": "Tidak lain ucapan mereka kecuali doa, “Ya Tuhan kami, ampunilah dosa-dosa kami dan tindakan-tindakan kami yang berlebihan dalam urusan kami,123) tetapkanlah pendirian kami, dan tolonglah kami terhadap kaum yang kafir.”"
+  },
+  {
+    "surah_number": 3,
+    "surah_name": "Āli ‘Imrān",
+    "ayah_number": 159,
+    "verse_key": "3:159",
+    "arabic": "فَبِمَا رَحْمَةٍ مِّنَ اللّٰهِ لِنْتَ لَهُمْ ۚ وَلَوْ كُنْتَ فَظًّا غَلِيْظَ الْقَلْبِ لَانْفَضُّوْا مِنْ حَوْلِكَ ۖ فَاعْفُ عَنْهُمْ وَاسْتَغْفِرْ لَهُمْ وَشَاوِرْهُمْ فِى الْاَمْرِۚ فَاِذَا عَزَمْتَ فَتَوَكَّلْ عَلَى اللّٰهِ ۗ اِنَّ اللّٰهَ يُحِبُّ الْمُتَوَكِّلِيْنَ",
+    "translation_id": "Maka, berkat rahmat Allah engkau (Nabi Muhammad) berlaku lemah lembut terhadap mereka. Seandainya engkau bersikap keras dan berhati kasar, tentulah mereka akan menjauh dari sekitarmu. Oleh karena itu, maafkanlah mereka, mohonkanlah ampunan untuk mereka, dan bermusyawarahlah dengan mereka dalam segala urusan (penting). Kemudian, apabila engkau telah membulatkan tekad, bertawakallah kepada Allah. Sesungguhnya Allah mencintai orang-orang yang bertawakal."
+  },
+  {
+    "surah_number": 3,
+    "surah_name": "Āli ‘Imrān",
+    "ayah_number": 173,
+    "verse_key": "3:173",
+    "arabic": "اَلَّذِيْنَ قَالَ لَهُمُ النَّاسُ اِنَّ النَّاسَ قَدْ جَمَعُوْا لَكُمْ فَاخْشَوْهُمْ فَزَادَهُمْ اِيْمَانًاۖ وَّقَالُوْا حَسْبُنَا اللّٰهُ وَنِعْمَ الْوَكِيْلُ",
+    "translation_id": "(yaitu) mereka yang (ketika ada) orang-orang mengatakan kepadanya, “Sesungguhnya orang-orang (Quraisy) telah mengumpulkan (pasukan) untuk (menyerang) kamu. Oleh karena itu, takutlah kepada mereka,” ternyata (ucapan) itu menambah (kuat) iman mereka dan mereka menjawab, “Cukuplah Allah (menjadi penolong) bagi kami dan Dia sebaik-baik pelindung.”"
+  },
+  {
+    "surah_number": 4,
+    "surah_name": "An-Nisā'",
+    "ayah_number": 130,
+    "verse_key": "4:130",
+    "arabic": "وَاِنْ يَّتَفَرَّقَا يُغْنِ اللّٰهُ كُلًّا مِّنْ سَعَتِهٖۗ وَكَانَ اللّٰهُ وَاسِعًا حَكِيْمًا",
+    "translation_id": "Jika keduanya bercerai, Allah akan memberi kecukupan kepada masing-masing dari keluasan (karunia)-Nya. Allah Maha Luas (karunia-Nya) lagi Maha Bijaksana."
+  },
+  {
+    "surah_number": 5,
+    "surah_name": "Al-Mā'idah",
+    "ayah_number": 11,
+    "verse_key": "5:11",
+    "arabic": "يٰٓاَيُّهَا الَّذِيْنَ اٰمَنُوا اذْكُرُوْا نِعْمَتَ اللّٰهِ عَلَيْكُمْ اِذْ هَمَّ قَوْمٌ اَنْ يَّبْسُطُوْٓا اِلَيْكُمْ اَيْدِيَهُمْ فَكَفَّ اَيْدِيَهُمْ عَنْكُمْۚ وَاتَّقُوا اللّٰهَ ۗوَعَلَى اللّٰهِ فَلْيَتَوَكَّلِ الْمُؤْمِنُوْنَ ࣖ",
+    "translation_id": "Wahai orang-orang yang beriman, ingatlah nikmat Allah (yang dianugerahkan) kepadamu ketika suatu kaum bermaksud hendak menyerangmu dengan tangannya, lalu Dia menahan tangan (mencegah) mereka dari kamu. Bertakwalah kepada Allah dan hanya kepada Allahlah hendaknya orang-orang mukmin itu bertawakal."
+  },
+  {
+    "surah_number": 7,
+    "surah_name": "Al-A‘rāf",
+    "ayah_number": 55,
+    "verse_key": "7:55",
+    "arabic": "اُدْعُوْا رَبَّكُمْ تَضَرُّعًا وَّخُفْيَةً ۗاِنَّهٗ لَا يُحِبُّ الْمُعْتَدِيْنَۚ",
+    "translation_id": "Berdoalah kepada Tuhanmu dengan rendah hati dan suara yang lembut. Sesungguhnya Dia tidak menyukai orang-orang yang melampaui batas."
+  },
+  {
+    "surah_number": 7,
+    "surah_name": "Al-A‘rāf",
+    "ayah_number": 56,
+    "verse_key": "7:56",
+    "arabic": "وَلَا تُفْسِدُوْا فِى الْاَرْضِ بَعْدَ اِصْلَاحِهَا وَادْعُوْهُ خَوْفًا وَّطَمَعًاۗ اِنَّ رَحْمَتَ اللّٰهِ قَرِيْبٌ مِّنَ الْمُحْسِنِيْنَ",
+    "translation_id": "Janganlah kamu berbuat kerusakan di bumi setelah diatur dengan baik. Berdoalah kepada-Nya dengan rasa takut dan penuh harap. Sesungguhnya rahmat Allah sangat dekat dengan orang-orang yang berbuat baik."
+  },
+  {
+    "surah_number": 8,
+    "surah_name": "Al-Anfāl",
+    "ayah_number": 2,
+    "verse_key": "8:2",
+    "arabic": "اِنَّمَا الْمُؤْمِنُوْنَ الَّذِيْنَ اِذَا ذُكِرَ اللّٰهُ وَجِلَتْ قُلُوْبُهُمْ وَاِذَا تُلِيَتْ عَلَيْهِمْ اٰيٰتُهٗ زَادَتْهُمْ اِيْمَانًا وَّعَلٰى رَبِّهِمْ يَتَوَكَّلُوْنَۙ",
+    "translation_id": "Sesungguhnya orang-orang mukmin adalah mereka yang jika disebut nama Allah,304) gemetar hatinya dan jika dibacakan ayat-ayat-Nya kepada mereka, bertambah (kuat) imannya dan hanya kepada Tuhannya mereka bertawakal,"
+  },
+  {
+    "surah_number": 9,
+    "surah_name": "At-Taubah",
+    "ayah_number": 51,
+    "verse_key": "9:51",
+    "arabic": "قُلْ لَّنْ يُّصِيْبَنَآ اِلَّا مَا كَتَبَ اللّٰهُ لَنَاۚ هُوَ مَوْلٰىنَا وَعَلَى اللّٰهِ فَلْيَتَوَكَّلِ الْمُؤْمِنُوْنَ",
+    "translation_id": "Katakanlah (Nabi Muhammad), “Tidak akan menimpa kami melainkan apa yang telah ditetapkan Allah bagi kami. Dialah Pelindung kami, dan hanya kepada Allah hendaknya orang-orang mukmin bertawakal."
+  },
+  {
+    "surah_number": 10,
+    "surah_name": "Yūnus",
+    "ayah_number": 61,
+    "verse_key": "10:61",
+    "arabic": "وَمَا تَكُوْنُ فِيْ شَأْنٍ وَّمَا تَتْلُوْا مِنْهُ مِنْ قُرْاٰنٍ وَّلَا تَعْمَلُوْنَ مِنْ عَمَلٍ اِلَّا كُنَّا عَلَيْكُمْ شُهُوْدًا اِذْ تُفِيْضُوْنَ فِيْهِۗ وَمَا يَعْزُبُ عَنْ رَّبِّكَ مِنْ مِّثْقَالِ ذَرَّةٍ فِى الْاَرْضِ وَلَا فِى السَّمَاۤءِ وَلَآ اَصْغَرَ مِنْ ذٰلِكَ وَلَآ اَكْبَرَ اِلَّا فِيْ كِتٰبٍ مُّبِيْنٍ",
+    "translation_id": "Engkau (Nabi Muhammad) tidak berada dalam suatu urusan, tidak membaca suatu ayat Al-Qur’an, dan tidak pula mengerjakan suatu pekerjaan, kecuali Kami menjadi saksi atasmu ketika kamu melakukannya. Tidak ada yang luput sedikit pun dari (pengetahuan) Tuhanmu, walaupun seberat zarah, baik di bumi maupun di langit. Tidak ada sesuatu yang lebih kecil dan yang lebih besar daripada itu, kecuali semua tercatat dalam kitab yang nyata (Lauhulmahfuz)."
+  },
+  {
+    "surah_number": 10,
+    "surah_name": "Yūnus",
+    "ayah_number": 62,
+    "verse_key": "10:62",
+    "arabic": "اَلَآ اِنَّ اَوْلِيَاۤءَ اللّٰهِ لَا خَوْفٌ عَلَيْهِمْ وَلَا هُمْ يَحْزَنُوْنَۚ",
+    "translation_id": "Ketahuilah bahwa sesungguhnya (bagi) para wali Allah itu tidak ada rasa takut yang menimpa mereka dan mereka pun tidak bersedih."
+  },
+  {
+    "surah_number": 11,
+    "surah_name": "Hūd",
+    "ayah_number": 114,
+    "verse_key": "11:114",
+    "arabic": "وَاَقِمِ الصَّلٰوةَ طَرَفَيِ النَّهَارِ وَزُلَفًا مِّنَ الَّيْلِ ۗاِنَّ الْحَسَنٰتِ يُذْهِبْنَ السَّيِّاٰتِۗ ذٰلِكَ ذِكْرٰى لِلذّٰكِرِيْنَ",
+    "translation_id": "Dirikanlah salat pada kedua ujung hari (pagi dan petang) dan pada bagian-bagian malam. Sesungguhnya perbuatan-perbuatan baik menghapus kesalahan-kesalahan. Itu adalah peringatan bagi orang-orang yang selalu mengingat (Allah)."
+  },
+  {
+    "surah_number": 14,
+    "surah_name": "Ibrāhīm",
+    "ayah_number": 7,
+    "verse_key": "14:7",
+    "arabic": "وَاِذْ تَاَذَّنَ رَبُّكُمْ لَىِٕنْ شَكَرْتُمْ لَاَزِيْدَنَّكُمْ وَلَىِٕنْ كَفَرْتُمْ اِنَّ عَذَابِيْ لَشَدِيْدٌ",
+    "translation_id": "(Ingatlah) ketika Tuhanmu memaklumkan, “Sesungguhnya jika kamu bersyukur, niscaya Aku akan menambah (nikmat) kepadamu, tetapi jika kamu mengingkari (nikmat-Ku), sesungguhnya azab-Ku benar-benar sangat keras.”"
+  },
+  {
+    "surah_number": 15,
+    "surah_name": "Al-Ḥijr",
+    "ayah_number": 55,
+    "verse_key": "15:55",
+    "arabic": "قَالُوْا بَشَّرْنٰكَ بِالْحَقِّ فَلَا تَكُنْ مِّنَ الْقٰنِطِيْنَ",
+    "translation_id": "Mereka menjawab, “Kami menyampaikan kabar gembira kepadamu dengan benar. Maka, janganlah engkau termasuk orang yang berputus asa.”"
+  },
+  {
+    "surah_number": 15,
+    "surah_name": "Al-Ḥijr",
+    "ayah_number": 56,
+    "verse_key": "15:56",
+    "arabic": "قَالَ وَمَنْ يَّقْنَطُ مِنْ رَّحْمَةِ رَبِّهٖٓ اِلَّا الضَّاۤلُّوْنَ",
+    "translation_id": "Dia (Ibrahim) berkata, “Adakah orang yang berputus asa dari rahmat Tuhannya selain orang yang sesat?”"
+  },
+  {
+    "surah_number": 16,
+    "surah_name": "An-Naḥl",
+    "ayah_number": 125,
+    "verse_key": "16:125",
+    "arabic": "اُدْعُ اِلٰى سَبِيْلِ رَبِّكَ بِالْحِكْمَةِ وَالْمَوْعِظَةِ الْحَسَنَةِ وَجَادِلْهُمْ بِالَّتِيْ هِيَ اَحْسَنُۗ اِنَّ رَبَّكَ هُوَ اَعْلَمُ بِمَنْ ضَلَّ عَنْ سَبِيْلِهٖ وَهُوَ اَعْلَمُ بِالْمُهْتَدِيْنَ",
+    "translation_id": "Serulah (manusia) ke jalan Tuhanmu dengan hikmah424) dan pengajaran yang baik serta debatlah mereka dengan cara yang lebih baik. Sesungguhnya Tuhanmu Dialah yang paling tahu siapa yang tersesat dari jalan-Nya dan Dia (pula) yang paling tahu siapa yang mendapat petunjuk."
+  },
+  {
+    "surah_number": 16,
+    "surah_name": "An-Naḥl",
+    "ayah_number": 126,
+    "verse_key": "16:126",
+    "arabic": "وَاِنْ عَاقَبْتُمْ فَعَاقِبُوْا بِمِثْلِ مَا عُوْقِبْتُمْ بِهٖۗ وَلَىِٕنْ صَبَرْتُمْ لَهُوَ خَيْرٌ لِّلصّٰبِرِيْنَ",
+    "translation_id": "Jika kamu membalas, balaslah dengan (balasan) yang sama dengan siksaan yang ditimpakan kepadamu. Sungguh, jika kamu bersabar, hal itu benar-benar lebih baik bagi orang-orang yang sabar."
+  },
+  {
+    "surah_number": 16,
+    "surah_name": "An-Naḥl",
+    "ayah_number": 127,
+    "verse_key": "16:127",
+    "arabic": "وَاصْبِرْ وَمَا صَبْرُكَ اِلَّا بِاللّٰهِ وَلَا تَحْزَنْ عَلَيْهِمْ وَلَا تَكُ فِيْ ضَيْقٍ مِّمَّا يَمْكُرُوْنَ",
+    "translation_id": "Bersabarlah (Nabi Muhammad) dan kesabaranmu itu semata-mata dengan (pertolongan) Allah, janganlah bersedih terhadap (kekufuran) mereka, dan jangan (pula) bersempit dada terhadap tipu daya yang mereka rencanakan."
+  },
+  {
+    "surah_number": 17,
+    "surah_name": "Al-Isrā'",
+    "ayah_number": 7,
+    "verse_key": "17:7",
+    "arabic": "اِنْ اَحْسَنْتُمْ اَحْسَنْتُمْ لِاَنْفُسِكُمْ ۗوَاِنْ اَسَأْتُمْ فَلَهَاۗ فَاِذَا جَاۤءَ وَعْدُ الْاٰخِرَةِ لِيَسٗۤـُٔوْا وُجُوْهَكُمْ وَلِيَدْخُلُوا الْمَسْجِدَ كَمَا دَخَلُوْهُ اَوَّلَ مَرَّةٍ وَّلِيُتَبِّرُوْا مَا عَلَوْا تَتْبِيْرًا",
+    "translation_id": "Jika berbuat baik, (berarti) kamu telah berbuat baik untuk dirimu sendiri. Jika kamu berbuat jahat, (kerugian dari kejahatan) itu kembali kepada dirimu sendiri. Apabila datang saat (kerusakan) yang kedua, (Kami bangkitkan musuhmu) untuk menyuramkan wajahmu, untuk memasuki masjid (Baitulmaqdis) sebagaimana memasukinya ketika pertama kali, dan untuk membinasakan apa saja yang mereka kuasai."
+  },
+  {
+    "surah_number": 17,
+    "surah_name": "Al-Isrā'",
+    "ayah_number": 8,
+    "verse_key": "17:8",
+    "arabic": "عَسٰى رَبُّكُمْ اَنْ يَّرْحَمَكُمْۚ وَاِنْ عُدْتُّمْ عُدْنَاۘ وَجَعَلْنَا جَهَنَّمَ لِلْكٰفِرِيْنَ حَصِيْرًا",
+    "translation_id": "Mudah-mudahan Tuhanmu melimpahkan rahmat kepadamu. Akan tetapi, jika kamu kembali (melakukan kejahatan), niscaya Kami kembali (mengazabmu). Kami jadikan (neraka) Jahanam sebagai penjara bagi orang-orang kafir."
+  },
+  {
+    "surah_number": 17,
+    "surah_name": "Al-Isrā'",
+    "ayah_number": 82,
+    "verse_key": "17:82",
+    "arabic": "وَنُنَزِّلُ مِنَ الْقُرْاٰنِ مَا هُوَ شِفَاۤءٌ وَّرَحْمَةٌ لِّلْمُؤْمِنِيْنَۙ وَلَا يَزِيْدُ الظّٰلِمِيْنَ اِلَّا خَسَارًا",
+    "translation_id": "Kami turunkan dari Al-Qur’an sesuatu yang menjadi penawar dan rahmat bagi orang-orang mukmin, sedangkan bagi orang-orang zalim (Al-Qur’an itu) hanya akan menambah kerugian."
+  },
+  {
+    "surah_number": 18,
+    "surah_name": "Al-Kahf",
+    "ayah_number": 28,
+    "verse_key": "18:28",
+    "arabic": "وَاصْبِرْ نَفْسَكَ مَعَ الَّذِيْنَ يَدْعُوْنَ رَبَّهُمْ بِالْغَدٰوةِ وَالْعَشِيِّ يُرِيْدُوْنَ وَجْهَهٗ وَلَا تَعْدُ عَيْنٰكَ عَنْهُمْۚ تُرِيْدُ زِيْنَةَ الْحَيٰوةِ الدُّنْيَاۚ وَلَا تُطِعْ مَنْ اَغْفَلْنَا قَلْبَهٗ عَنْ ذِكْرِنَا وَاتَّبَعَ هَوٰىهُ وَكَانَ اَمْرُهٗ فُرُطًا",
+    "translation_id": "Bersabarlah engkau (Nabi Muhammad) bersama orang-orang yang menyeru Tuhannya pada pagi dan petang hari dengan mengharap keridaan-Nya. Janganlah kedua matamu berpaling dari mereka karena mengharapkan perhiasan kehidupan dunia. Janganlah engkau mengikuti orang yang hatinya telah Kami lalaikan dari mengingat Kami serta menuruti hawa nafsunya dan keadaannya melewati batas."
+  },
+  {
+    "surah_number": 18,
+    "surah_name": "Al-Kahf",
+    "ayah_number": 46,
+    "verse_key": "18:46",
+    "arabic": "اَلْمَالُ وَالْبَنُوْنَ زِيْنَةُ الْحَيٰوةِ الدُّنْيَاۚ وَالْبٰقِيٰتُ الصّٰلِحٰتُ خَيْرٌ عِنْدَ رَبِّكَ ثَوَابًا وَّخَيْرٌ اَمَلًا",
+    "translation_id": "Harta dan anak-anak adalah perhiasan kehidupan dunia, sedangkan amal kebajikan yang abadi (pahalanya)448) adalah lebih baik balasannya di sisi Tuhanmu serta lebih baik untuk menjadi harapan."
+  },
+  {
+    "surah_number": 20,
+    "surah_name": "Ṭāhā",
+    "ayah_number": 2,
+    "verse_key": "20:2",
+    "arabic": "مَآ اَنْزَلْنَا عَلَيْكَ الْقُرْاٰنَ لِتَشْقٰٓى ۙ",
+    "translation_id": "Kami tidak menurunkan Al-Qur’an ini kepadamu (Nabi Muhammad) supaya engkau menjadi susah."
+  },
+  {
+    "surah_number": 20,
+    "surah_name": "Ṭāhā",
+    "ayah_number": 3,
+    "verse_key": "20:3",
+    "arabic": "اِلَّا تَذْكِرَةً لِّمَنْ يَّخْشٰى ۙ",
+    "translation_id": "(Kami tidak menurunkannya,) kecuali sebagai peringatan bagi orang yang takut (kepada Allah)."
+  },
+  {
+    "surah_number": 20,
+    "surah_name": "Ṭāhā",
+    "ayah_number": 130,
+    "verse_key": "20:130",
+    "arabic": "فَاصْبِرْ عَلٰى مَا يَقُوْلُوْنَ وَسَبِّحْ بِحَمْدِ رَبِّكَ قَبْلَ طُلُوْعِ الشَّمْسِ وَقَبْلَ غُرُوْبِهَا ۚوَمِنْ اٰنَاۤئِ الَّيْلِ فَسَبِّحْ وَاَطْرَافَ النَّهَارِ لَعَلَّكَ تَرْضٰى",
+    "translation_id": "Maka, bersabarlah engkau (Nabi Muhammad) atas apa yang mereka katakan dan bertasbihlah dengan memuji Tuhanmu sebelum matahari terbit dan sebelum terbenam. Bertasbihlah (pula) pada waktu tengah malam dan di ujung siang hari agar engkau merasa tenang."
+  },
+  {
+    "surah_number": 20,
+    "surah_name": "Ṭāhā",
+    "ayah_number": 132,
+    "verse_key": "20:132",
+    "arabic": "وَأْمُرْ اَهْلَكَ بِالصَّلٰوةِ وَاصْطَبِرْ عَلَيْهَاۗ  لَا نَسْـَٔلُكَ رِزْقًاۗ نَحْنُ نَرْزُقُكَۗ وَالْعَاقِبَةُ لِلتَّقْوٰى",
+    "translation_id": "Perintahkanlah keluargamu melaksanakan salat dan bersabarlah dengan sungguh-sungguh dalam mengerjakannya. Kami tidak meminta rezeki kepadamu. Kamilah yang memberi rezeki kepadamu. Kesudahan (yang baik di dunia dan akhirat) adalah bagi orang yang bertakwa."
+  },
+  {
+    "surah_number": 21,
+    "surah_name": "Al-Anbiyā'",
+    "ayah_number": 84,
+    "verse_key": "21:84",
+    "arabic": "فَاسْتَجَبْنَا لَهٗ فَكَشَفْنَا مَا بِهٖ مِنْ ضُرٍّ وَّاٰتَيْنٰهُ اَهْلَهٗ وَمِثْلَهُمْ مَّعَهُمْ رَحْمَةً مِّنْ عِنْدِنَا وَذِكْرٰى لِلْعٰبِدِيْنَ ۚ",
+    "translation_id": "Maka, Kami mengabulkan (doa)-nya, lalu Kami lenyapkan penyakit yang ada padanya, Kami mengembalikan keluarganya kepadanya, dan (Kami melipatgandakan jumlah mereka) sebagai suatu rahmat dari Kami dan pengingat bagi semua yang menyembah (Kami)."
+  },
+  {
+    "surah_number": 22,
+    "surah_name": "Al-Ḥajj",
+    "ayah_number": 77,
+    "verse_key": "22:77",
+    "arabic": "يٰٓاَيُّهَا الَّذِيْنَ اٰمَنُوا ارْكَعُوْا وَاسْجُدُوْا وَاعْبُدُوْا رَبَّكُمْ وَافْعَلُوا الْخَيْرَ لَعَلَّكُمْ تُفْلِحُوْنَ ۚ۩",
+    "translation_id": "Wahai orang-orang yang beriman, rukuklah, sujudlah, sembahlah Tuhanmu, dan lakukanlah kebaikan agar kamu beruntung."
+  },
+  {
+    "surah_number": 22,
+    "surah_name": "Al-Ḥajj",
+    "ayah_number": 78,
+    "verse_key": "22:78",
+    "arabic": "وَجَاهِدُوْا فِى اللّٰهِ حَقَّ جِهَادِهٖۗ هُوَ اجْتَبٰىكُمْ وَمَا جَعَلَ عَلَيْكُمْ فِى الدِّيْنِ مِنْ حَرَجٍۗ مِلَّةَ اَبِيْكُمْ اِبْرٰهِيْمَۗ هُوَ سَمّٰىكُمُ الْمُسْلِمِيْنَ ەۙ مِنْ قَبْلُ وَفِيْ هٰذَا لِيَكُوْنَ الرَّسُوْلُ شَهِيْدًا عَلَيْكُمْ وَتَكُوْنُوْا شُهَدَاۤءَ عَلَى النَّاسِۖ فَاَقِيْمُوا الصَّلٰوةَ وَاٰتُوا الزَّكٰوةَ وَاعْتَصِمُوْا بِاللّٰهِ ۗهُوَ مَوْلٰىكُمْۚ فَنِعْمَ الْمَوْلٰى وَنِعْمَ النَّصِيْرُ ࣖ   ۔",
+    "translation_id": "Berjuanglah kamu pada (jalan) Allah dengan sebenar-benarnya. Dia telah memilih kamu dan tidak menjadikan kesulitan untukmu dalam agama. (Ikutilah) agama nenek moyangmu, yaitu Ibrahim. Dia (Allah) telah menamakan kamu orang-orang muslim sejak dahulu dan (begitu pula) dalam (kitab) ini (Al-Qur’an) agar Rasul (Nabi Muhammad) menjadi saksi atas dirimu dan agar kamu semua menjadi saksi atas segenap manusia. Maka, tegakkanlah salat, tunaikanlah zakat, dan berpegang teguhlah pada (ajaran) Allah. Dia adalah pelindungmu. Dia adalah sebaik-baik pelindung dan sebaik-baik penolong."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 1,
+    "verse_key": "23:1",
+    "arabic": "قَدْ اَفْلَحَ الْمُؤْمِنُوْنَ ۙ",
+    "translation_id": "Sungguh, beruntunglah orang-orang mukmin."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 2,
+    "verse_key": "23:2",
+    "arabic": "الَّذِيْنَ هُمْ فِيْ صَلَاتِهِمْ خٰشِعُوْنَ",
+    "translation_id": "(Yaitu) orang-orang yang khusyuk dalam salatnya,"
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 3,
+    "verse_key": "23:3",
+    "arabic": "وَالَّذِيْنَ هُمْ عَنِ اللَّغْوِ مُعْرِضُوْنَ ۙ",
+    "translation_id": "orang-orang yang meninggalkan (perbuatan dan perkataan) yang tidak berguna,"
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 4,
+    "verse_key": "23:4",
+    "arabic": "وَالَّذِيْنَ هُمْ لِلزَّكٰوةِ فٰعِلُوْنَ ۙ",
+    "translation_id": "orang-orang yang menunaikan zakat,"
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 5,
+    "verse_key": "23:5",
+    "arabic": "وَالَّذِيْنَ هُمْ لِفُرُوْجِهِمْ حٰفِظُوْنَ ۙ",
+    "translation_id": "dan orang-orang yang menjaga kemaluannya,"
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 6,
+    "verse_key": "23:6",
+    "arabic": "اِلَّا عَلٰٓى اَزْوَاجِهِمْ اَوْ مَا مَلَكَتْ اَيْمَانُهُمْ فَاِنَّهُمْ غَيْرُ مَلُوْمِيْنَۚ",
+    "translation_id": "kecuali terhadap istri-istri mereka atau hamba sahaya yang mereka miliki.506) Sesungguhnya mereka tidak tercela (karena menggaulinya)."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 7,
+    "verse_key": "23:7",
+    "arabic": "فَمَنِ ابْتَغٰى وَرَاۤءَ ذٰلِكَ فَاُولٰۤىِٕكَ هُمُ الْعَادُوْنَ ۚ",
+    "translation_id": "Maka, siapa yang mencari (pelampiasan syahwat) selain itu, mereka itulah orang-orang yang melampaui batas."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 8,
+    "verse_key": "23:8",
+    "arabic": "وَالَّذِيْنَ هُمْ لِاَمٰنٰتِهِمْ وَعَهْدِهِمْ رَاعُوْنَ ۙ",
+    "translation_id": "(Sungguh beruntung pula) orang-orang yang memelihara amanat dan janji mereka"
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 9,
+    "verse_key": "23:9",
+    "arabic": "وَالَّذِيْنَ هُمْ عَلٰى صَلَوٰتِهِمْ يُحَافِظُوْنَ ۘ",
+    "translation_id": "serta orang-orang yang memelihara salat mereka."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 10,
+    "verse_key": "23:10",
+    "arabic": "اُولٰۤىِٕكَ هُمُ الْوٰرِثُوْنَ ۙ",
+    "translation_id": "Mereka itulah orang-orang yang akan mewarisi."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 11,
+    "verse_key": "23:11",
+    "arabic": "الَّذِيْنَ يَرِثُوْنَ الْفِرْدَوْسَۗ هُمْ فِيْهَا خٰلِدُوْنَ",
+    "translation_id": "(Yaitu) orang-orang yang akan mewarisi (surga) Firdaus. Mereka kekal di dalamnya."
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 97,
+    "verse_key": "23:97",
+    "arabic": "وَقُلْ رَّبِّ اَعُوْذُ بِكَ مِنْ هَمَزٰتِ الشَّيٰطِيْنِ ۙ",
+    "translation_id": "Katakanlah, “Ya Tuhanku, aku berlindung kepada-Mu dari bisikan-bisikan setan"
+  },
+  {
+    "surah_number": 23,
+    "surah_name": "Al-Mu'minūn",
+    "ayah_number": 98,
+    "verse_key": "23:98",
+    "arabic": "وَاَعُوْذُ بِكَ رَبِّ اَنْ يَّحْضُرُوْنِ",
+    "translation_id": "dan aku berlindung (pula) kepada-Mu, ya Tuhanku, dari kedatangan mereka kepadaku.”"
+  },
+  {
+    "surah_number": 24,
+    "surah_name": "An-Nūr",
+    "ayah_number": 35,
+    "verse_key": "24:35",
+    "arabic": "۞ اَللّٰهُ نُوْرُ السَّمٰوٰتِ وَالْاَرْضِۗ مَثَلُ نُوْرِهٖ كَمِشْكٰوةٍ فِيْهَا مِصْبَاحٌۗ  اَلْمِصْبَاحُ فِيْ زُجَاجَةٍۗ  اَلزُّجَاجَةُ كَاَنَّهَا كَوْكَبٌ دُرِّيٌّ يُّوْقَدُ مِنْ شَجَرَةٍ مُّبٰرَكَةٍ زَيْتُوْنَةٍ لَّا شَرْقِيَّةٍ وَّلَا غَرْبِيَّةٍۙ يَّكَادُ زَيْتُهَا يُضِيْۤءُ وَلَوْ لَمْ تَمْسَسْهُ نَارٌۗ  نُوْرٌ عَلٰى نُوْرٍۗ يَهْدِى اللّٰهُ لِنُوْرِهٖ مَنْ يَّشَاۤءُۗ وَيَضْرِبُ اللّٰهُ الْاَمْثَالَ لِلنَّاسِۗ وَاللّٰهُ بِكُلِّ شَيْءٍ عَلِيْمٌ ۙ",
+    "translation_id": "Allah (pemberi) cahaya (pada) langit dan bumi. Perumpamaan cahaya-Nya seperti sebuah lubang (pada dinding) yang tidak tembus518) yang di dalamnya ada pelita besar. Pelita itu di dalam tabung kaca (dan) tabung kaca itu bagaikan bintang (yang berkilauan seperti) mutiara, yang dinyalakan dengan minyak dari pohon yang diberkahi, (yaitu) pohon zaitun yang tumbuh tidak di timur dan tidak pula di barat,519) yang minyaknya (saja) hampir-hampir menerangi walaupun tidak disentuh api. Cahaya di atas cahaya (berlapis-lapis). Allah memberi petunjuk menuju cahaya-Nya kepada orang yang Dia kehendaki. Allah membuat perumpamaan-perumpamaan bagi manusia. Allah Maha Mengetahui segala sesuatu."
+  },
+  {
+    "surah_number": 25,
+    "surah_name": "Al-Furqān",
+    "ayah_number": 63,
+    "verse_key": "25:63",
+    "arabic": "وَعِبَادُ الرَّحْمٰنِ الَّذِيْنَ يَمْشُوْنَ عَلَى الْاَرْضِ هَوْنًا وَّاِذَا خَاطَبَهُمُ الْجٰهِلُوْنَ قَالُوْا سَلٰمًا",
+    "translation_id": "Hamba-hamba Tuhan Yang Maha Pengasih itu adalah yang berjalan di atas bumi dengan rendah hati dan apabila orang-orang bodoh menyapa mereka (dengan kata-kata yang menghina), mereka mengucapkan, “Salam.”"
+  },
+  {
+    "surah_number": 26,
+    "surah_name": "Asy-Syu‘arā'",
+    "ayah_number": 78,
+    "verse_key": "26:78",
+    "arabic": "الَّذِيْ خَلَقَنِيْ فَهُوَ يَهْدِيْنِ ۙ",
+    "translation_id": "(Allah) yang telah menciptakanku. Maka, Dia (pula) yang memberi petunjuk kepadaku."
+  },
+  {
+    "surah_number": 26,
+    "surah_name": "Asy-Syu‘arā'",
+    "ayah_number": 79,
+    "verse_key": "26:79",
+    "arabic": "وَالَّذِيْ هُوَ يُطْعِمُنِيْ وَيَسْقِيْنِ ۙ",
+    "translation_id": "Dia (pula) yang memberiku makan dan minum."
+  },
+  {
+    "surah_number": 26,
+    "surah_name": "Asy-Syu‘arā'",
+    "ayah_number": 80,
+    "verse_key": "26:80",
+    "arabic": "وَاِذَا مَرِضْتُ فَهُوَ يَشْفِيْنِ ۙ",
+    "translation_id": "Apabila aku sakit, Dialah yang menyembuhkanku."
+  },
+  {
+    "surah_number": 26,
+    "surah_name": "Asy-Syu‘arā'",
+    "ayah_number": 81,
+    "verse_key": "26:81",
+    "arabic": "وَالَّذِيْ يُمِيْتُنِيْ ثُمَّ يُحْيِيْنِ ۙ",
+    "translation_id": "(Dia) yang akan mematikanku, kemudian menghidupkanku (kembali)."
+  },
+  {
+    "surah_number": 26,
+    "surah_name": "Asy-Syu‘arā'",
+    "ayah_number": 82,
+    "verse_key": "26:82",
+    "arabic": "وَالَّذِيْٓ اَطْمَعُ اَنْ يَّغْفِرَ لِيْ خَطِيْۤـَٔتِيْ يَوْمَ الدِّيْنِ ۗ",
+    "translation_id": "(Dia) yang sangat kuinginkan untuk mengampuni kesalahanku pada hari Pembalasan.”"
+  },
+  {
+    "surah_number": 27,
+    "surah_name": "An-Naml",
+    "ayah_number": 62,
+    "verse_key": "27:62",
+    "arabic": "اَمَّنْ يُّجِيْبُ الْمُضْطَرَّ اِذَا دَعَاهُ وَيَكْشِفُ السُّوْۤءَ وَيَجْعَلُكُمْ خُلَفَاۤءَ الْاَرْضِۗ ءَاِلٰهٌ مَّعَ اللّٰهِ ۗقَلِيْلًا مَّا تَذَكَّرُوْنَۗ",
+    "translation_id": "Apakah (yang kamu sekutukan itu lebih baik ataukah) Zat yang mengabulkan (doa) orang yang berada dalam kesulitan apabila dia berdoa kepada-Nya, menghilangkan kesusahan, dan menjadikan kamu (manusia) sebagai khalifah (pemimpin) di bumi? Apakah ada tuhan (lain) bersama Allah? Sedikit sekali (nikmat Allah) yang kamu ingat."
+  },
+  {
+    "surah_number": 28,
+    "surah_name": "Al-Qaṣaṣ",
+    "ayah_number": 56,
+    "verse_key": "28:56",
+    "arabic": "اِنَّكَ لَا تَهْدِيْ مَنْ اَحْبَبْتَ وَلٰكِنَّ اللّٰهَ يَهْدِيْ مَنْ يَّشَاۤءُ ۚوَهُوَ اَعْلَمُ بِالْمُهْتَدِيْنَ",
+    "translation_id": "Sesungguhnya engkau (Nabi Muhammad) tidak (akan dapat) memberi petunjuk kepada orang yang engkau kasihi, tetapi Allah memberi petunjuk kepada siapa yang Dia kehendaki (berdasarkan kesiapannya untuk menerima petunjuk). Dia paling tahu tentang orang-orang yang (mau) menerima petunjuk."
+  },
+  {
+    "surah_number": 30,
+    "surah_name": "Ar-Rūm",
+    "ayah_number": 21,
+    "verse_key": "30:21",
+    "arabic": "وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً ۗاِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ",
+    "translation_id": "Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir."
+  },
+  {
+    "surah_number": 30,
+    "surah_name": "Ar-Rūm",
+    "ayah_number": 60,
+    "verse_key": "30:60",
+    "arabic": "فَاصْبِرْ اِنَّ وَعْدَ اللّٰهِ حَقٌّ وَّلَا يَسْتَخِفَّنَّكَ الَّذِيْنَ لَا يُوْقِنُوْنَ ࣖ",
+    "translation_id": "Maka, bersabarlah engkau (Nabi Muhammad)! Sesungguhnya janji Allah itu benar. Jangan sampai orang-orang yang tidak meyakini (kebenaran ayat-ayat Allah) itu membuat engkau bersedih."
+  },
+  {
+    "surah_number": 31,
+    "surah_name": "Luqmān",
+    "ayah_number": 17,
+    "verse_key": "31:17",
+    "arabic": "يٰبُنَيَّ اَقِمِ الصَّلٰوةَ وَأْمُرْ بِالْمَعْرُوْفِ وَانْهَ عَنِ الْمُنْكَرِ وَاصْبِرْ عَلٰى مَآ اَصَابَكَۗ اِنَّ ذٰلِكَ مِنْ عَزْمِ الْاُمُوْرِ",
+    "translation_id": "Wahai anakku, tegakkanlah salat dan suruhlah (manusia) berbuat yang makruf dan cegahlah (mereka) dari yang mungkar serta bersabarlah terhadap apa yang menimpamu. Sesungguhnya yang demikian itu termasuk urusan yang (harus) diutamakan."
+  },
+  {
+    "surah_number": 33,
+    "surah_name": "Al-Aḥzāb",
+    "ayah_number": 43,
+    "verse_key": "33:43",
+    "arabic": "هُوَ الَّذِيْ يُصَلِّيْ عَلَيْكُمْ وَمَلٰۤىِٕكَتُهٗ لِيُخْرِجَكُمْ مِّنَ الظُّلُمٰتِ اِلَى النُّوْرِۗ وَكَانَ بِالْمُؤْمِنِيْنَ رَحِيْمًا",
+    "translation_id": "Dialah yang memberi rahmat kepadamu dan para malaikat-Nya (memohonkan ampunan untukmu), agar Dia mengeluarkan kamu dari berbagai kegelapan menuju cahaya (yang terang benderang). Dia Maha Penyayang kepada orang-orang mukmin."
+  },
+  {
+    "surah_number": 33,
+    "surah_name": "Al-Aḥzāb",
+    "ayah_number": 70,
+    "verse_key": "33:70",
+    "arabic": "يٰٓاَيُّهَا الَّذِيْنَ اٰمَنُوا اتَّقُوا اللّٰهَ وَقُوْلُوْا قَوْلًا سَدِيْدًاۙ",
+    "translation_id": "Wahai orang-orang yang beriman, bertakwalah kamu kepada Allah dan ucapkanlah perkataan yang benar."
+  },
+  {
+    "surah_number": 33,
+    "surah_name": "Al-Aḥzāb",
+    "ayah_number": 71,
+    "verse_key": "33:71",
+    "arabic": "يُّصْلِحْ لَكُمْ اَعْمَالَكُمْ وَيَغْفِرْ لَكُمْ ذُنُوْبَكُمْۗ وَمَنْ يُّطِعِ اللّٰهَ وَرَسُوْلَهٗ فَقَدْ فَازَ فَوْزًا عَظِيْمًا",
+    "translation_id": "Niscaya Dia (Allah) akan memperbaiki amal-amalmu dan mengampuni dosa-dosamu. Siapa yang menaati Allah dan Rasul-Nya, sungguh, dia menang dengan kemenangan yang besar."
+  },
+  {
+    "surah_number": 35,
+    "surah_name": "Fāṭir",
+    "ayah_number": 2,
+    "verse_key": "35:2",
+    "arabic": "مَا يَفْتَحِ اللّٰهُ لِلنَّاسِ مِنْ رَّحْمَةٍ فَلَا مُمْسِكَ لَهَا ۚوَمَا يُمْسِكْۙ فَلَا مُرْسِلَ لَهٗ مِنْۢ بَعْدِهٖۗ وَهُوَ الْعَزِيْزُ الْحَكِيْمُ",
+    "translation_id": "Apa saja yang Allah anugerahkan kepada manusia berupa rahmat, tidak ada yang dapat menahannya. (Demikian pula) apa saja yang ditahan-Nya, tidak ada yang sanggup untuk melepaskannya. Dialah Yang Maha Perkasa lagi Maha Bijaksana."
+  },
+  {
+    "surah_number": 35,
+    "surah_name": "Fāṭir",
+    "ayah_number": 3,
+    "verse_key": "35:3",
+    "arabic": "يٰٓاَيُّهَا النَّاسُ اذْكُرُوْا نِعْمَتَ اللّٰهِ عَلَيْكُمْۗ هَلْ مِنْ خَالِقٍ غَيْرُ اللّٰهِ يَرْزُقُكُمْ مِّنَ السَّمَاۤءِ وَالْاَرْضِۗ  لَآ اِلٰهَ اِلَّا هُوَۖ فَاَنّٰى تُؤْفَكُوْنَ",
+    "translation_id": "Wahai manusia, ingatlah nikmat Allah kepadamu! Adakah pencipta selain Allah yang dapat memberikan rezeki kepadamu dari langit dan bumi? Tidak ada Tuhan selain Dia. Lalu, bagaimana kamu dapat dipalingkan (dari ketauhidan)?"
+  },
+  {
+    "surah_number": 36,
+    "surah_name": "Yāsīn",
+    "ayah_number": 58,
+    "verse_key": "36:58",
+    "arabic": "سَلٰمٌۗ قَوْلًا مِّنْ رَّبٍّ رَّحِيْمٍ",
+    "translation_id": "(Kepada mereka dikatakan,) “Salam sejahtera” sebagai ucapan dari Tuhan Yang Maha Penyayang."
+  },
+  {
+    "surah_number": 38,
+    "surah_name": "Ṣād",
+    "ayah_number": 24,
+    "verse_key": "38:24",
+    "arabic": "قَالَ لَقَدْ ظَلَمَكَ بِسُؤَالِ نَعْجَتِكَ اِلٰى نِعَاجِهٖۗ وَاِنَّ كَثِيْرًا مِّنَ الْخُلَطَاۤءِ لَيَبْغِيْ بَعْضُهُمْ عَلٰى بَعْضٍ اِلَّا الَّذِيْنَ اٰمَنُوْا وَعَمِلُوا الصّٰلِحٰتِ وَقَلِيْلٌ مَّا هُمْۗ وَظَنَّ دَاوٗدُ اَنَّمَا فَتَنّٰهُ فَاسْتَغْفَرَ رَبَّهٗ وَخَرَّ رَاكِعًا وَّاَنَابَ ۩",
+    "translation_id": "Dia (Daud) berkata, “Sungguh, dia benar-benar telah berbuat zalim kepadamu dengan meminta kambingmu itu untuk (digabungkan) kepada kambing-kambingnya. Sesungguhnya banyak di antara orang-orang yang berserikat itu benar-benar saling merugikan satu sama lain, kecuali orang-orang yang beriman dan beramal saleh, dan sedikit sekali mereka itu.” Daud meyakini bahwa Kami hanya mengujinya. Maka, dia memohon ampunan kepada Tuhannya dan dia tersungkur jatuh serta bertobat."
+  },
+  {
+    "surah_number": 39,
+    "surah_name": "Az-Zumar",
+    "ayah_number": 38,
+    "verse_key": "39:38",
+    "arabic": "وَلَىِٕنْ سَاَلْتَهُمْ مَّنْ خَلَقَ السَّمٰوٰتِ وَالْاَرْضَ لَيَقُوْلُنَّ اللّٰهُ ۗ قُلْ اَفَرَءَيْتُمْ مَّا تَدْعُوْنَ مِنْ دُوْنِ اللّٰهِ اِنْ اَرَادَنِيَ اللّٰهُ بِضُرٍّ هَلْ هُنَّ كٰشِفٰتُ ضُرِّهٖٓ اَوْ اَرَادَنِيْ بِرَحْمَةٍ هَلْ هُنَّ مُمْسِكٰتُ رَحْمَتِهٖۗ قُلْ حَسْبِيَ اللّٰهُ ۗعَلَيْهِ يَتَوَكَّلُ الْمُتَوَكِّلُوْنَ",
+    "translation_id": "Sungguh, jika engkau (Nabi Muhammad) bertanya kepada mereka (kaum musyrik Makkah) siapa yang menciptakan langit dan bumi, niscaya mereka menjawab, “Allah.” Katakanlah, “Kalau begitu, tahukah kamu tentang apa yang kamu sembah selain Allah jika Allah hendak mendatangkan bencana kepadaku, apakah mereka (sesembahan itu) mampu menghilangkan bencana itu atau jika Allah hendak memberi rahmat kepadaku, apakah mereka dapat mencegah rahmat-Nya?” Katakanlah, “Cukuplah Allah (sebagai pelindung) bagiku. Hanya kepada-Nya orang-orang yang bertawakal berserah diri.”"
+  },
+  {
+    "surah_number": 40,
+    "surah_name": "Gāfir",
+    "ayah_number": 60,
+    "verse_key": "40:60",
+    "arabic": "وَقَالَ رَبُّكُمُ ادْعُوْنِيْٓ اَسْتَجِبْ لَكُمْ ۗاِنَّ الَّذِيْنَ يَسْتَكْبِرُوْنَ عَنْ عِبَادَتِيْ سَيَدْخُلُوْنَ جَهَنَّمَ دَاخِرِيْنَ ࣖ",
+    "translation_id": "Tuhanmu berfirman, “Berdoalah kepada-Ku, niscaya akan Aku perkenankan bagimu (apa yang kamu harapkan). Sesungguhnya orang-orang yang menyombongkan diri tidak mau beribadah kepada-Ku akan masuk (neraka) Jahanam dalam keadaan hina dina.”"
+  },
+  {
+    "surah_number": 41,
+    "surah_name": "Fuṣṣilat",
+    "ayah_number": 34,
+    "verse_key": "41:34",
+    "arabic": "وَلَا تَسْتَوِى الْحَسَنَةُ وَلَا السَّيِّئَةُ ۗاِدْفَعْ بِالَّتِيْ هِيَ اَحْسَنُ فَاِذَا الَّذِيْ بَيْنَكَ وَبَيْنَهٗ عَدَاوَةٌ كَاَنَّهٗ وَلِيٌّ حَمِيْمٌ",
+    "translation_id": "Tidaklah sama kebaikan dengan kejahatan. Tolaklah (kejahatan) dengan perilaku yang lebih baik sehingga orang yang ada permusuhan denganmu serta-merta menjadi seperti teman yang sangat setia."
+  },
+  {
+    "surah_number": 41,
+    "surah_name": "Fuṣṣilat",
+    "ayah_number": 44,
+    "verse_key": "41:44",
+    "arabic": "وَلَوْ جَعَلْنٰهُ قُرْاٰنًا اَعْجَمِيًّا لَّقَالُوْا لَوْلَا فُصِّلَتْ اٰيٰتُهٗ ۗ ءَاَ۬عْجَمِيٌّ وَّعَرَبِيٌّ ۗ قُلْ هُوَ لِلَّذِيْنَ اٰمَنُوْا هُدًى وَّشِفَاۤءٌ ۗوَالَّذِيْنَ لَا يُؤْمِنُوْنَ فِيْٓ اٰذَانِهِمْ وَقْرٌ وَّهُوَ عَلَيْهِمْ عَمًىۗ اُولٰۤىِٕكَ يُنَادَوْنَ مِنْ مَّكَانٍۢ بَعِيْدٍ ࣖ",
+    "translation_id": "Seandainya Kami menjadikannya (Al-Qur’an) bacaan dalam bahasa selain Arab, niscaya mereka akan mengatakan, “Mengapa ayat-ayatnya tidak dijelaskan (dengan bahasa yang kami pahami)?” Apakah patut (Al-Qur’an) dalam bahasa selain bahasa Arab, sedangkan (rasul adalah) orang Arab? Katakanlah (Nabi Muhammad), “Al-Qur’an adalah petunjuk dan penyembuh bagi orang-orang yang beriman, sedangkan orang-orang yang tidak beriman, pada telinga mereka ada penyumbat dan mereka buta terhadapnya (Al-Qur’an).673) Mereka itu (seperti) orang-orang yang dipanggil dari tempat yang jauh.”"
+  },
+  {
+    "surah_number": 42,
+    "surah_name": "Asy-Syūrā",
+    "ayah_number": 43,
+    "verse_key": "42:43",
+    "arabic": "وَلَمَنْ صَبَرَ وَغَفَرَ اِنَّ ذٰلِكَ لَمِنْ عَزْمِ الْاُمُوْرِ ࣖ",
+    "translation_id": "Akan tetapi, sungguh siapa yang bersabar dan memaafkan, sesungguhnya yang demikian itu termasuk urusan yang (patut) diutamakan."
+  },
+  {
+    "surah_number": 50,
+    "surah_name": "Qāf",
+    "ayah_number": 16,
+    "verse_key": "50:16",
+    "arabic": "وَلَقَدْ خَلَقْنَا الْاِنْسَانَ وَنَعْلَمُ مَا تُوَسْوِسُ بِهٖ نَفْسُهٗ ۖوَنَحْنُ اَقْرَبُ اِلَيْهِ مِنْ حَبْلِ الْوَرِيْدِ",
+    "translation_id": "Sungguh, Kami benar-benar telah menciptakan manusia dan mengetahui apa yang dibisikkan oleh dirinya. Kami lebih dekat kepadanya daripada urat lehernya."
+  },
+  {
+    "surah_number": 51,
+    "surah_name": "Aż-Żāriyāt",
+    "ayah_number": 55,
+    "verse_key": "51:55",
+    "arabic": "وَذَكِّرْ فَاِنَّ الذِّكْرٰى تَنْفَعُ الْمُؤْمِنِيْنَ",
+    "translation_id": "Teruslah memberi peringatan karena sesungguhnya peringatan itu bermanfaat bagi orang-orang mukmin."
+  },
+  {
+    "surah_number": 52,
+    "surah_name": "Aṭ-Ṭūr",
+    "ayah_number": 48,
+    "verse_key": "52:48",
+    "arabic": "وَاصْبِرْ لِحُكْمِ رَبِّكَ فَاِنَّكَ بِاَعْيُنِنَا وَسَبِّحْ بِحَمْدِ رَبِّكَ حِيْنَ تَقُوْمُۙ",
+    "translation_id": "Bersabarlah (Nabi Muhammad) menunggu ketetapan Tuhanmu karena sesungguhnya engkau berada dalam pengawasan Kami! Bertasbihlah seraya bertahmid (memuji) Tuhanmu ketika engkau bangun!"
+  },
+  {
+    "surah_number": 57,
+    "surah_name": "Al-Ḥadīd",
+    "ayah_number": 22,
+    "verse_key": "57:22",
+    "arabic": "مَآ اَصَابَ مِنْ مُّصِيْبَةٍ فِى الْاَرْضِ وَلَا فِيْٓ اَنْفُسِكُمْ اِلَّا فِيْ كِتٰبٍ مِّنْ قَبْلِ اَنْ نَّبْرَاَهَا ۗاِنَّ ذٰلِكَ عَلَى اللّٰهِ يَسِيْرٌۖ",
+    "translation_id": "Tidak ada bencana (apa pun) yang menimpa di bumi dan tidak (juga yang menimpa) dirimu, kecuali telah tertulis dalam Kitab (Lauhulmahfuz) sebelum Kami mewujudkannya. Sesungguhnya hal itu mudah bagi Allah."
+  },
+  {
+    "surah_number": 57,
+    "surah_name": "Al-Ḥadīd",
+    "ayah_number": 23,
+    "verse_key": "57:23",
+    "arabic": "لِّكَيْلَا تَأْسَوْا عَلٰى مَا فَاتَكُمْ وَلَا تَفْرَحُوْا بِمَآ اٰتٰىكُمْ ۗوَاللّٰهُ لَا يُحِبُّ كُلَّ مُخْتَالٍ فَخُوْرٍۙ",
+    "translation_id": "(Yang demikian itu kami tetapkan) agar kamu tidak bersedih terhadap apa yang luput dari kamu dan tidak pula terlalu gembira terhadap apa yang diberikan-Nya kepadamu. Allah tidak menyukai setiap orang yang sombong lagi membanggakan diri."
+  },
+  {
+    "surah_number": 59,
+    "surah_name": "Al-Ḥasyr",
+    "ayah_number": 22,
+    "verse_key": "59:22",
+    "arabic": "هُوَ اللّٰهُ الَّذِيْ لَآ اِلٰهَ اِلَّا هُوَۚ عَالِمُ الْغَيْبِ وَالشَّهَادَةِۚ هُوَ الرَّحْمٰنُ الرَّحِيْمُ",
+    "translation_id": "Dialah Allah Yang tidak ada tuhan selain Dia. (Dialah) Yang Mengetahui yang gaib dan yang nyata. Dialah Yang Maha Pengasih lagi Maha Penyayang."
+  },
+  {
+    "surah_number": 59,
+    "surah_name": "Al-Ḥasyr",
+    "ayah_number": 23,
+    "verse_key": "59:23",
+    "arabic": "هُوَ اللّٰهُ الَّذِيْ لَآ اِلٰهَ اِلَّا هُوَ ۚ اَلْمَلِكُ الْقُدُّوْسُ السَّلٰمُ الْمُؤْمِنُ الْمُهَيْمِنُ الْعَزِيْزُ الْجَبَّارُ الْمُتَكَبِّرُۗ سُبْحٰنَ اللّٰهِ عَمَّا يُشْرِكُوْنَ",
+    "translation_id": "Dialah Allah Yang tidak ada tuhan selain Dia. Dia (adalah) Maha Raja, Yang Maha Suci, Yang Maha Damai, Yang Maha Mengaruniakan keamanan, Maha Mengawasi, Yang Maha Perkasa, Yang Maha Kuasa, dan Yang Memiliki segala keagungan. Maha Suci Allah dari apa yang mereka persekutukan."
+  },
+  {
+    "surah_number": 59,
+    "surah_name": "Al-Ḥasyr",
+    "ayah_number": 24,
+    "verse_key": "59:24",
+    "arabic": "هُوَ اللّٰهُ الْخَالِقُ الْبَارِئُ الْمُصَوِّرُ لَهُ الْاَسْمَاۤءُ الْحُسْنٰىۗ يُسَبِّحُ لَهٗ مَا فِى السَّمٰوٰتِ وَالْاَرْضِۚ وَهُوَ الْعَزِيْزُ الْحَكِيْمُ ࣖ",
+    "translation_id": "Dialah Allah Yang Maha Pencipta, Yang Mewujudkan dari tiada, dan Yang Membentuk rupa. Dia memiliki nama-nama yang indah. Apa yang di langit dan di bumi senantiasa bertasbih kepada-Nya. Dialah Yang Maha Perkasa lagi Maha Bijaksana."
+  },
+  {
+    "surah_number": 60,
+    "surah_name": "Al-Mumtaḥanah",
+    "ayah_number": 8,
+    "verse_key": "60:8",
+    "arabic": "لَا يَنْهٰىكُمُ اللّٰهُ عَنِ الَّذِيْنَ لَمْ يُقَاتِلُوْكُمْ فِى الدِّيْنِ وَلَمْ يُخْرِجُوْكُمْ مِّنْ دِيَارِكُمْ اَنْ تَبَرُّوْهُمْ وَتُقْسِطُوْٓا اِلَيْهِمْۗ اِنَّ اللّٰهَ يُحِبُّ الْمُقْسِطِيْنَ",
+    "translation_id": "Allah tidak melarang kamu berbuat baik dan berlaku adil terhadap orang-orang yang tidak memerangimu dalam urusan agama dan tidak mengusir kamu dari kampung halamanmu. Sesungguhnya Allah mencintai orang-orang yang berlaku adil."
+  },
+  {
+    "surah_number": 60,
+    "surah_name": "Al-Mumtaḥanah",
+    "ayah_number": 9,
+    "verse_key": "60:9",
+    "arabic": "اِنَّمَا يَنْهٰىكُمُ اللّٰهُ عَنِ الَّذِيْنَ قَاتَلُوْكُمْ فِى الدِّيْنِ وَاَخْرَجُوْكُمْ مِّنْ دِيَارِكُمْ وَظَاهَرُوْا عَلٰٓى اِخْرَاجِكُمْ اَنْ تَوَلَّوْهُمْۚ وَمَنْ يَّتَوَلَّهُمْ فَاُولٰۤىِٕكَ هُمُ الظّٰلِمُوْنَ",
+    "translation_id": "Sesungguhnya Allah hanya melarangmu (berteman akrab) dengan orang-orang yang memerangimu dalam urusan agama,  mengusirmu dari kampung halamanmu, dan membantu (orang lain) dalam mengusirmu. Siapa yang menjadikan mereka sebagai teman akrab, mereka itulah orang-orang yang zalim."
+  },
+  {
+    "surah_number": 66,
+    "surah_name": "At-taḥrīm",
+    "ayah_number": 8,
+    "verse_key": "66:8",
+    "arabic": "يٰٓاَيُّهَا الَّذِيْنَ اٰمَنُوْا تُوْبُوْٓا اِلَى اللّٰهِ تَوْبَةً نَّصُوْحًاۗ عَسٰى رَبُّكُمْ اَنْ يُّكَفِّرَ عَنْكُمْ سَيِّاٰتِكُمْ وَيُدْخِلَكُمْ جَنّٰتٍ تَجْرِيْ مِنْ تَحْتِهَا الْاَنْهٰرُۙ يَوْمَ لَا يُخْزِى اللّٰهُ النَّبِيَّ وَالَّذِيْنَ اٰمَنُوْا مَعَهٗۚ نُوْرُهُمْ يَسْعٰى بَيْنَ اَيْدِيْهِمْ وَبِاَيْمَانِهِمْ يَقُوْلُوْنَ رَبَّنَآ اَتْمِمْ لَنَا نُوْرَنَا وَاغْفِرْ لَنَاۚ اِنَّكَ عَلٰى كُلِّ شَيْءٍ قَدِيْرٌ",
+    "translation_id": "Wahai orang-orang yang beriman, bertobatlah kepada Allah dengan tobat yang semurni-murninya. Mudah-mudahan Tuhanmu akan menghapus kesalahan-kesalahanmu dan memasukkanmu ke dalam surga yang mengalir di bawahnya sungai-sungai pada hari ketika Allah tidak menghinakan Nabi dan orang-orang yang beriman bersamanya. Cahaya mereka memancar di hadapan dan di sebelah kanannya. Mereka berkata, “Ya Tuhan kami, sempurnakanlah untuk kami cahaya kami dan ampunilah kami. Sesungguhnya Engkau Maha Kuasa atas segala sesuatu.”"
+  },
+  {
+    "surah_number": 67,
+    "surah_name": "Al-Mulk",
+    "ayah_number": 1,
+    "verse_key": "67:1",
+    "arabic": "تَبٰرَكَ الَّذِيْ بِيَدِهِ الْمُلْكُۖ وَهُوَ عَلٰى كُلِّ شَيْءٍ قَدِيْرٌۙ",
+    "translation_id": "Maha Berkah Zat yang menguasai (segala) kerajaan dan Dia Maha Kuasa atas segala sesuatu,"
+  },
+  {
+    "surah_number": 67,
+    "surah_name": "Al-Mulk",
+    "ayah_number": 2,
+    "verse_key": "67:2",
+    "arabic": "ۨالَّذِيْ خَلَقَ الْمَوْتَ وَالْحَيٰوةَ لِيَبْلُوَكُمْ اَيُّكُمْ اَحْسَنُ عَمَلًاۗ وَهُوَ الْعَزِيْزُ الْغَفُوْرُۙ",
+    "translation_id": "yaitu yang menciptakan kematian dan kehidupan untuk menguji kamu, siapa di antara kamu yang lebih baik amalnya. Dia Maha Perkasa lagi Maha Pengampun."
+  },
+  {
+    "surah_number": 68,
+    "surah_name": "Al-Qalam",
+    "ayah_number": 48,
+    "verse_key": "68:48",
+    "arabic": "فَاصْبِرْ لِحُكْمِ رَبِّكَ وَلَا تَكُنْ كَصَاحِبِ الْحُوْتِۘ اِذْ نَادٰى وَهُوَ مَكْظُوْمٌۗ",
+    "translation_id": "Oleh karena itu, bersabarlah (Nabi Muhammad) terhadap ketetapan Tuhanmu dan janganlah seperti orang yang berada dalam (perut) ikan (Yunus) ketika dia berdoa dengan hati sedih."
+  },
+  {
+    "surah_number": 68,
+    "surah_name": "Al-Qalam",
+    "ayah_number": 49,
+    "verse_key": "68:49",
+    "arabic": "لَوْلَآ اَنْ تَدٰرَكَهٗ نِعْمَةٌ مِّنْ رَّبِّهٖ لَنُبِذَ بِالْعَرَاۤءِ وَهُوَ مَذْمُوْمٌ",
+    "translation_id": "Seandainya dia tidak segera mendapat nikmat dari Tuhannya, pastilah dia dicampakkan ke tanah tandus dalam keadaan tercela."
+  },
+  {
+    "surah_number": 68,
+    "surah_name": "Al-Qalam",
+    "ayah_number": 50,
+    "verse_key": "68:50",
+    "arabic": "فَاجْتَبٰىهُ رَبُّهٗ فَجَعَلَهٗ مِنَ الصّٰلِحِيْنَ",
+    "translation_id": "Tuhannya lalu memilihnya dan menjadikannya termasuk orang-orang saleh."
+  },
+  {
+    "surah_number": 70,
+    "surah_name": "Al-Ma‘ārij",
+    "ayah_number": 23,
+    "verse_key": "70:23",
+    "arabic": "الَّذِيْنَ هُمْ عَلٰى صَلَاتِهِمْ دَاۤىِٕمُوْنَۖ",
+    "translation_id": "yang selalu setia mengerjakan salatnya,"
+  },
+  {
+    "surah_number": 71,
+    "surah_name": "Nūḥ",
+    "ayah_number": 10,
+    "verse_key": "71:10",
+    "arabic": "فَقُلْتُ اسْتَغْفِرُوْا رَبَّكُمْ اِنَّهٗ كَانَ غَفَّارًاۙ",
+    "translation_id": "Lalu, aku berkata (kepada mereka), “Mohonlah ampun kepada Tuhanmu. Sesungguhnya Dia Maha Pengampun."
+  },
+  {
+    "surah_number": 71,
+    "surah_name": "Nūḥ",
+    "ayah_number": 11,
+    "verse_key": "71:11",
+    "arabic": "يُّرْسِلِ السَّمَاۤءَ عَلَيْكُمْ مِّدْرَارًاۙ",
+    "translation_id": "(Jika kamu memohon ampun,) niscaya Dia akan menurunkan hujan yang lebat dari langit kepadamu,"
+  },
+  {
+    "surah_number": 71,
+    "surah_name": "Nūḥ",
+    "ayah_number": 12,
+    "verse_key": "71:12",
+    "arabic": "وَّيُمْدِدْكُمْ بِاَمْوَالٍ وَّبَنِيْنَ وَيَجْعَلْ لَّكُمْ جَنّٰتٍ وَّيَجْعَلْ لَّكُمْ اَنْهٰرًاۗ",
+    "translation_id": "memperbanyak harta dan anak-anakmu, serta mengadakan kebun-kebun dan sungai-sungai untukmu.”"
+  },
+  {
+    "surah_number": 73,
+    "surah_name": "Al-Muzzammil",
+    "ayah_number": 20,
+    "verse_key": "73:20",
+    "arabic": "۞ اِنَّ رَبَّكَ يَعْلَمُ اَنَّكَ تَقُوْمُ اَدْنٰى مِنْ ثُلُثَيِ الَّيْلِ وَنِصْفَهٗ وَثُلُثَهٗ وَطَاۤىِٕفَةٌ مِّنَ الَّذِيْنَ مَعَكَۗ وَاللّٰهُ يُقَدِّرُ الَّيْلَ وَالنَّهَارَۗ عَلِمَ اَنْ لَّنْ تُحْصُوْهُ فَتَابَ عَلَيْكُمْ فَاقْرَءُوْا مَا تَيَسَّرَ مِنَ الْقُرْاٰنِۗ عَلِمَ اَنْ سَيَكُوْنُ مِنْكُمْ مَّرْضٰىۙ وَاٰخَرُوْنَ يَضْرِبُوْنَ فِى الْاَرْضِ يَبْتَغُوْنَ مِنْ فَضْلِ اللّٰهِ ۙوَاٰخَرُوْنَ يُقَاتِلُوْنَ فِيْ سَبِيْلِ اللّٰهِ ۖفَاقْرَءُوْا مَا تَيَسَّرَ مِنْهُۙ وَاَقِيْمُوا الصَّلٰوةَ وَاٰتُوا الزَّكٰوةَ وَاَقْرِضُوا اللّٰهَ قَرْضًا حَسَنًاۗ وَمَا تُقَدِّمُوْا لِاَنْفُسِكُمْ مِّنْ خَيْرٍ تَجِدُوْهُ عِنْدَ اللّٰهِ ۙهُوَ خَيْرًا وَّاَعْظَمَ اَجْرًاۗ وَاسْتَغْفِرُوا اللّٰهَ ۗاِنَّ اللّٰهَ غَفُوْرٌ رَّحِيْمٌ ࣖ",
+    "translation_id": "Sesungguhnya Tuhanmu mengetahui bahwa engkau (Nabi Muhammad) berdiri (salat) kurang dari dua pertiga malam, atau seperdua malam atau sepertiganya dan (demikian pula) segolongan dari orang-orang yang bersamamu. Allah menetapkan ukuran malam dan siang. Allah mengetahui bahwa kamu tidak dapat menghitungnya (secara terperinci waktu-waktu tersebut sehingga menyulitkanmu dalam melaksanakan salat malam). Maka, Dia kembali (memberi keringanan) kepadamu. Oleh karena itu, bacalah (ayat) Al-Qur’an yang mudah (bagimu). Dia mengetahui bahwa akan ada di antara kamu orang-orang yang sakit, dan yang lain berjalan di bumi mencari sebagian karunia Allah serta yang lain berperang di jalan Allah, maka bacalah apa yang mudah (bagimu) darinya (Al-Qur’an). Tegakkanlah salat, tunaikanlah zakat, dan berikanlah pinjaman kepada Allah pinjaman yang baik. Kebaikan apa saja yang kamu perbuat untuk dirimu niscaya kamu memperoleh (balasan)-nya di sisi Allah sebagai balasan yang paling baik dan yang paling besar pahalanya. Mohonlah ampunan kepada Allah. Sesungguhnya Allah Maha Pengampun lagi Maha Penyayang."
+  },
+  {
+    "surah_number": 74,
+    "surah_name": "Al-Muddaṡṡir",
+    "ayah_number": 7,
+    "verse_key": "74:7",
+    "arabic": "وَلِرَبِّكَ فَاصْبِرْۗ",
+    "translation_id": "Karena Tuhanmu, bersabarlah!"
+  },
+  {
+    "surah_number": 75,
+    "surah_name": "Al-Qiyāmah",
+    "ayah_number": 22,
+    "verse_key": "75:22",
+    "arabic": "وُجُوْهٌ يَّوْمَىِٕذٍ نَّاضِرَةٌۙ",
+    "translation_id": "Wajah-wajah (orang mukmin) pada hari itu berseri-seri"
+  },
+  {
+    "surah_number": 75,
+    "surah_name": "Al-Qiyāmah",
+    "ayah_number": 23,
+    "verse_key": "75:23",
+    "arabic": "اِلٰى رَبِّهَا نَاظِرَةٌ ۚ",
+    "translation_id": "(karena) memandang Tuhannya."
+  },
+  {
+    "surah_number": 76,
+    "surah_name": "Al-Insān",
+    "ayah_number": 24,
+    "verse_key": "76:24",
+    "arabic": "فَاصْبِرْ لِحُكْمِ رَبِّكَ وَلَا تُطِعْ مِنْهُمْ اٰثِمًا اَوْ كَفُوْرًاۚ",
+    "translation_id": "Maka, bersabarlah untuk (melaksanakan) ketetapan Tuhanmu dan jangan ikuti pendosa dan orang yang sangat kufur di antara mereka."
+  },
+  {
+    "surah_number": 91,
+    "surah_name": "Asy-Syams",
+    "ayah_number": 9,
+    "verse_key": "91:9",
+    "arabic": "قَدْ اَفْلَحَ مَنْ زَكّٰىهَاۖ",
+    "translation_id": "sungguh beruntung orang yang menyucikannya (jiwa itu)"
+  },
+  {
+    "surah_number": 91,
+    "surah_name": "Asy-Syams",
+    "ayah_number": 10,
+    "verse_key": "91:10",
+    "arabic": "وَقَدْ خَابَ مَنْ دَسّٰىهَاۗ",
+    "translation_id": "dan sungguh rugi orang yang mengotorinya."
+  },
+  {
+    "surah_number": 92,
+    "surah_name": "Al-Lail",
+    "ayah_number": 5,
+    "verse_key": "92:5",
+    "arabic": "فَاَمَّا مَنْ اَعْطٰى وَاتَّقٰىۙ",
+    "translation_id": "Siapa yang memberikan (hartanya di jalan Allah) dan bertakwa"
+  },
+  {
+    "surah_number": 92,
+    "surah_name": "Al-Lail",
+    "ayah_number": 6,
+    "verse_key": "92:6",
+    "arabic": "وَصَدَّقَ بِالْحُسْنٰىۙ",
+    "translation_id": "serta membenarkan adanya (balasan) yang terbaik (surga),"
+  },
+  {
+    "surah_number": 92,
+    "surah_name": "Al-Lail",
+    "ayah_number": 7,
+    "verse_key": "92:7",
+    "arabic": "فَسَنُيَسِّرُهٗ لِلْيُسْرٰىۗ",
+    "translation_id": "Kami akan melapangkan baginya jalan kemudahan (kebahagiaan)."
+  },
+  {
+    "surah_number": 93,
+    "surah_name": "Aḍ-Ḍuḥā",
+    "ayah_number": 1,
+    "verse_key": "93:1",
+    "arabic": "وَالضُّحٰىۙ",
+    "translation_id": "Demi waktu duha"
+  },
+  {
+    "surah_number": 93,
+    "surah_name": "Aḍ-Ḍuḥā",
+    "ayah_number": 2,
+    "verse_key": "93:2",
+    "arabic": "وَالَّيْلِ اِذَا سَجٰىۙ",
+    "translation_id": "dan demi waktu malam apabila telah sunyi,"
+  },
+  {
+    "surah_number": 93,
+    "surah_name": "Aḍ-Ḍuḥā",
+    "ayah_number": 3,
+    "verse_key": "93:3",
+    "arabic": "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلٰىۗ",
+    "translation_id": "Tuhanmu (Nabi Muhammad) tidak meninggalkan dan tidak (pula) membencimu."
+  },
+  {
+    "surah_number": 93,
+    "surah_name": "Aḍ-Ḍuḥā",
+    "ayah_number": 4,
+    "verse_key": "93:4",
+    "arabic": "وَلَلْاٰخِرَةُ خَيْرٌ لَّكَ مِنَ الْاُوْلٰىۗ",
+    "translation_id": "Sungguh, akhirat itu lebih baik bagimu daripada yang permulaan (dunia)."
+  },
+  {
+    "surah_number": 93,
+    "surah_name": "Aḍ-Ḍuḥā",
+    "ayah_number": 5,
+    "verse_key": "93:5",
+    "arabic": "وَلَسَوْفَ يُعْطِيْكَ رَبُّكَ فَتَرْضٰىۗ",
+    "translation_id": "Sungguh, kelak (di akhirat nanti) Tuhanmu pasti memberikan karunia-Nya kepadamu sehingga engkau rida."
+  },
+  {
+    "surah_number": 94,
+    "surah_name": "Asy-Syarḥ",
+    "ayah_number": 1,
+    "verse_key": "94:1",
+    "arabic": "اَلَمْ نَشْرَحْ لَكَ صَدْرَكَۙ",
+    "translation_id": "Bukankah Kami telah melapangkan dadamu (Nabi Muhammad),"
+  },
+  {
+    "surah_number": 94,
+    "surah_name": "Asy-Syarḥ",
+    "ayah_number": 2,
+    "verse_key": "94:2",
+    "arabic": "وَوَضَعْنَا عَنْكَ وِزْرَكَۙ",
+    "translation_id": "meringankan beban (tugas-tugas kenabian) darimu"
+  },
+  {
+    "surah_number": 94,
+    "surah_name": "Asy-Syarḥ",
+    "ayah_number": 3,
+    "verse_key": "94:3",
+    "arabic": "الَّذِيْٓ اَنْقَضَ ظَهْرَكَۙ",
+    "translation_id": "yang memberatkan punggungmu,"
+  },
+  {
+    "surah_number": 94,
+    "surah_name": "Asy-Syarḥ",
+    "ayah_number": 4,
+    "verse_key": "94:4",
+    "arabic": "وَرَفَعْنَا لَكَ ذِكْرَكَۗ",
+    "translation_id": "dan meninggikan (derajat)-mu (dengan selalu) menyebut-nyebut (nama)-mu?"
+  },
+  {
+    "surah_number": 94,
+    "surah_name": "Asy-Syarḥ",
+    "ayah_number": 7,
+    "verse_key": "94:7",
+    "arabic": "فَاِذَا فَرَغْتَ فَانْصَبْۙ",
+    "translation_id": "Apabila engkau telah selesai (dengan suatu kebajikan), teruslah bekerja keras (untuk kebajikan yang lain)"
+  },
+  {
+    "surah_number": 94,
+    "surah_name": "Asy-Syarḥ",
+    "ayah_number": 8,
+    "verse_key": "94:8",
+    "arabic": "وَاِلٰى رَبِّكَ فَارْغَبْ ࣖ",
+    "translation_id": "dan hanya kepada Tuhanmu berharaplah!"
+  },
+  {
+    "surah_number": 95,
+    "surah_name": "At-Tīn",
+    "ayah_number": 4,
+    "verse_key": "95:4",
+    "arabic": "لَقَدْ خَلَقْنَا الْاِنْسَانَ فِيْٓ اَحْسَنِ تَقْوِيْمٍۖ",
+    "translation_id": "sungguh, Kami benar-benar telah menciptakan manusia dalam bentuk yang sebaik-baiknya."
+  },
+  {
+    "surah_number": 95,
+    "surah_name": "At-Tīn",
+    "ayah_number": 5,
+    "verse_key": "95:5",
+    "arabic": "ثُمَّ رَدَدْنٰهُ اَسْفَلَ سٰفِلِيْنَۙ",
+    "translation_id": "Kemudian, kami kembalikan dia ke tempat yang serendah-rendahnya,"
+  },
+  {
+    "surah_number": 95,
+    "surah_name": "At-Tīn",
+    "ayah_number": 6,
+    "verse_key": "95:6",
+    "arabic": "اِلَّا الَّذِيْنَ اٰمَنُوْا وَعَمِلُوا الصّٰلِحٰتِ فَلَهُمْ اَجْرٌ غَيْرُ مَمْنُوْنٍۗ",
+    "translation_id": "kecuali orang-orang yang beriman dan mengerjakan kebajikan. Maka, mereka akan mendapat pahala yang tidak putus-putusnya."
+  },
+  {
+    "surah_number": 97,
+    "surah_name": "Al-Qadr",
+    "ayah_number": 1,
+    "verse_key": "97:1",
+    "arabic": "اِنَّآ اَنْزَلْنٰهُ فِيْ لَيْلَةِ الْقَدْرِ",
+    "translation_id": "Sesungguhnya Kami telah menurunkannya (Al-Qur’an) pada Lailatulqadar."
+  },
+  {
+    "surah_number": 97,
+    "surah_name": "Al-Qadr",
+    "ayah_number": 2,
+    "verse_key": "97:2",
+    "arabic": "وَمَآ اَدْرٰىكَ مَا لَيْلَةُ الْقَدْرِۗ",
+    "translation_id": "Tahukah kamu apakah Lailatulqadar itu?"
+  },
+  {
+    "surah_number": 97,
+    "surah_name": "Al-Qadr",
+    "ayah_number": 3,
+    "verse_key": "97:3",
+    "arabic": "لَيْلَةُ الْقَدْرِ ەۙ خَيْرٌ مِّنْ اَلْفِ شَهْرٍۗ",
+    "translation_id": "Lailatulqadar itu lebih baik daripada seribu bulan."
+  },
+  {
+    "surah_number": 97,
+    "surah_name": "Al-Qadr",
+    "ayah_number": 4,
+    "verse_key": "97:4",
+    "arabic": "تَنَزَّلُ الْمَلٰۤىِٕكَةُ وَالرُّوْحُ فِيْهَا بِاِذْنِ رَبِّهِمْۚ مِنْ كُلِّ اَمْرٍۛ",
+    "translation_id": "Pada malam itu turun para malaikat dan Rūḥ (Jibril) dengan izin Tuhannya untuk mengatur semua urusan."
+  },
+  {
+    "surah_number": 97,
+    "surah_name": "Al-Qadr",
+    "ayah_number": 5,
+    "verse_key": "97:5",
+    "arabic": "سَلٰمٌ ۛهِيَ حَتّٰى مَطْلَعِ الْفَجْرِ ࣖ",
+    "translation_id": "Sejahteralah (malam) itu sampai terbit fajar."
+  },
+  {
+    "surah_number": 98,
+    "surah_name": "Al-Bayyinah",
+    "ayah_number": 8,
+    "verse_key": "98:8",
+    "arabic": "جَزَاۤؤُهُمْ عِنْدَ رَبِّهِمْ جَنّٰتُ عَدْنٍ تَجْرِيْ مِنْ تَحْتِهَا الْاَنْهٰرُ خٰلِدِيْنَ فِيْهَآ اَبَدًا ۗرَضِيَ اللّٰهُ عَنْهُمْ وَرَضُوْا عَنْهُ ۗ ذٰلِكَ لِمَنْ خَشِيَ رَبَّهٗ ࣖ",
+    "translation_id": "Balasan mereka di sisi Tuhannya adalah surga ‘Adn yang mengalir di bawahnya sungai-sungai. Mereka kekal di dalamnya selama-lamanya. Allah rida terhadap mereka dan mereka pun rida kepada-Nya. Itu adalah (balasan) bagi orang yang takut kepada Tuhannya."
+  },
+  {
+    "surah_number": 103,
+    "surah_name": "Al-‘Aṣr",
+    "ayah_number": 1,
+    "verse_key": "103:1",
+    "arabic": "وَالْعَصْرِۙ",
+    "translation_id": "Demi masa,"
+  },
+  {
+    "surah_number": 103,
+    "surah_name": "Al-‘Aṣr",
+    "ayah_number": 2,
+    "verse_key": "103:2",
+    "arabic": "اِنَّ الْاِنْسَانَ لَفِيْ خُسْرٍۙ",
+    "translation_id": "sesungguhnya manusia benar-benar berada dalam kerugian,"
+  },
+  {
+    "surah_number": 103,
+    "surah_name": "Al-‘Aṣr",
+    "ayah_number": 3,
+    "verse_key": "103:3",
+    "arabic": "اِلَّا الَّذِيْنَ اٰمَنُوْا وَعَمِلُوا الصّٰلِحٰتِ وَتَوَاصَوْا بِالْحَقِّ ەۙ وَتَوَاصَوْا بِالصَّبْرِ ࣖ",
+    "translation_id": "kecuali orang-orang yang beriman dan beramal saleh serta saling menasihati untuk kebenaran dan kesabaran."
+  },
+  {
+    "surah_number": 110,
+    "surah_name": "An-Naṣr",
+    "ayah_number": 1,
+    "verse_key": "110:1",
+    "arabic": "اِذَا جَاۤءَ نَصْرُ اللّٰهِ وَالْفَتْحُۙ",
+    "translation_id": "Apabila telah datang pertolongan Allah dan kemenangan"
+  },
+  {
+    "surah_number": 110,
+    "surah_name": "An-Naṣr",
+    "ayah_number": 2,
+    "verse_key": "110:2",
+    "arabic": "وَرَاَيْتَ النَّاسَ يَدْخُلُوْنَ فِيْ دِيْنِ اللّٰهِ اَفْوَاجًاۙ",
+    "translation_id": "dan engkau melihat manusia berbondong-bondong masuk agama Allah,"
+  },
+  {
+    "surah_number": 110,
+    "surah_name": "An-Naṣr",
+    "ayah_number": 3,
+    "verse_key": "110:3",
+    "arabic": "فَسَبِّحْ بِحَمْدِ رَبِّكَ وَاسْتَغْفِرْهُۗ اِنَّهٗ كَانَ تَوَّابًا ࣖ",
+    "translation_id": "bertasbihlah dengan memuji Tuhanmu dan mohonlah ampun kepada-Nya. Sesungguhnya Dia Maha Penerima tobat."
+  },
+  {
+    "surah_number": 113,
+    "surah_name": "Al-Falaq",
+    "ayah_number": 1,
+    "verse_key": "113:1",
+    "arabic": "قُلْ اَعُوْذُ بِرَبِّ الْفَلَقِۙ",
+    "translation_id": "Katakanlah (Nabi Muhammad), “Aku berlindung kepada Tuhan yang (menjaga) fajar (subuh)"
+  },
+  {
+    "surah_number": 113,
+    "surah_name": "Al-Falaq",
+    "ayah_number": 2,
+    "verse_key": "113:2",
+    "arabic": "مِنْ شَرِّ مَا خَلَقَۙ",
+    "translation_id": "dari kejahatan (makhluk yang) Dia ciptakan,"
+  },
+  {
+    "surah_number": 113,
+    "surah_name": "Al-Falaq",
+    "ayah_number": 3,
+    "verse_key": "113:3",
+    "arabic": "وَمِنْ شَرِّ غَاسِقٍ اِذَا وَقَبَۙ",
+    "translation_id": "dari kejahatan malam apabila telah gelap gulita,"
+  },
+  {
+    "surah_number": 113,
+    "surah_name": "Al-Falaq",
+    "ayah_number": 4,
+    "verse_key": "113:4",
+    "arabic": "وَمِنْ شَرِّ النَّفّٰثٰتِ فِى الْعُقَدِۙ",
+    "translation_id": "dari kejahatan perempuan-perempuan (penyihir) yang meniup pada buhul-buhul (talinya),"
+  },
+  {
+    "surah_number": 113,
+    "surah_name": "Al-Falaq",
+    "ayah_number": 5,
+    "verse_key": "113:5",
+    "arabic": "وَمِنْ شَرِّ حَاسِدٍ اِذَا حَسَدَ ࣖ",
+    "translation_id": "dan dari kejahatan orang yang dengki apabila dia dengki.”"
+  },
+  {
+    "surah_number": 114,
+    "surah_name": "An-Nās",
+    "ayah_number": 1,
+    "verse_key": "114:1",
+    "arabic": "قُلْ اَعُوْذُ بِرَبِّ النَّاسِۙ",
+    "translation_id": "Katakanlah (Nabi Muhammad), “Aku berlindung kepada Tuhan manusia,"
+  },
+  {
+    "surah_number": 114,
+    "surah_name": "An-Nās",
+    "ayah_number": 2,
+    "verse_key": "114:2",
+    "arabic": "مَلِكِ النَّاسِۙ",
+    "translation_id": "raja manusia,"
+  },
+  {
+    "surah_number": 114,
+    "surah_name": "An-Nās",
+    "ayah_number": 3,
+    "verse_key": "114:3",
+    "arabic": "اِلٰهِ النَّاسِۙ",
+    "translation_id": "sembahan manusia"
+  },
+  {
+    "surah_number": 114,
+    "surah_name": "An-Nās",
+    "ayah_number": 4,
+    "verse_key": "114:4",
+    "arabic": "مِنْ شَرِّ الْوَسْوَاسِ ەۙ الْخَنَّاسِۖ",
+    "translation_id": "dari kejahatan (setan) pembisik yang bersembunyi"
+  },
+  {
+    "surah_number": 114,
+    "surah_name": "An-Nās",
+    "ayah_number": 5,
+    "verse_key": "114:5",
+    "arabic": "الَّذِيْ يُوَسْوِسُ فِيْ صُدُوْرِ النَّاسِۙ",
+    "translation_id": "yang membisikkan (kejahatan) ke dalam dada manusia,"
+  },
+  {
+    "surah_number": 114,
+    "surah_name": "An-Nās",
+    "ayah_number": 6,
+    "verse_key": "114:6",
+    "arabic": "مِنَ الْجِنَّةِ وَالنَّاسِ ࣖ",
+    "translation_id": "dari (golongan) jin dan manusia.”"
   }
 ]

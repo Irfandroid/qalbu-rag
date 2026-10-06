@@ -1,7 +1,7 @@
 {
   "dataset": "qalbu_quran_ayat_id.json",
-  "record_count": 111,
-  "sha256": "44136d9022e98c84bfd992fc38173cfa2840d7702d9fc0b086aad04457d58cd4",
+  "record_count": 257,
+  "sha256": "92155b2f8a157e85bac1d3baf36d404c2bf8696d9c71fa0bc41363fb76f5137b",
   "language": "id",
   "provided_by": "project owner",
   "provenance_status": "unverified",

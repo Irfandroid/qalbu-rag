@@ -32,6 +32,8 @@ def test_generic_answer_fails_context_and_tafsir_gates():
     assert not report.passed
     assert "missing_context_ack" in report.issues
     assert "missing_tafsir_attribution" in report.issues
+    assert "missing_empathy" in report.issues
+    assert "missing_grounding_bridge" in report.issues
 
 
 def test_contextual_grounded_answer_passes():
@@ -94,3 +96,34 @@ def test_rejects_model_authored_quotation():
     )
 
     assert "embedded_quotation" in report.issues
+
+
+def test_rejects_empathy_without_source_grounding():
+    response = QalbuResponse(
+        answer=(
+            "Aku memahami perasaanmu. Ayat ini mungkin membantu kamu menjalani hari."
+        ),
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
+    )
+
+    report = assess_contextual_response(
+        "Aku merasa hampa", response, [source()], max_tokens=72
+    )
+
+    assert "missing_source_anchor" in report.issues
+
+
+def test_rejects_dismissive_tone():
+    response = QalbuResponse(
+        answer=(
+            "Kamu harus bersyukur. Ayat ini mengingatkan hati. "
+            "Dalam tafsir yang tersedia, zikir mencakup tasbih dan tahmid."
+        ),
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
+    )
+
+    report = assess_contextual_response(
+        "Aku merasa hampa", response, [source()], max_tokens=72
+    )
+
+    assert "dismissive_or_preachy" in report.issues

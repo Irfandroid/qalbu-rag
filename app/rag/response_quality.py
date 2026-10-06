@@ -29,6 +29,76 @@ _UNSUPPORTED_PROMISES = (
     "semua terjadi untuk kebaikan",
     "akan merasa tidak hampa",
 )
+_EMPATHY_MARKERS = (
+    "bisa terasa",
+    "terdengar",
+    "yang kamu rasakan",
+    "perasaanmu",
+    "perasaan ini",
+    "kondisimu",
+    "wajar jika",
+    "aku mendengar",
+    "aku memahami",
+    "aku ikut prihatin",
+)
+_DISMISSIVE_PATTERNS = (
+    "tinggal ",
+    "cuma perlu",
+    "hanya perlu",
+    "kamu harus",
+    "jangan sedih",
+    "kurang iman",
+    "berpikir positif saja",
+)
+_GROUNDING_BRIDGES = (
+    "ayat ini",
+    "konteks ini",
+    "sumber ini",
+    "dalam tafsir yang tersedia",
+    "berdasarkan sumber",
+)
+_SOURCE_STOPWORDS = {
+    "allah",
+    "yang",
+    "dan",
+    "dengan",
+    "untuk",
+    "dari",
+    "pada",
+    "dalam",
+    "tidak",
+    "akan",
+    "hanya",
+    "sesungguhnya",
+    "mereka",
+    "orang",
+    "this",
+    "that",
+    "with",
+    "from",
+    "when",
+    "their",
+    "your",
+}
+
+
+def _meaningful_tokens(value: str) -> set[str]:
+    return {
+        token
+        for token in re.findall(r"[a-zA-ZÀ-ÿ]+", value.casefold())
+        if len(token) >= 4 and token not in _SOURCE_STOPWORDS
+    }
+
+
+def _has_source_anchor(answer: str, documents: list[QuranDocument]) -> bool:
+    answer_tokens = _meaningful_tokens(answer)
+    for document in documents:
+        source_text = " ".join(
+            [document.translation or "", document.tafsir or "", *document.themes]
+        )
+        if answer_tokens & _meaningful_tokens(source_text):
+            return True
+    return False
 
 
 def assess_contextual_response(
@@ -48,6 +118,11 @@ def assess_contextual_response(
     if matched_group and not any(term in answer for term in matched_group):
         issues.append("missing_context_ack")
 
+    if not any(marker in answer for marker in _EMPATHY_MARKERS):
+        issues.append("missing_empathy")
+    if any(pattern in answer for pattern in _DISMISSIVE_PATTERNS):
+        issues.append("dismissive_or_preachy")
+
     if documents:
         cited = {reference.parent_id for reference in response.references}
         if documents[0].id not in cited:
@@ -57,6 +132,10 @@ def assess_contextual_response(
     cited_with_tafsir = any(doc.id in cited_ids and doc.tafsir for doc in documents)
     if cited_with_tafsir and "dalam tafsir yang tersedia" not in answer:
         issues.append("missing_tafsir_attribution")
+    if documents and not any(bridge in answer for bridge in _GROUNDING_BRIDGES):
+        issues.append("missing_grounding_bridge")
+    if documents and not _has_source_anchor(answer, documents):
+        issues.append("missing_source_anchor")
 
     if any(claim in answer for claim in _UNSUPPORTED_PROMISES):
         issues.append("unsupported_promise")
@@ -89,6 +168,8 @@ def build_repair_query(
         f"MASALAH: {issues}.\n"
         "Tulis ulang dari nol dalam Bahasa Indonesia. Akui emosi pengguna, hubungkan hanya "
         "SOURCE 1, mulai kalimat tafsir dengan tepat 'Dalam tafsir yang tersedia,' jika tafsir "
-        "ada, jangan bertanya atau menjanjikan hasil, jangan menulis aksara Arab, nama surah, "
-        "nomor ayat, kutipan, atau kata Inggris dalam answer, dan cantumkan PARENT_ID SOURCE 1."
+        "ada, sertakan satu gagasan yang jelas didukung Translation/Tafsir/Themes SOURCE 1, "
+        "jangan bertanya atau menjanjikan hasil, jangan menulis aksara Arab, nama surah, nomor "
+        "ayat, kutipan, atau kata Inggris dalam answer, hindari kalimat menggurui, dan cantumkan "
+        "PARENT_ID SOURCE 1."
     )
