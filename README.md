@@ -115,9 +115,12 @@ Runtime membaca corpus `qalbu-seed-v1` dari tabel Supabase `quran_documents` dan
 Folder [`data/external/indonesian-quran/`](data/external/indonesian-quran/) hanya menyimpan
 snapshot/seed referensi dan tidak dibaca langsung oleh chat runtime.
 
-Snapshot Indonesia saat ini berstatus `unverified`; jangan menyebutnya sebagai terjemahan resmi
-Kemenag sebelum metadata sumber diverifikasi. Evidence Arab, terjemahan, tafsir, dan provenance
-yang dikirim ke UI berasal dari row database, bukan dibuat oleh Gemini.
+Sumber aktif corpus `qalbu-seed-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
+dari LPMQ Kementerian Agama RI. Metadata `source_provider=official_portal` dan
+`source_authority=LPMQ Kementerian Agama RI` dipakai untuk menampilkan provenance ini di UI.
+Evidence Arab, terjemahan, tafsir, dan provenance yang dikirim ke UI berasal dari row database,
+bukan dibuat oleh Gemini. Snapshot di folder data tetap diperlakukan terpisah dan tidak otomatis
+dianggap sebagai sumber resmi.
 
 Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Model serta
 dimensi embedding saat indexing harus sama dengan runtime (`768` dimensi).

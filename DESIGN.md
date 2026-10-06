@@ -18,6 +18,33 @@ Qalbu must feel calm, credible, and human. It is not a generic AI dashboard, a s
 6. **Private by default.** The active runtime profile and privacy implication are stated in plain Indonesian.
 7. **No false authority.** Qalbu is a reflection companion, not a therapist, diagnostic tool, fatwa source, or substitute for qualified help.
 
+## 1A. Relationship and ABI Contract
+
+Qalbu is relationship-centered without simulating a human relationship. The user remains the
+owner of meaning, interpretation, decisions, and next steps; Qalbu only retrieves, organizes,
+explains, and opens a quiet space for reflection. The product should strengthen the user's
+relationship with the Qur'an, trusted people, and their own lived context—not maximize messages
+or make Qalbu feel indispensable.
+
+Every response follows this order when sources are available:
+
+1. **Acknowledge:** recognize the user's stated experience without diagnosis or judgment.
+2. **Qur'an:** show the exact Arabic, Indonesian translation, citation, and provenance.
+3. **Meaning:** explain the connection as a tentative reflection, never as divine certainty.
+4. **Tafsir:** disclose the tafsir source and keep it distinct from AI wording.
+5. **Reflect:** offer one open, optional question or small step; leave the decision to the user.
+
+The ABI trust contract is visible in the interface:
+
+- **Ability:** only retrieved Quran, translation, tafsir, and themes may support a claim.
+- **Benevolence:** use calm, non-preachy language; suffering is not evidence of weak faith.
+- **Integrity:** label AI reflection, source, and tafsir separately; prefer an honest fallback to a
+  forced verse, invented citation, or overconfident interpretation.
+
+Progressive disclosure keeps the first view readable: acknowledgement and one to three sources
+come first; tafsir detail, retrieval explanation, and related exploration remain expandable. A
+crisis state bypasses normal reflection and uses the reviewed deterministic support response.
+
 ## 2. Atmosphere and Identity
 
 ### Direction

@@ -228,8 +228,11 @@ membocorkan exception provider ke user.
 Folder `data/external/indonesian-quran/` menyimpan snapshot Indonesia sebagai artefak referensi.
 Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus `qalbu-seed-v1` dari Supabase.
 
-Provenance snapshot saat ini ditandai `unverified`; jangan menyebutnya terjemahan resmi Kemenag
-sebelum metadata sumber diverifikasi.
+Sumber aktif corpus `qalbu-seed-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
+dari LPMQ Kementerian Agama RI. Row aktif menyimpan `source_provider=official_portal` dan
+`source_authority=LPMQ Kementerian Agama RI`, lalu provenance tersebut diteruskan ke UI.
+Snapshot di folder data tetap diperlakukan sebagai artefak terpisah; statusnya `unverified` sampai
+metadata sumbernya diverifikasi.
 
 ### 3.2 Bentuk tabel
 

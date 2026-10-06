@@ -56,6 +56,25 @@ def test_valid_citation_returns_exact_parent_evidence():
     assert evidence.parent_id == "al-baqarah-286"
 
 
+def test_official_kemenag_provenance_is_shown_in_evidence():
+    source = document().model_copy(
+        update={
+            "metadata": {
+                "source_provider": "official_portal",
+                "source_authority": "LPMQ Kementerian Agama RI",
+            }
+        }
+    )
+    response = QalbuResponse(
+        answer="x",
+        references=[QuranReference(parent_id="al-baqarah-286")],
+    )
+
+    evidence = CitationValidator().validate(response, [source]).evidence[0]
+
+    assert evidence.source_status == "Sumber: API Al-Qur'an Kemenag · LPMQ Kementerian Agama RI."
+
+
 def test_community_source_adds_provenance_note():
     source = document().model_copy(update={"metadata": {"unverified_community_source": True}})
     response = QalbuResponse(

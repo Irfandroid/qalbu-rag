@@ -59,11 +59,7 @@ class CitationValidator:
                     or "Terjemahan Indonesia"
                 ),
                 tafsir=allowed[reference.parent_id].tafsir,
-                source_status=(
-                    "Dataset komunitas; bukan sumber resmi Kemenag."
-                    if allowed[reference.parent_id].metadata.get("unverified_community_source")
-                    else "Sumber terverifikasi dalam basis pengetahuan Qalbu."
-                ),
+                source_status=self._source_status(allowed[reference.parent_id]),
             )
             for reference in valid
         ]
@@ -82,3 +78,15 @@ class CitationValidator:
         return response.model_copy(
             update={"references": valid, "evidence": evidence, "safety_note": safety_note}
         )
+
+    @staticmethod
+    def _source_status(document: QuranDocument) -> str:
+        metadata = document.metadata
+        if metadata.get("unverified_community_source"):
+            return "Dataset komunitas; bukan sumber resmi Kemenag."
+        if (
+            metadata.get("source_provider") == "official_portal"
+            and "kementerian agama" in str(metadata.get("source_authority", "")).casefold()
+        ):
+            return "Sumber: API Al-Qur'an Kemenag · LPMQ Kementerian Agama RI."
+        return "Sumber terverifikasi dalam basis pengetahuan Qalbu."

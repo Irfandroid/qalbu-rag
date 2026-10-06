@@ -30,6 +30,9 @@ _UNSUPPORTED_PROMISES = (
     "akan merasa tidak hampa",
 )
 _EMPATHY_MARKERS = (
+    "rasanya",
+    "terasa berat",
+    "terasa sulit",
     "bisa terasa",
     "terdengar",
     "yang kamu rasakan",
@@ -170,6 +173,6 @@ def build_repair_query(
         "SOURCE 1, mulai kalimat tafsir dengan tepat 'Dalam tafsir yang tersedia,' jika tafsir "
         "ada, sertakan satu gagasan yang jelas didukung Translation/Tafsir/Themes SOURCE 1, "
         "jangan bertanya atau menjanjikan hasil, jangan menulis aksara Arab, nama surah, nomor "
-        "ayat, kutipan, atau kata Inggris dalam answer, hindari kalimat menggurui, dan cantumkan "
-        "PARENT_ID SOURCE 1."
+        "ayat, kutipan, atau kata Inggris dalam answer, hindari kalimat menggurui, buat maksimal "
+        "70 kata, dan cantumkan PARENT_ID SOURCE 1."
     )

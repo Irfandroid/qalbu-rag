@@ -293,8 +293,8 @@ class QalbuRAG:
     ) -> QalbuResponse:
         draft = QalbuResponse(
             answer=(
-                "Refleksi AI sedang tidak tersedia. Sumber Al-Qur'an hasil pencarian "
-                "tetap ditampilkan agar kamu dapat membacanya langsung."
+                "Refleksi AI sedang tidak tersedia saat ini. Sumber Al-Qur'an hasil pencarian "
+                "tetap ditampilkan agar kamu dapat membacanya dan menilainya sendiri dengan tenang."
             ),
             references=[QuranReference(parent_id=document.id) for document in documents],
         )
