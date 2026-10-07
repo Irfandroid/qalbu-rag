@@ -1,7 +1,9 @@
 import json
 from pathlib import Path
 
-from scripts.scrape_kemenag_manifest import expand_ranges, payload_to_document
+import httpx
+
+from scripts.scrape_kemenag_manifest import expand_ranges, parse_payload, payload_to_document
 
 MANIFEST = Path(__file__).parents[1] / "data/manifests/kemenag_reflection_verses.json"
 
@@ -37,3 +39,27 @@ def test_kemenag_payload_keeps_provenance_and_tafsir():
     assert document["metadata"]["source_authority"] == "LPMQ Kementerian Agama RI"
     assert "Tafsir Kemenag" in child["content"]
     assert child["metadata"]["verse_key"] == "39:53"
+
+
+def test_parse_kemenag_html_fragment():
+    response = httpx.Response(
+        200,
+        text=(
+            "Ayat ID : <b>2251</b><br>No Ayat : <b>1</b><br>"
+            "Text MSI Usmani: <b class='arabic'>arab</b><br>"
+            "Terjemahan : <b>arti</b><br>"
+            "Tafsir Ringkas: <b>ringkas</b><br>"
+            "Tafsir Tahlili : tahlili<br>"
+        ),
+    )
+    rows = parse_payload(response)
+    assert rows == [
+        {
+            "Ayat ID": "2251",
+            "No Ayat": "1",
+            "Text MSI Usmani": "arab",
+            "Terjemahan": "arti",
+            "Tafsir Ringkas": "ringkas",
+            "Tafsir Tahlili": "tahlili",
+        }
+    ]

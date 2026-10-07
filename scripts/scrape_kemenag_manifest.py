@@ -1,7 +1,9 @@
 """Fetch the requested Kemenag verses and upsert them into the active corpus."""
 
 import argparse
+import html
 import json
+import re
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -82,19 +84,55 @@ def parse_payload(response: httpx.Response) -> list[dict[str, Any]]:
     try:
         candidates = _candidate_dicts(response.json())
     except ValueError:
-        parser = _TableParser()
-        parser.feed(response.text)
-        candidates = []
-        for row in parser.rows:
-            if len(row) >= 2:
-                candidates.append(dict(zip(row[::2], row[1::2], strict=False)))
-        for index, headers in enumerate(parser.rows[:-1]):
-            next_row = parser.rows[index + 1]
-            if len(headers) == len(next_row) and any("Ayat" in header for header in headers):
-                candidates.append(dict(zip(headers, next_row, strict=True)))
+        candidates = _parse_labelled_html(response.text)
+        if not candidates:
+            parser = _TableParser()
+            parser.feed(response.text)
+            for row in parser.rows:
+                if len(row) >= 2:
+                    candidates.append(dict(zip(row[::2], row[1::2], strict=False)))
+            for index, headers in enumerate(parser.rows[:-1]):
+                next_row = parser.rows[index + 1]
+                if len(headers) == len(next_row) and any("Ayat" in header for header in headers):
+                    candidates.append(dict(zip(headers, next_row, strict=True)))
     if not candidates:
         raise RuntimeError("Kemenag API returned no ayat payload")
     return candidates
+
+
+def _parse_labelled_html(source: str) -> list[dict[str, Any]]:
+    """Parse Kemenag's authenticated response, which is an HTML fragment, not JSON."""
+    fields = (
+        "Ayat ID",
+        "Surah ID",
+        "No Ayat",
+        "No Juz",
+        "Halaman",
+        "Text MSI Usmani",
+        "Transliterasi",
+        "Terjemahan",
+        "No Foot",
+        "Teks Foot",
+        "Keterangan",
+        "Tafsir Ringkas",
+        "Tafsir Tahlili",
+    )
+    label = "|".join(re.escape(field) for field in fields)
+    field_pattern = re.compile(
+        rf"(?P<label>{label})\s*:\s*(?:<b[^>]*>(?P<bold>.*?)</b>|(?P<plain>.*?))"
+        r"(?=<br\s*/?>|$)",
+        re.IGNORECASE | re.DOTALL,
+    )
+    records: list[dict[str, Any]] = []
+    for fragment in re.split(r"(?=Ayat ID\s*:)", source, flags=re.IGNORECASE)[1:]:
+        record: dict[str, Any] = {}
+        for match in field_pattern.finditer(fragment):
+            value = match.group("bold") or match.group("plain") or ""
+            value = re.sub(r"<[^>]+>", "", value)
+            record[match.group("label")] = html.unescape(value).strip()
+        if "Ayat ID" in record:
+            records.append(record)
+    return records
 
 
 def _number(record: dict[str, Any], *fields: str) -> int | None:
