@@ -69,6 +69,90 @@ THEMES: dict[str, dict[str, list[str]]] = {
         "keywords": ["kesulitan", "kemudahan", "hikmah"],
         "retrieval_terms": ["bersama kesulitan ada kemudahan", "keteguhan"],
     },
+    "kemarahan": {
+        "keywords": ["marah", "amarah", "emosi", "jengkel", "kesal"],
+        "retrieval_terms": ["menahan amarah", "memaafkan", "berbuat baik"],
+    },
+    "rasa_bersalah": {
+        "keywords": ["bersalah", "menyesal", "rasa bersalah"],
+        "retrieval_terms": ["ampunan", "rahmat Allah", "memperbaiki diri"],
+    },
+    "kegagalan": {
+        "keywords": ["gagal", "kegagalan", "tidak berhasil", "jatuh"],
+        "retrieval_terms": ["ujian", "keteguhan", "kemudahan setelah kesulitan"],
+    },
+    "harga_diri": {
+        "keywords": ["harga diri", "tidak berharga", "tidak berguna", "nilai diri"],
+        "retrieval_terms": ["kemuliaan manusia", "takwa", "nilai diri"],
+    },
+    "perbandingan": {
+        "keywords": ["membandingkan", "dibandingkan", "iri", "kalah dari orang lain"],
+        "retrieval_terms": ["kemuliaan manusia", "takwa", "persaudaraan"],
+    },
+    "malu": {
+        "keywords": ["malu", "dipermalukan", "aib"],
+        "retrieval_terms": ["menjaga kehormatan", "ampunan", "rahmat Allah"],
+    },
+    "stres": {
+        "keywords": ["stres", "tertekan", "terbebani", "tegang"],
+        "retrieval_terms": ["beban sesuai kemampuan", "kesulitan", "pertolongan"],
+    },
+    "burnout": {
+        "keywords": ["burnout", "kelelahan kerja", "habis tenaga", "jenuh"],
+        "retrieval_terms": ["kesulitan", "kemudahan", "istirahat"],
+    },
+    "ketidakpastian": {
+        "keywords": ["tidak pasti", "bingung", "ragu", "tidak tahu arah"],
+        "retrieval_terms": ["tawakal", "petunjuk", "Allah mencukupi"],
+    },
+    "kesulitan": {
+        "keywords": ["kesulitan", "cobaan", "musibah", "masalah berat"],
+        "retrieval_terms": ["sabar", "ujian", "kemudahan setelah kesulitan"],
+    },
+    "tekanan_finansial_karier": {
+        "keywords": ["keuangan", "finansial", "pekerjaan", "karier", "rezeki", "utang"],
+        "retrieval_terms": ["rezeki", "usaha", "tawakal", "Allah mencukupi"],
+    },
+    "kesepian": {
+        "keywords": ["kesepian", "sendiri", "ditinggalkan", "tidak punya teman"],
+        "retrieval_terms": ["kedekatan Allah", "dukungan manusia", "persaudaraan"],
+    },
+    "penolakan": {
+        "keywords": ["ditolak", "penolakan", "tidak diterima", "tidak diinginkan"],
+        "retrieval_terms": ["rahmat Allah", "kemuliaan manusia", "harapan"],
+    },
+    "konflik": {
+        "keywords": ["konflik", "bertengkar", "perselisihan", "bertengkar"],
+        "retrieval_terms": ["persaudaraan", "berbuat adil", "berdamai"],
+    },
+    "patah_hati": {
+        "keywords": ["patah hati", "putus cinta", "hubungan berakhir", "sakit hati"],
+        "retrieval_terms": ["kesedihan", "sabar", "harapan"],
+    },
+    "duka": {
+        "keywords": ["berduka", "duka", "kehilangan orang", "kematian"],
+        "retrieval_terms": ["mengadukan kesedihan kepada Allah", "sabar", "harapan"],
+    },
+    "tujuan_hidup": {
+        "keywords": ["tujuan hidup", "arah hidup", "untuk apa hidup"],
+        "retrieval_terms": ["tujuan penciptaan manusia", "ibadah", "makna hidup"],
+    },
+    "makna_hidup": {
+        "keywords": ["makna hidup", "hidup tidak bermakna", "arti hidup"],
+        "retrieval_terms": ["tujuan penciptaan manusia", "ibadah", "mengingat Allah"],
+    },
+    "iman": {
+        "keywords": ["iman", "keimanan", "ragu kepada Allah", "jauh dari Allah"],
+        "retrieval_terms": ["petunjuk", "mengingat Allah", "keteguhan"],
+    },
+    "taubat": {
+        "keywords": ["taubat", "bertobat", "dosa", "ingin berubah"],
+        "retrieval_terms": ["ampunan", "rahmat Allah", "memperbaiki diri"],
+    },
+    "penerimaan": {
+        "keywords": ["menerima keadaan", "sulit menerima", "ikhlas", "berdamai dengan keadaan"],
+        "retrieval_terms": ["takdir", "tawakal", "Allah mencukupi"],
+    },
 }
 
 

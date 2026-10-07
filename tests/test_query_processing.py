@@ -38,3 +38,10 @@ def test_query_understanding_returns_non_diagnostic_metadata():
     assert "takut_masa_depan" in result.possible_themes
     assert "ketenangan" in result.retrieval_hints
     assert "Konsep terkait" in enrich_query("Aku cemas")[0]
+
+
+def test_mental_health_taxonomy_terms_are_retrievable():
+    result = understand_query("Aku burnout dan merasa ditolak setelah kehilangan pekerjaan")
+    assert "burnout" in result.possible_themes
+    assert "penolakan" in result.possible_themes
+    assert "tekanan_finansial_karier" in result.possible_themes

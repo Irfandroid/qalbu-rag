@@ -1,0 +1,45 @@
+{
+  "version": "mental-health-v1",
+  "corpus": "qalbu-seed-v1",
+  "source": {
+    "provider": "Quran Kemenag API",
+    "authority": "LPMQ Kementerian Agama RI",
+    "api_url": "https://quran-api.lpmqkemenag.id/alquran/data",
+    "note": "Only verse keys already present in the official Kemenag snapshot are seeded. Missing keys stay pending until fetched and verified."
+  },
+  "categories": [
+    {"id": "kecemasan", "group": "emotional_distress", "label": "Kecemasan", "verse_keys": ["2:186", "2:214", "70:20", "94:5", "94:6"]},
+    {"id": "kesedihan", "group": "emotional_distress", "label": "Kesedihan", "verse_keys": ["12:86", "12:87", "70:20", "94:5", "94:6"]},
+    {"id": "kemarahan", "group": "emotional_distress", "label": "Kemarahan", "verse_keys": ["41:34"]},
+    {"id": "rasa_bersalah", "group": "emotional_distress", "label": "Rasa bersalah", "verse_keys": ["39:53"]},
+    {"id": "kehampaan", "group": "emotional_distress", "label": "Kehampaan", "verse_keys": ["23:115", "51:56", "3:191"]},
+
+    {"id": "kegagalan", "group": "self", "label": "Kegagalan", "verse_keys": ["2:286", "3:140", "3:141", "94:5", "94:6"]},
+    {"id": "harga_diri", "group": "self", "label": "Harga diri", "verse_keys": ["49:13", "90:10", "90:11", "90:12", "90:13", "90:14", "90:15", "90:16", "90:17", "90:18"]},
+    {"id": "perbandingan", "group": "self", "label": "Perbandingan", "verse_keys": ["49:13"]},
+    {"id": "malu", "group": "self", "label": "Malu", "verse_keys": [], "recommended_verse_keys": ["24:30", "24:31"]},
+
+    {"id": "stres", "group": "life_challenges", "label": "Stres", "verse_keys": ["2:286", "70:19", "70:20", "70:21", "70:22", "94:5", "94:6"]},
+    {"id": "burnout", "group": "life_challenges", "label": "Kelelahan/burnout", "verse_keys": ["70:19", "70:20", "94:5", "94:6"]},
+    {"id": "ketidakpastian", "group": "life_challenges", "label": "Ketidakpastian", "verse_keys": ["2:216", "65:2", "65:3", "65:4"]},
+    {"id": "kesulitan", "group": "life_challenges", "label": "Kesulitan", "verse_keys": ["2:155", "2:156", "2:157", "21:35", "29:2", "29:3", "94:5", "94:6"]},
+    {"id": "tekanan_finansial_karier", "group": "life_challenges", "label": "Tekanan finansial/karier", "verse_keys": ["2:268", "28:77", "51:57", "51:58", "65:2", "65:3"]},
+
+    {"id": "kesepian", "group": "relationships", "label": "Kesepian", "verse_keys": ["2:186", "12:86", "12:87"]},
+    {"id": "penolakan", "group": "relationships", "label": "Penolakan", "verse_keys": [], "recommended_verse_keys": ["93:3", "94:3"]},
+    {"id": "konflik", "group": "relationships", "label": "Konflik", "verse_keys": ["4:59", "49:13"]},
+    {"id": "patah_hati", "group": "relationships", "label": "Patah hati", "verse_keys": ["12:86", "12:87"]},
+    {"id": "duka", "group": "relationships", "label": "Duka", "verse_keys": ["12:86", "12:87", "21:83"]},
+
+    {"id": "tujuan_hidup", "group": "existential_spiritual", "label": "Tujuan hidup", "verse_keys": ["23:115", "51:56", "51:57", "51:58", "3:191"]},
+    {"id": "makna_hidup", "group": "existential_spiritual", "label": "Makna hidup", "verse_keys": ["23:115", "51:56", "3:191"]},
+    {"id": "iman", "group": "existential_spiritual", "label": "Iman", "verse_keys": ["2:2", "3:8", "64:11"]},
+    {"id": "taubat", "group": "existential_spiritual", "label": "Taubat", "verse_keys": ["39:53"]},
+    {"id": "penerimaan", "group": "existential_spiritual", "label": "Penerimaan", "verse_keys": ["2:216", "64:11", "65:2", "65:3", "65:4"]},
+
+    {"id": "self_harm", "group": "safety", "label": "Self-harm", "guardrail_only": true, "verse_keys": []},
+    {"id": "suicidal_ideation", "group": "safety", "label": "Suicidal ideation", "guardrail_only": true, "verse_keys": []},
+    {"id": "psychosis", "group": "safety", "label": "Psychosis", "guardrail_only": true, "verse_keys": []},
+    {"id": "severe_crisis", "group": "safety", "label": "Krisis berat", "guardrail_only": true, "verse_keys": []}
+  ]
+}

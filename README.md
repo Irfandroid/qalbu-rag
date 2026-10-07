@@ -125,6 +125,13 @@ dianggap sebagai sumber resmi.
 Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Model serta
 dimensi embedding saat indexing harus sama dengan runtime (`768` dimensi).
 
+Taxonomy kondisi emosional ada di
+[`data/manifests/mental_health_categories.json`](data/manifests/mental_health_categories.json).
+Label yang sudah memiliki ayat Kemenag dapat disinkronkan ke Supabase dengan
+`python -m scripts.sync_mental_health_categories`; jalankan `--dry-run` untuk memeriksa snapshot
+lebih dulu. Kategori keselamatan hanya melewati safety guardrail. Kategori tanpa ayat aktif tetap
+ditandai pending sampai data diambil dan diverifikasi dari [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data).
+
 ## Verifikasi
 
 ```powershell
