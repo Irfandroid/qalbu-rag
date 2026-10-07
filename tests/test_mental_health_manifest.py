@@ -8,6 +8,8 @@ MANIFEST = Path(__file__).parents[1] / "data/manifests/mental_health_categories.
 
 def test_manifest_covers_the_requested_taxonomy():
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    assert data["corpus"] == "qalbu-seed-v1"
+    assert data["source"]["api_url"] == "https://quran-api.lpmqkemenag.id/alquran/data"
     groups = {}
     for category in data["categories"]:
         groups.setdefault(category["group"], set()).add(category["id"])
