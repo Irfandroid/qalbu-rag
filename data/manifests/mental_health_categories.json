@@ -5,7 +5,7 @@
     "provider": "Quran Kemenag API",
     "authority": "LPMQ Kementerian Agama RI",
     "api_url": "https://quran-api.lpmqkemenag.id/alquran/data",
-    "note": "Only verse keys already present in the official Kemenag snapshot are seeded. Missing keys stay pending until fetched and verified."
+    "note": "Only verse keys already present in the active official Kemenag corpus are seeded. Missing keys stay pending until fetched and verified."
   },
   "categories": [
     {"id": "kecemasan", "group": "emotional_distress", "label": "Kecemasan", "verse_keys": ["2:186", "2:214", "70:20", "94:5", "94:6"]},
@@ -17,7 +17,7 @@
     {"id": "kegagalan", "group": "self", "label": "Kegagalan", "verse_keys": ["2:286", "3:140", "3:141", "94:5", "94:6"]},
     {"id": "harga_diri", "group": "self", "label": "Harga diri", "verse_keys": ["49:13", "90:10", "90:11", "90:12", "90:13", "90:14", "90:15", "90:16", "90:17", "90:18"]},
     {"id": "perbandingan", "group": "self", "label": "Perbandingan", "verse_keys": ["49:13"]},
-    {"id": "malu", "group": "self", "label": "Malu", "verse_keys": [], "recommended_verse_keys": ["24:30", "24:31"]},
+    {"id": "malu", "group": "self", "label": "Malu", "verse_keys": ["39:53"]},
 
     {"id": "stres", "group": "life_challenges", "label": "Stres", "verse_keys": ["2:286", "70:19", "70:20", "70:21", "70:22", "94:5", "94:6"]},
     {"id": "burnout", "group": "life_challenges", "label": "Kelelahan/burnout", "verse_keys": ["70:19", "70:20", "94:5", "94:6"]},
@@ -26,7 +26,7 @@
     {"id": "tekanan_finansial_karier", "group": "life_challenges", "label": "Tekanan finansial/karier", "verse_keys": ["2:268", "28:77", "51:57", "51:58", "65:2", "65:3"]},
 
     {"id": "kesepian", "group": "relationships", "label": "Kesepian", "verse_keys": ["2:186", "12:86", "12:87"]},
-    {"id": "penolakan", "group": "relationships", "label": "Penolakan", "verse_keys": [], "recommended_verse_keys": ["93:3", "94:3"]},
+    {"id": "penolakan", "group": "relationships", "label": "Penolakan", "verse_keys": ["93:3"]},
     {"id": "konflik", "group": "relationships", "label": "Konflik", "verse_keys": ["4:59", "49:13"]},
     {"id": "patah_hati", "group": "relationships", "label": "Patah hati", "verse_keys": ["12:86", "12:87"]},
     {"id": "duka", "group": "relationships", "label": "Duka", "verse_keys": ["12:86", "12:87", "21:83"]},

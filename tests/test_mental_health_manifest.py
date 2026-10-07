@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from app.quran.themes import THEMES
+from scripts.sync_mental_health_categories import category_index, parent_categories
 
 MANIFEST = Path(__file__).parents[1] / "data/manifests/mental_health_categories.json"
 
@@ -32,3 +33,12 @@ def test_safety_categories_cannot_enter_retrieval_themes():
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
     safety = {item["id"] for item in data["categories"] if item.get("guardrail_only")}
     assert safety.isdisjoint(THEMES)
+
+
+def test_grouped_chunk_verse_keys_are_mapped():
+    data = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    by_verse, _ = category_index(data)
+    grouped = parent_categories(
+        [{"parent_id": "p", "metadata": {"verse_key": "93:1,93:2,93:3"}}], by_verse
+    )
+    assert "penolakan" in grouped["p"]

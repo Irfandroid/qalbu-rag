@@ -39,9 +39,10 @@ def parent_categories(
 ) -> dict[str, list[str]]:
     result: dict[str, set[str]] = {}
     for chunk in chunks:
-        verse_key = str(chunk.get("metadata", {}).get("verse_key", ""))
-        for category in by_verse.get(verse_key, []):
-            result.setdefault(chunk["parent_id"], set()).add(category)
+        verse_keys = str(chunk.get("metadata", {}).get("verse_key", "")).split(",")
+        for verse_key in (key.strip() for key in verse_keys):
+            for category in by_verse.get(verse_key, []):
+                result.setdefault(chunk["parent_id"], set()).add(category)
     return {parent_id: sorted(categories) for parent_id, categories in result.items()}
 
 
@@ -94,7 +95,9 @@ async def sync() -> None:
 
     grouped = parent_categories(chunks, by_verse)
     available_keys = {
-        str(chunk.get("metadata", {}).get("verse_key", "")) for chunk in chunks
+        key.strip()
+        for chunk in chunks
+        for key in str(chunk.get("metadata", {}).get("verse_key", "")).split(",")
     }
     missing_keys = sorted(key for key in by_verse if key not in available_keys)
     changed_documents = 0
