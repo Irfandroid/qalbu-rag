@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     jina_api_key: str | None = None
     jina_embedding_model: str = "jina-embeddings-v5-text-small"
     embedding_dimensions: int = 768
+    kemenag_api_base_url: str = "https://quran-api.lpmqkemenag.id/alquran/data"
+    kemenag_username: str | None = None
+    kemenag_password: str | None = None
+    kemenag_token: str | None = None
     min_retrieval_score: float = 0.32
     top_k_retrieval: int = 15
     retrieval_parent_k: int = 4

@@ -132,6 +132,11 @@ Label yang sudah memiliki ayat Kemenag dapat disinkronkan ke Supabase dengan
 lebih dulu. Kategori keselamatan hanya melewati safety guardrail. Kategori tanpa ayat aktif tetap
 ditandai pending sampai data diambil dan diverifikasi dari [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data).
 
+Daftar ayat dan tafsir tambahan yang diminta tersedia di
+[`data/manifests/kemenag_reflection_verses.json`](data/manifests/kemenag_reflection_verses.json).
+Gunakan `python -m scripts.scrape_kemenag_manifest --dry-run` untuk melihat ayat yang belum ada.
+Setelah credential Kemenag diisi di `.env`, jalankan `python -m scripts.scrape_kemenag_manifest`.
+
 ## Verifikasi
 
 ```powershell

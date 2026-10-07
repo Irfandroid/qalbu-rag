@@ -26,3 +26,23 @@ Kategori keselamatan (`self_harm`, ide bunuh diri, psikosis, dan krisis berat) h
 safety guardrail dan tidak pernah dipakai untuk mencari atau membuat ayat. Kategori yang belum
 memiliki ayat pada corpus ditandai `recommended_verse_keys` dan menunggu fetch API Kemenag; ayat
 tidak boleh ditambahkan hanya berdasarkan kemiripan kata.
+
+## Manifest ayat dan tafsir Kemenag
+
+Daftar 100 rentang ayat yang diminta ada di
+`manifests/kemenag_reflection_verses.json`. Periksa coverage terhadap corpus:
+
+```powershell
+python -m scripts.scrape_kemenag_manifest --dry-run
+```
+
+Untuk mengambil ayat yang belum ada, isi `KEMENAG_USERNAME`, `KEMENAG_PASSWORD`, dan
+`KEMENAG_TOKEN` di `.env`, lalu jalankan:
+
+```powershell
+python -m scripts.scrape_kemenag_manifest
+```
+
+Script memakai endpoint `getAyat` dan `getAyatTafsir`, menyimpan cache mentah lokal yang di-ignore
+Git, memvalidasi provenance Kemenag, membuat embedding Jina, lalu memasukkan parent document dan
+child chunk ke corpus `qalbu-seed-v1`.
