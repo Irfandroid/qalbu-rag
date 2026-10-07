@@ -36,6 +36,9 @@ Daftar 100 rentang ayat yang diminta ada di
 python -m scripts.scrape_kemenag_manifest --dry-run
 ```
 
+Checklist hasil retrieval yang sudah diverifikasi ada di
+`manifests/kemenag_retrieved_verses.json` (`201/201` ayat, `missing_verses: 0`).
+
 Untuk mengambil ayat yang belum ada, isi `KEMENAG_USERNAME`, `KEMENAG_PASSWORD`, dan
 `KEMENAG_TOKEN` di `.env`, lalu jalankan:
 

@@ -136,6 +136,8 @@ Daftar ayat dan tafsir tambahan yang diminta tersedia di
 [`data/manifests/kemenag_reflection_verses.json`](data/manifests/kemenag_reflection_verses.json).
 Gunakan `python -m scripts.scrape_kemenag_manifest --dry-run` untuk melihat ayat yang belum ada.
 Setelah credential Kemenag diisi di `.env`, jalankan `python -m scripts.scrape_kemenag_manifest`.
+Daftar hasil retrieval yang sudah diverifikasi dapat dilihat di
+[`data/manifests/kemenag_retrieved_verses.json`](data/manifests/kemenag_retrieved_verses.json).
 
 ## Verifikasi
 
