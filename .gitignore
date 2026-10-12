@@ -1,6 +1,12 @@
 .env
 .env.*
 !.env.example
+*.ppk
+*.pem
+*.key
+id_ed25519*
+id_rsa*
+deploy ssh*
 __pycache__/
 .pytest_cache/
 .pytest-qalbu-*/

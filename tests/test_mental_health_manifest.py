@@ -5,6 +5,16 @@ from app.quran.themes import THEMES
 from scripts.sync_mental_health_categories import category_index, parent_categories
 
 MANIFEST = Path(__file__).parents[1] / "data/manifests/mental_health_categories.json"
+RETRIEVED_MANIFEST = Path(__file__).parents[1] / "data/manifests/kemenag_retrieved_verses.json"
+
+
+def _expand_ranges(ranges: list[str]) -> set[str]:
+    verses: set[str] = set()
+    for item in ranges:
+        surah, ayah_range = item.split(":", 1)
+        start, _, end = ayah_range.partition("-")
+        verses.update(f"{surah}:{ayah}" for ayah in range(int(start), int(end or start) + 1))
+    return verses
 
 
 def test_manifest_covers_the_requested_taxonomy():
@@ -24,7 +34,12 @@ def test_manifest_covers_the_requested_taxonomy():
     }
     assert groups["relationships"] == {"kesepian", "penolakan", "konflik", "patah_hati", "duka"}
     assert groups["existential_spiritual"] == {
-        "tujuan_hidup", "makna_hidup", "iman", "taubat", "penerimaan"
+        "tujuan_hidup", "makna_hidup", "iman", "taubat", "penerimaan", "waswas"
+    }
+    assert groups["supporting_reflection"] == {
+        "doa_pertolongan", "sabar_ujian", "ketenangan_zikir", "harapan_rahmat",
+        "tawakal_rezeki", "taubat_pengampunan", "relasi_akhlak", "iman_petunjuk",
+        "perlindungan_waswas", "makna_dan_amal", "syukur_nikmat", "pemulihan",
     }
     assert groups["safety"] == {"self_harm", "suicidal_ideation", "psychosis", "severe_crisis"}
 
@@ -42,3 +57,10 @@ def test_grouped_chunk_verse_keys_are_mapped():
         [{"parent_id": "p", "metadata": {"verse_key": "93:1,93:2,93:3"}}], by_verse
     )
     assert "penolakan" in grouped["p"]
+
+
+def test_every_retrieved_kemenag_verse_has_a_category():
+    data = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    retrieved = json.loads(RETRIEVED_MANIFEST.read_text(encoding="utf-8"))
+    mapped = {key for category in data["categories"] for key in category.get("verse_keys", [])}
+    assert _expand_ranges(retrieved["ranges"]) <= mapped

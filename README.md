@@ -127,6 +127,10 @@ dimensi embedding saat indexing harus sama dengan runtime (`768` dimensi).
 
 Taxonomy kondisi emosional ada di
 [`data/manifests/mental_health_categories.json`](data/manifests/mental_health_categories.json).
+Daftar ayat yang dikelompokkan agar mudah dibaca tersedia di
+[`docs/VERSE_CATEGORIES.md`](docs/VERSE_CATEGORIES.md).
+Seluruh 201 ayat pada inventaris retrieval Kemenag memiliki setidaknya satu
+kategori kandidat refleksi; satu ayat dapat muncul di beberapa kategori.
 Label yang sudah memiliki ayat Kemenag dapat disinkronkan ke Supabase dengan
 `python -m scripts.sync_mental_health_categories`; jalankan `--dry-run` untuk memeriksa snapshot
 lebih dulu. Kategori keselamatan hanya melewati safety guardrail. Kategori tanpa ayat aktif tetap
