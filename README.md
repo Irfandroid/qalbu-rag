@@ -93,6 +93,11 @@ manager, jangan commit ke Git.
 `SUPABASE_SERVICE_ROLE_KEY` masih diterima untuk kompatibilitas lama, tetapi key server tidak boleh
 dikirim ke browser.
 
+`TOP_K_RETRIEVAL` adalah jumlah minimum child yang diminta dari vector search. Runtime melakukan
+oversampling hingga `max(TOP_K_RETRIEVAL, RETRIEVAL_PARENT_K * 4)` agar beberapa child dari satu
+parent tidak menghabiskan seluruh slot sebelum parent unik lain ditemukan. RPC tetap membatasi
+hasil maksimal 100 child.
+
 ## API
 
 ### `GET /api/health`

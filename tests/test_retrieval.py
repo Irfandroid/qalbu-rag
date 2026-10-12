@@ -8,8 +8,10 @@ from tests.conftest import FakeEmbeddings, FakeRepository
 class MultiResultRepository(FakeRepository):
     def __init__(self, results: list[RetrievalResult]) -> None:
         self.results = results
+        self.requested_top_k: int | None = None
 
     async def match_chunks(self, embedding: list[float], top_k: int) -> list[RetrievalResult]:
+        self.requested_top_k = top_k
         return self.results[:top_k]
 
 
@@ -54,3 +56,14 @@ async def test_retrieval_deduplicates_parent_and_limits_results():
         "aku sedang berat"
     )
     assert [item.parent_id for item in results] == ["al-baqarah-286", "al-balad-4"]
+
+
+@pytest.mark.asyncio
+async def test_retrieval_oversamples_children_for_parent_coverage():
+    repo = MultiResultRepository([retrieval_result("al-baqarah-286", 0.91)])
+
+    await QuranRetriever(FakeEmbeddings(), repo, candidate_k=3, parent_k=4).search(
+        "aku sedang berat"
+    )
+
+    assert repo.requested_top_k == 16

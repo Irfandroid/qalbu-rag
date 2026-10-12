@@ -28,7 +28,8 @@ class QuranRetriever:
         embedding = await self.embeddings.embed_query(processed_query)
         embedding_ms = round((time.perf_counter() - embedding_started) * 1000, 2)
         vector_started = time.perf_counter()
-        results = await self.repository.match_chunks(embedding, self.candidate_k)
+        child_candidate_k = max(self.candidate_k, self.parent_k * 4)
+        results = await self.repository.match_chunks(embedding, child_candidate_k)
         vector_ms = round((time.perf_counter() - vector_started) * 1000, 2)
         accepted = [result for result in results if result.score >= self.min_score]
         # Keep only the strongest child for each parent. This prevents repeated
@@ -46,7 +47,7 @@ class QuranRetriever:
         logging.getLogger(__name__).info(
             "retrieval request_id=%s themes=%s vector_threshold=%s "
             "embedding_ms=%s vector_ms=%s scores=%s parent_scores=%s "
-            "parents=%s embedding_model=%s",
+            "parents=%s child_candidate_k=%s embedding_model=%s",
             request_id,
             themes,
             self.min_score,
@@ -55,6 +56,7 @@ class QuranRetriever:
             [round(result.score, 4) for result in results],
             [round(result.score, 4) for result in parents],
             [result.parent_id for result in parents],
+            child_candidate_k,
             getattr(self.embeddings, "model", "unknown"),
         )
         return parents

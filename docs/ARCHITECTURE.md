@@ -124,7 +124,8 @@ vector-nya sudah ada di Supabase sebelum aplikasi dipakai.
 
 1. Jina query embedding.
 2. RPC Supabase `match_quran_chunks(embedding, match_count, corpus_filter)` pada corpus
-   `qalbu-seed-v1`.
+   `qalbu-seed-v1`, dengan `match_count` child minimal `TOP_K_RETRIEVAL` dan di-oversample
+   menjadi `max(TOP_K_RETRIEVAL, RETRIEVAL_PARENT_K * 4)`.
 3. Buang result dengan skor cosine di bawah `MIN_RETRIEVAL_SCORE` (default `0.32`).
 4. Deduplicate berdasarkan `parent_id`; child terkuat mewakili satu parent.
 5. Batasi parent ke `RETRIEVAL_PARENT_K` (default `4`).
@@ -143,6 +144,11 @@ flowchart LR
 
 Skor dihitung PostgreSQL sebagai `1 - (embedding <=> query_embedding)`. HNSW index dipakai untuk
 cosine search. RPC membatasi jumlah result agar input tidak membesar tanpa batas.
+
+Oversampling child diperlukan karena satu parent dapat memiliki beberapa child yang mirip dengan
+query. Tanpa oversampling, child dari satu parent dapat memenuhi `TOP_K_RETRIEVAL` lebih dulu dan
+mengurangi jumlah parent unik yang tersedia untuk context. RPC membatasi hasil pada maksimal 100
+child; setelah itu aplikasi tetap memilih paling banyak `RETRIEVAL_PARENT_K` parent.
 
 Jika tidak ada parent setelah threshold/filter, pipeline berhenti dengan fallback relevansi jujur.
 Tidak ada ayat yang dibuat oleh model.
