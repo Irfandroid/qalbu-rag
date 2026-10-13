@@ -75,8 +75,8 @@ Health check:
 Invoke-WebRequest http://127.0.0.1:8000/api/health
 ```
 
-`status=ok` berarti proses hidup. `rag=configured` hanya berarti credential server terbaca; itu
-belum membuktikan corpus Supabase berisi data.
+`status=ok` berarti proses hidup. `rag=configured` hanya berarti credential server terbaca; field
+`corpus` menunjukkan corpus aktif. Keduanya belum membuktikan corpus Supabase berisi data.
 
 ## Konfigurasi
 
@@ -88,6 +88,7 @@ manager, jangan commit ke Git.
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Membuat refleksi grounded |
 | `JINA_API_KEY`, `JINA_EMBEDDING_MODEL` | Membuat query embedding |
 | `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Akses database/vector search dari server |
+| `QALBU_CORPUS` | Corpus aktif; default `qalbu-kemenag-v1`, rollback `qalbu-seed-v1` |
 | `MIN_RETRIEVAL_SCORE`, `TOP_K_RETRIEVAL`, `RETRIEVAL_PARENT_K` | Batas retrieval |
 | `CRISIS_LINE`, `CRISIS_LINE_LABEL` | Kontak bantuan yang harus diverifikasi |
 
@@ -117,7 +118,7 @@ Response berupa Server-Sent Events dengan event `response`, `crisis`, `error`, d
 
 ## Data dan provenance
 
-Runtime membaca corpus `qalbu-kemenag-v1` dari tabel Supabase `quran_documents` dan `quran_chunks`.
+Runtime membaca corpus yang dipilih oleh `QALBU_CORPUS` dari tabel Supabase `quran_documents` dan `quran_chunks`.
 Folder [`data/external/indonesian-quran/`](data/external/indonesian-quran/) hanya menyimpan
 snapshot/seed referensi dan tidak dibaca langsung oleh chat runtime.
 
@@ -132,7 +133,9 @@ Inventaris referensi lengkap tersedia di [`docs/QURAN_DATASET.md`](docs/QURAN_DA
 halaman web [`/dataset`](http://127.0.0.1:8000/dataset). Setiap ayat adalah satu parent;
 field Arab, terjemahan, tafsir, dan tema dibuat sebagai child embedding terpisah.
 
-Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Model serta
+Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Endpoint katalog
+menghitung child dari row Supabase aktual ketika credential server tersedia; tanpa koneksi database,
+nilai manifest hanya fallback offline. Model serta
 dimensi embedding saat indexing harus sama dengan runtime (`768` dimensi).
 
 Taxonomy kondisi emosional ada di

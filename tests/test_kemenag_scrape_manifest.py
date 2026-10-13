@@ -3,7 +3,13 @@ from pathlib import Path
 
 import httpx
 
-from scripts.scrape_kemenag_manifest import expand_ranges, parse_payload, payload_to_document
+from app.quran.catalog import CHUNK_TYPES, parent_id
+from scripts.scrape_kemenag_manifest import (
+    expand_ranges,
+    keys_needing_sync,
+    parse_payload,
+    payload_to_document,
+)
 
 MANIFEST = Path(__file__).parents[1] / "data/manifests/kemenag_reflection_verses.json"
 
@@ -33,6 +39,7 @@ def test_kemenag_payload_keeps_provenance_and_tafsir():
             },
         },
         manifest,
+        categories=["rasa_bersalah"],
     )
     assert document["source"]["quran"] == "Quran Kemenag"
     assert document["source"]["tafsir"] == "Tafsir Kemenag (ringkas), Tafsir Kemenag (tahlili)"
@@ -68,3 +75,51 @@ def test_parse_kemenag_html_fragment():
             "Tafsir Tahlili": "tahlili",
         }
     ]
+
+
+def test_scraper_ignores_complete_superset_when_planning_requested_manifest():
+    key = "39:53"
+    document_id = parent_id("qalbu-kemenag-v1", key)
+    documents = [
+        {
+            "id": document_id,
+            "metadata": {"verse_keys": [key]},
+            "arabic_text": "arabic",
+            "translation": "translation",
+            "tafsir": "tafsir",
+            "themes": ["rasa_bersalah"],
+        },
+        {"id": "extra-parent", "metadata": {"verse_keys": ["2:2"]}},
+    ]
+    chunks = [
+        {"parent_id": document_id, "chunk_type": chunk_type}
+        for chunk_type in CHUNK_TYPES
+    ]
+    assert keys_needing_sync([key], documents, chunks) == []
+
+
+def test_scraper_repairs_missing_or_legacy_parent_chunks():
+    key = "39:53"
+    documents = [{"id": "legacy-parent", "metadata": {"verse_keys": [key]}}]
+    assert keys_needing_sync([key], documents, []) == [key]
+
+
+def test_scraper_repairs_a_missing_child_on_an_existing_parent():
+    key = "39:53"
+    document_id = parent_id("qalbu-kemenag-v1", key)
+    documents = [
+        {
+            "id": document_id,
+            "metadata": {"verse_keys": [key]},
+            "arabic_text": "arabic",
+            "translation": "translation",
+            "tafsir": "tafsir",
+            "themes": ["rasa_bersalah"],
+        }
+    ]
+    chunks = [
+        {"parent_id": document_id, "chunk_type": chunk_type}
+        for chunk_type in CHUNK_TYPES
+        if chunk_type != "themes"
+    ]
+    assert keys_needing_sync([key], documents, chunks) == [key]

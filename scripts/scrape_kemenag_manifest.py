@@ -12,7 +12,7 @@ import httpx
 
 from app.core.config import get_settings
 from app.providers.embeddings.jina import JinaEmbeddingProvider, embedding_fingerprint
-from app.quran.catalog import CHUNK_TYPES, child_id, expand_ranges, parent_id
+from app.quran.catalog import CHUNK_TYPES, CORPUS, child_id, expand_ranges, parent_id
 from supabase import acreate_client
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -271,7 +271,9 @@ def payload_to_document(
         "themes": (
             f"Surah {surah}, ayat {ayah}\n"
             f"Kategori kesehatan mental: {', '.join(categories) or 'belum dipetakan'}"
-        ),
+        )
+        if categories
+        else "",
     }
     chunks = [
         {
@@ -294,12 +296,50 @@ def payload_to_document(
     return document, chunks
 
 
-def existing_keys(documents: list[dict[str, Any]]) -> set[str]:
-    return {
-        key
-        for document in documents
-        for key in document.get("metadata", {}).get("verse_keys", [])
+def _chunk_types_for_document(document: dict[str, Any]) -> set[str]:
+    fields = {
+        "arabic": document.get("arabic_text"),
+        "translation": document.get("translation"),
+        "tafsir": document.get("tafsir"),
+        "themes": document.get("themes"),
     }
+    return {chunk_type for chunk_type, value in fields.items() if value}
+
+
+def _parents_by_verse(
+    documents: list[dict[str, Any]], chunks: list[dict[str, Any]]
+) -> dict[str, dict[str, Any]]:
+    parents: dict[str, dict[str, Any]] = {}
+    for document in documents:
+        for key in document.get("metadata", {}).get("verse_keys", []):
+            parents[key] = document
+    for chunk in chunks:
+        key = chunk.get("metadata", {}).get("verse_key")
+        if key and key not in parents:
+            parents[key] = {"id": chunk["parent_id"]}
+    return parents
+
+
+def keys_needing_sync(
+    requested: list[str],
+    documents: list[dict[str, Any]],
+    chunks: list[dict[str, Any]],
+    corpus: str = CORPUS,
+) -> list[str]:
+    parents = _parents_by_verse(documents, chunks)
+    chunks_by_parent: dict[str, set[str]] = {}
+    for chunk in chunks:
+        chunks_by_parent.setdefault(chunk["parent_id"], set()).add(chunk["chunk_type"])
+    pending: list[str] = []
+    for key in requested:
+        document = parents.get(key)
+        expected_id = parent_id(corpus, key)
+        if not document or document.get("id") != expected_id:
+            pending.append(key)
+            continue
+        if chunks_by_parent.get(expected_id, set()) != _chunk_types_for_document(document):
+            pending.append(key)
+    return pending
 
 
 async def corpus_rows(client: Any, table: str, columns: str, corpus: str) -> list[dict[str, Any]]:
@@ -380,35 +420,31 @@ async def run(dry_run: bool, manifest_path: Path = MANIFEST) -> None:
     if not settings.supabase_url or not settings.supabase_server_key:
         raise RuntimeError("SUPABASE_URL dan Supabase server key wajib dikonfigurasi")
     supabase = await acreate_client(settings.supabase_url, settings.supabase_server_key)
-    documents = await corpus_rows(supabase, "quran_documents", "metadata", manifest["corpus"])
-    missing = [key for key in requested if key not in existing_keys(documents)]
-    existing_chunks = await corpus_rows(
-        supabase, "quran_chunks", "parent_id,chunk_type", manifest["corpus"]
+    documents = await corpus_rows(
+        supabase,
+        "quran_documents",
+        "id,metadata,arabic_text,translation,tafsir,themes",
+        manifest["corpus"],
     )
-    expected_pairs = {
-        (parent_id(manifest["corpus"], key), chunk_type)
-        for key in requested
-        for chunk_type in CHUNK_TYPES
-    }
-    existing_pairs = {
-        (chunk["parent_id"], chunk["chunk_type"]) for chunk in existing_chunks
-    }
-    complete = not missing and expected_pairs == existing_pairs
+    existing_chunks = await corpus_rows(
+        supabase,
+        "quran_chunks",
+        "id,parent_id,chunk_type,metadata",
+        manifest["corpus"],
+    )
+    pending = keys_needing_sync(requested, documents, existing_chunks, manifest["corpus"])
     print(f"Manifest: {len(manifest['ranges'])} ranges, {len(requested)} ayat")
-    print(f"Already in corpus: {len(requested) - len(missing)}; missing: {len(missing)}")
+    print(f"Ready in corpus: {len(requested) - len(pending)}; needing sync: {len(pending)}")
     if dry_run:
-        print("Missing keys:", ", ".join(missing) or "none")
+        print("Keys needing sync:", ", ".join(pending) or "none")
         return
-    if complete:
+    if not pending:
         print("Corpus dan parent-child chunks sudah lengkap.")
         return
 
     cache = load_cache(raw_cache)
-    required_keys = requested
-    fetched: dict[str, dict[str, Any]] = {
-        key: cache[key] for key in required_keys if key in cache
-    }
-    api_missing = [key for key in required_keys if key not in fetched]
+    fetched: dict[str, dict[str, Any]] = {key: cache[key] for key in pending if key in cache}
+    api_missing = [key for key in pending if key not in fetched]
     username = settings.kemenag_username or ""
     password = settings.kemenag_password or ""
     token = settings.kemenag_token or ""
@@ -452,17 +488,18 @@ async def run(dry_run: bool, manifest_path: Path = MANIFEST) -> None:
                     }
         finally:
             client.close()
-    save_cache(list(fetched.values()), raw_cache, manifest_path)
+    cache.update(fetched)
+    save_cache(list(cache.values()), raw_cache, manifest_path)
 
     categories = _category_index()
     rows = [
         payload_to_document(key, fetched[key], manifest, categories.get(key, []))
-        for key in requested
+        for key in pending
         if key in fetched
     ]
-    if len(rows) != len(requested):
+    if len(rows) != len(pending):
         raise RuntimeError("Kemenag fetch did not return every requested verse")
-    child_counts = validate_chunk_rows(rows, requested)
+    child_counts = validate_chunk_rows(rows, pending)
     chunks = [child for _, row_chunks in rows for child in row_chunks]
     provider = JinaEmbeddingProvider(
         settings.jina_api_key or "",
@@ -498,6 +535,35 @@ async def run(dry_run: bool, manifest_path: Path = MANIFEST) -> None:
         await supabase.table("quran_chunks").upsert(
             chunks[start : start + 32], on_conflict="id"
         ).execute()
+    new_parent_ids = {parent["id"] for parent, _ in rows}
+    new_chunk_ids = {child["id"] for child in chunks}
+    stale_chunk_ids = {
+        chunk["id"]
+        for chunk in existing_chunks
+        if chunk["parent_id"] in new_parent_ids
+        and chunk["id"] not in new_chunk_ids
+    }
+    old_parent_ids = {
+        document["id"]
+        for key, document in _parents_by_verse(documents, existing_chunks).items()
+        if key in pending and document["id"] != parent_id(manifest["corpus"], key)
+    }
+    if stale_chunk_ids:
+        await (
+            supabase.table("quran_chunks")
+            .delete()
+            .eq("corpus", manifest["corpus"])
+            .in_("id", list(stale_chunk_ids))
+            .execute()
+        )
+    if old_parent_ids:
+        await (
+            supabase.table("quran_documents")
+            .delete()
+            .eq("corpus", manifest["corpus"])
+            .in_("id", list(old_parent_ids))
+            .execute()
+        )
     print(f"Inserted Kemenag documents: {len(rows)}; embedded chunks: {len(chunks)}")
     print("Child counts:", ", ".join(f"{key}={value}" for key, value in child_counts.items()))
 

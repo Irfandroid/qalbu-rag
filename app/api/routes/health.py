@@ -7,7 +7,9 @@ router = APIRouter(tags=["health"])
 
 @router.get("/api/health")
 async def health() -> dict[str, str]:
+    settings = get_settings()
     return {
         "status": "ok",
-        "rag": "configured" if get_settings().configured_for_rag else "configuration_required",
+        "rag": "configured" if settings.configured_for_rag else "configuration_required",
+        "corpus": settings.quran_corpus,
     }

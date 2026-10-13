@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import model_validator
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     supabase_url: str | None = None
     supabase_secret_key: str | None = None
     supabase_service_role_key: str | None = None
+    quran_corpus: str = Field(
+        default="qalbu-kemenag-v1",
+        validation_alias="QALBU_CORPUS",
+        min_length=1,
+    )
     jina_api_key: str | None = None
     jina_embedding_model: str = "jina-embeddings-v5-text-small"
     embedding_dimensions: int = 768

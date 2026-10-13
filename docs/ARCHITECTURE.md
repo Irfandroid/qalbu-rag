@@ -232,7 +232,8 @@ membocorkan exception provider ke user.
 ### 3.1 Sumber data
 
 Folder `data/external/indonesian-quran/` menyimpan snapshot Indonesia sebagai artefak referensi.
-Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus `qalbu-kemenag-v1` dari Supabase.
+Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus yang dipilih oleh `QALBU_CORPUS`
+dari Supabase. Nilai defaultnya `qalbu-kemenag-v1`; `qalbu-seed-v1` dipakai untuk rollback.
 
 Sumber aktif corpus `qalbu-kemenag-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
 dari LPMQ Kementerian Agama RI. Row aktif menyimpan `source_provider=official_portal` dan
@@ -404,7 +405,10 @@ sebelum provider eksternal dan sitasi tidak dipercayakan kepada model.
 ### Biaya yang sengaja diterima
 
 - Cache dan rate limit hanya berlaku dalam satu proses.
-- Indexing corpus dilakukan di luar startup.
+- Indexing corpus dilakukan di luar startup. Scraper membandingkan parent dan child aktual berdasarkan
+  `verse_key`, deterministic ID, serta tipe child yang benar-benar memiliki isi; rerun tanpa perubahan
+  tidak mengirim ulang row dan tidak menyentuh parent di luar inventory yang diminta. Katalog menghitung
+  child dari `quran_chunks` aktual, bukan hanya dari angka manifest.
 - Tidak ada auth, history server, dashboard evaluasi, reranker, atau multi-provider.
 - Retrieval memakai heuristic tema sederhana dan threshold statis.
 

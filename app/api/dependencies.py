@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 from fastapi import HTTPException
 
 from app.core.config import get_settings
@@ -5,7 +7,7 @@ from app.database.queries import SupabaseQuranRepository
 from app.database.supabase import get_supabase
 from app.providers.embeddings.jina import JinaEmbeddingProvider
 from app.providers.llm.gemini import GeminiProvider
-from app.quran.catalog import CORPUS
+from app.quran.catalog import CHUNK_TYPES, CORPUS
 from app.rag.citation_validator import CitationValidator
 from app.rag.pipeline import QalbuRAG
 from app.rag.retriever import QuranRetriever
@@ -23,7 +25,7 @@ async def get_rag() -> QalbuRAG:
             },
         )
     supabase = await get_supabase(settings)
-    repository = SupabaseQuranRepository(supabase, CORPUS)
+    repository = SupabaseQuranRepository(supabase, settings.quran_corpus)
     embeddings = JinaEmbeddingProvider(
         settings.jina_api_key or "",
         settings.jina_embedding_model,
@@ -52,3 +54,32 @@ async def get_rag() -> QalbuRAG:
         settings.crisis_line_label,
         settings.max_context_tokens,
     )
+
+
+async def get_dataset_child_counts() -> dict[str, int] | None:
+    settings = get_settings()
+    if settings.quran_corpus != CORPUS:
+        return None
+    if not settings.supabase_url or not settings.supabase_server_key:
+        return None
+    supabase = await get_supabase(settings)
+    counts = {chunk_type: 0 for chunk_type in CHUNK_TYPES}
+    start = 0
+    while True:
+        response = await (
+            supabase.table("quran_chunks")
+            .select("chunk_type")
+            .eq("corpus", settings.quran_corpus)
+            .range(start, start + 999)
+            .execute()
+        )
+        rows = response.data or []
+        for row in rows:
+            if not isinstance(row, Mapping):
+                continue
+            chunk_type = row.get("chunk_type")
+            if isinstance(chunk_type, str) and chunk_type in counts:
+                counts[chunk_type] += 1
+        if len(rows) < 1000:
+            return counts
+        start += 1000

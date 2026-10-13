@@ -49,7 +49,7 @@ def category_index() -> tuple[dict[str, list[str]], dict[str, str]]:
     return by_verse, labels
 
 
-def build_catalog() -> dict[str, Any]:
+def build_catalog(child_counts: dict[str, int] | None = None) -> dict[str, Any]:
     manifest = load_json(MANIFEST_PATH)
     reflection = load_json(REFLECTION_MANIFEST_PATH)
     categories, labels = category_index()
@@ -76,9 +76,12 @@ def build_catalog() -> dict[str, Any]:
             }
         )
     counts = manifest.get("counts", {})
-    child_counts = counts.get("child_counts") or {
-        chunk_type: len(verses) for chunk_type in CHUNK_TYPES
-    }
+    if child_counts is not None:
+        actual_child_counts = child_counts
+    else:
+        actual_child_counts = counts.get("child_counts") or {
+            chunk_type: len(verses) for chunk_type in CHUNK_TYPES
+        }
     return {
         "version": manifest["version"],
         "corpus": manifest["corpus"],
@@ -86,7 +89,10 @@ def build_catalog() -> dict[str, Any]:
         "verified_at": manifest.get("verified_at"),
         "source": manifest["source"],
         "parent_count": len(verses),
-        "child_counts": child_counts,
+        "child_counts": {
+            chunk_type: actual_child_counts.get(chunk_type, 0)
+            for chunk_type in CHUNK_TYPES
+        },
         "reflection_subset": len(reflection_keys),
         "category_options": [
             {"id": category_id, "label": label}
