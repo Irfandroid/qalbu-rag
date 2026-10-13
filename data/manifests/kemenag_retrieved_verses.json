@@ -1,6 +1,6 @@
 {
   "status": "verified_retrieved",
-  "corpus": "qalbu-seed-v1",
+  "corpus": "qalbu-kemenag-v1",
   "source": {
     "provider": "Quran Kemenag API",
     "authority": "LPMQ Kementerian Agama RI",
@@ -13,7 +13,7 @@
   },
   "dataset_location": {
     "primary": "Supabase tables quran_documents and quran_chunks",
-    "corpus_filter": "qalbu-seed-v1",
+    "corpus_filter": "qalbu-kemenag-v1",
     "local_raw_cache": "data/raw/kemenag_reflection_scrape.json",
     "request_manifest": "data/manifests/kemenag_reflection_verses.json"
   },

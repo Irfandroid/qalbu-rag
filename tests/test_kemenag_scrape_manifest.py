@@ -19,7 +19,7 @@ def test_requested_manifest_expands_to_all_unique_verses():
 
 def test_kemenag_payload_keeps_provenance_and_tafsir():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    document, child = payload_to_document(
+    document, children = payload_to_document(
         "39:53",
         {
             "surah_payload": {
@@ -37,8 +37,13 @@ def test_kemenag_payload_keeps_provenance_and_tafsir():
     assert document["source"]["quran"] == "Quran Kemenag"
     assert document["source"]["tafsir"] == "Tafsir Kemenag (ringkas), Tafsir Kemenag (tahlili)"
     assert document["metadata"]["source_authority"] == "LPMQ Kementerian Agama RI"
-    assert "Tafsir Kemenag" in child["content"]
-    assert child["metadata"]["verse_key"] == "39:53"
+    assert {child["chunk_type"] for child in children} == {
+        "arabic", "translation", "tafsir", "themes"
+    }
+    tafsir = next(child for child in children if child["chunk_type"] == "tafsir")
+    assert "Tafsir Kemenag" in tafsir["content"]
+    assert tafsir["metadata"]["verse_key"] == "39:53"
+    assert all(child["parent_id"] == document["id"] for child in children)
 
 
 def test_parse_kemenag_html_fragment():

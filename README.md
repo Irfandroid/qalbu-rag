@@ -24,7 +24,7 @@ Untuk risiko segera, aplikasi langsung mengirim respons krisis tetap dan tidak m
 atau Gemini. Jika retrieval gagal, sumber tidak cukup relevan, atau jawaban AI tidak lolos
 validasi, aplikasi menampilkan fallback jujur atau sources-only response.
 
-Runtime MVP sengaja sederhana: satu bahasa, satu corpus aktif (`qalbu-seed-v1`), satu provider
+Runtime MVP sengaja sederhana: satu bahasa, satu corpus aktif (`qalbu-kemenag-v1`), satu provider
 embedding (Jina), dan satu provider LLM (Gemini). Riwayat chat hanya disimpan di `localStorage`
 browser; server tidak menyimpan percakapan.
 
@@ -33,6 +33,7 @@ browser; server tidak menyimpan percakapan.
 | Path | Tanggung jawab |
 |---|---|
 | `frontend/index.html` | UI chat, pembaca SSE, evidence Quran, history lokal |
+| `frontend/dataset.html` | Katalog referensi ayat corpus aktif |
 | `app/main.py` | Bootstrap FastAPI dan static frontend |
 | `app/api/routes/chat.py` | Endpoint chat, SSE, timeout, rate limit |
 | `app/safety/guardrails.py` | Safety gate sebelum network call |
@@ -50,7 +51,7 @@ Penjelasan alur dan keputusan arsitektur yang lebih lengkap ada di
 
 ## Jalankan lokal
 
-Syarat: Python 3.11+, corpus `qalbu-seed-v1` sudah terisi di Supabase, dan credential provider.
+Syarat: Python 3.11+, corpus `qalbu-kemenag-v1` sudah terisi di Supabase, dan credential provider.
 
 ```powershell
 python -m venv .venv
@@ -116,16 +117,20 @@ Response berupa Server-Sent Events dengan event `response`, `crisis`, `error`, d
 
 ## Data dan provenance
 
-Runtime membaca corpus `qalbu-seed-v1` dari tabel Supabase `quran_documents` dan `quran_chunks`.
+Runtime membaca corpus `qalbu-kemenag-v1` dari tabel Supabase `quran_documents` dan `quran_chunks`.
 Folder [`data/external/indonesian-quran/`](data/external/indonesian-quran/) hanya menyimpan
 snapshot/seed referensi dan tidak dibaca langsung oleh chat runtime.
 
-Sumber aktif corpus `qalbu-seed-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
+Sumber aktif corpus `qalbu-kemenag-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
 dari LPMQ Kementerian Agama RI. Metadata `source_provider=official_portal` dan
 `source_authority=LPMQ Kementerian Agama RI` dipakai untuk menampilkan provenance ini di UI.
 Evidence Arab, terjemahan, tafsir, dan provenance yang dikirim ke UI berasal dari row database,
 bukan dibuat oleh Gemini. Snapshot di folder data tetap diperlakukan terpisah dan tidak otomatis
 dianggap sebagai sumber resmi.
+
+Inventaris referensi lengkap tersedia di [`docs/QURAN_DATASET.md`](docs/QURAN_DATASET.md) dan
+halaman web [`/dataset`](http://127.0.0.1:8000/dataset). Setiap ayat adalah satu parent;
+field Arab, terjemahan, tafsir, dan tema dibuat sebagai child embedding terpisah.
 
 Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Model serta
 dimensi embedding saat indexing harus sama dengan runtime (`768` dimensi).

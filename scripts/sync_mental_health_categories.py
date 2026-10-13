@@ -5,7 +5,7 @@ import asyncio
 import json
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from app.core.config import get_settings
 from app.providers.embeddings.jina import JinaEmbeddingProvider, embedding_fingerprint
@@ -17,7 +17,7 @@ LOCAL_CHILDREN = ROOT / "data/processed/kemenag_portal_seed_children.json"
 
 
 def load_manifest() -> dict[str, Any]:
-    return json.loads(MANIFEST.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(MANIFEST.read_text(encoding="utf-8")))
 
 
 def category_index(manifest: dict[str, Any]) -> tuple[dict[str, list[str]], list[str]]:
@@ -47,8 +47,31 @@ def parent_categories(
 
 
 def labelled_content(content: str, categories: list[str]) -> str:
-    clean = re.sub(r"\n\nKategori kesehatan mental:.*$", "", content, flags=re.DOTALL)
-    return f"{clean}\n\nKategori kesehatan mental: {', '.join(categories)}"
+    clean = re.sub(
+        r"\nKategori (?:kesehatan mental|refleksi):.*$", "", content, flags=re.DOTALL
+    )
+    return (
+        f"{clean}\n\nKategori kesehatan mental: "
+        f"{', '.join(categories) or 'belum dipetakan'}"
+    )
+
+
+async def corpus_rows(client: Any, table: str, corpus: str) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    start = 0
+    while True:
+        response = await (
+            client.table(table)
+            .select("*")
+            .eq("corpus", corpus)
+            .range(start, start + 999)
+            .execute()
+        )
+        batch = cast(list[dict[str, Any]], response.data or [])
+        rows.extend(batch)
+        if len(batch) < 1000:
+            return rows
+        start += 1000
 
 
 def local_dry_run(manifest: dict[str, Any]) -> None:
@@ -72,18 +95,8 @@ async def sync() -> None:
     manifest = load_manifest()
     by_verse, pending = category_index(manifest)
     client = await acreate_client(settings.supabase_url, settings.supabase_server_key)
-    documents = (
-            await client.table("quran_documents")
-            .select("*")
-            .eq("corpus", manifest["corpus"])
-            .execute()
-        ).data
-    chunks = (
-            await client.table("quran_chunks")
-            .select("*")
-            .eq("corpus", manifest["corpus"])
-            .execute()
-        ).data
+    documents = await corpus_rows(client, "quran_documents", manifest["corpus"])
+    chunks = await corpus_rows(client, "quran_chunks", manifest["corpus"])
     if any(
         (document.get("metadata") or {}).get("source_provider") != "official_portal"
         or "kementerian agama" not in str(
@@ -121,9 +134,9 @@ async def sync() -> None:
 
     to_embed: list[tuple[dict[str, Any], str, dict[str, Any]]] = []
     for chunk in chunks:
-        categories = grouped.get(chunk["parent_id"], [])
-        if not categories:
+        if chunk.get("chunk_type") != "themes":
             continue
+        categories = grouped.get(chunk["parent_id"], [])
         content = labelled_content(chunk["content"], categories)
         metadata = dict(chunk.get("metadata") or {})
         metadata.update(

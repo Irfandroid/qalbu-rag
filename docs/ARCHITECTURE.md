@@ -124,7 +124,7 @@ vector-nya sudah ada di Supabase sebelum aplikasi dipakai.
 
 1. Jina query embedding.
 2. RPC Supabase `match_quran_chunks(embedding, match_count, corpus_filter)` pada corpus
-   `qalbu-seed-v1`, dengan `match_count` child minimal `TOP_K_RETRIEVAL` dan di-oversample
+   `qalbu-kemenag-v1`, dengan `match_count` child minimal `TOP_K_RETRIEVAL` dan di-oversample
    menjadi `max(TOP_K_RETRIEVAL, RETRIEVAL_PARENT_K * 4)`.
 3. Buang result dengan skor cosine di bawah `MIN_RETRIEVAL_SCORE` (default `0.32`).
 4. Deduplicate berdasarkan `parent_id`; child terkuat mewakili satu parent.
@@ -232,9 +232,9 @@ membocorkan exception provider ke user.
 ### 3.1 Sumber data
 
 Folder `data/external/indonesian-quran/` menyimpan snapshot Indonesia sebagai artefak referensi.
-Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus `qalbu-seed-v1` dari Supabase.
+Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus `qalbu-kemenag-v1` dari Supabase.
 
-Sumber aktif corpus `qalbu-seed-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
+Sumber aktif corpus `qalbu-kemenag-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
 dari LPMQ Kementerian Agama RI. Row aktif menyimpan `source_provider=official_portal` dan
 `source_authority=LPMQ Kementerian Agama RI`, lalu provenance tersebut diteruskan ke UI.
 Snapshot di folder data tetap diperlakukan sebagai artefak terpisah; statusnya `unverified` sampai
@@ -272,11 +272,11 @@ erDiagram
     }
 ```
 
-**Parent** = satu unit ayat/rentang ayat lengkap yang dikembalikan ke UI. Isinya Arab,
+**Parent** = satu ayat lengkap yang dikembalikan ke UI. Isinya Arab,
 terjemahan, tafsir, tema, dan provenance.
 
-**Child** = unit kecil yang di-embed untuk pencarian. `chunk_type` aktif: `arabic`, `translation`,
-`tafsir`, `themes`. Child menunjuk ke parent lewat `parent_id`; child tidak ditampilkan sebagai
+**Child** = satu field ayat yang di-embed untuk pencarian. `chunk_type` aktif: `arabic`, `translation`,
+`tafsir`, `themes`. Field kosong tidak dibuat. Child menunjuk ke parent lewat `parent_id`; child tidak ditampilkan sebagai
 jawaban akhir.
 
 ### 3.3 Workflow indexing satu kali
@@ -290,7 +290,7 @@ flowchart TD
     E --> F[Fingerprint model + dimensi + content]
     F --> V[Insert quran_chunks vector(768)]
     V --> I[HNSW cosine index + RPC]
-    I --> READY[Corpus qalbu-seed-v1 siap dipakai]
+    I --> READY[Corpus qalbu-kemenag-v1 siap dipakai]
 ```
 
 Indexing harus memakai model/dimensi yang sama dengan runtime. Jika model atau dimensi berubah,
@@ -305,7 +305,7 @@ boot. Startup chat tidak mengulang embedding atau mengubah database.
 Migration di `supabase/migrations/` membangun schema secara bertahap:
 
 1. tabel parent/child dan vector column;
-2. corpus partition `qalbu-seed-v1` + filter RPC;
+2. corpus partition `qalbu-kemenag-v1` + filter RPC;
 3. HNSW index dan tuning `ef_search`;
 4. manifest provider/model/dimensi/fingerprint;
 5. revoke akses publik ke RPC dan tabel, hanya `service_role`.
@@ -413,7 +413,7 @@ multi-instance, kebutuhan audit, atau evaluasi relevansi yang terukur.
 
 ### Dampak dan batasan yang harus diketahui
 
-- Kualitas jawaban dibatasi kualitas/coverage corpus `qalbu-seed-v1` dan metadata provenance.
+- Kualitas jawaban dibatasi kualitas/coverage corpus `qalbu-kemenag-v1` dan metadata provenance.
 - Snapshot Indonesia saat ini belum otomatis berarti resmi Kemenag.
 - Kontak krisis harus diisi dan diverifikasi sebelum deployment publik.
 - Provider eksternal menentukan latency dan availability.

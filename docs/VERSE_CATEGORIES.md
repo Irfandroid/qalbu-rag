@@ -1,6 +1,6 @@
 # Peta Ayat Qalbu per Kategori
 
-Daftar ini adalah **kandidat ayat refleksi** untuk corpus aktif `qalbu-seed-v1`.
+Daftar ini adalah **kandidat ayat refleksi** untuk corpus aktif `qalbu-kemenag-v1`.
 Sumber ayat, terjemahan, dan tafsir berasal dari **API Al-Qur'an Kemenag / LPMQ**;
 LLM tidak membuat teks Arab atau sitasi baru. Kesesuaian akhir tetap perlu dinilai
 oleh pengguna karena satu ayat dapat relevan dengan lebih dari satu pengalaman.

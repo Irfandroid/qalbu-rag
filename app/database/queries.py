@@ -1,9 +1,10 @@
 from app.models.quran import QuranDocument
 from app.models.rag import RetrievalResult
+from app.quran.catalog import CORPUS
 
 
 class SupabaseQuranRepository:
-    def __init__(self, client, corpus: str = "qalbu-seed-v1") -> None:
+    def __init__(self, client, corpus: str = CORPUS) -> None:
         self.client = client
         self.corpus = corpus
 

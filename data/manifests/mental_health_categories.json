@@ -1,6 +1,6 @@
 {
   "version": "mental-health-v1",
-  "corpus": "qalbu-seed-v1",
+  "corpus": "qalbu-kemenag-v1",
   "source": {
     "provider": "Quran Kemenag API",
     "authority": "LPMQ Kementerian Agama RI",

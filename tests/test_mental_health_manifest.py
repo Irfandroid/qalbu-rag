@@ -19,7 +19,7 @@ def _expand_ranges(ranges: list[str]) -> set[str]:
 
 def test_manifest_covers_the_requested_taxonomy():
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    assert data["corpus"] == "qalbu-seed-v1"
+    assert data["corpus"] == "qalbu-kemenag-v1"
     assert data["source"]["api_url"] == "https://quran-api.lpmqkemenag.id/alquran/data"
     groups = {}
     for category in data["categories"]:

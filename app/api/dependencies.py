@@ -5,6 +5,7 @@ from app.database.queries import SupabaseQuranRepository
 from app.database.supabase import get_supabase
 from app.providers.embeddings.jina import JinaEmbeddingProvider
 from app.providers.llm.gemini import GeminiProvider
+from app.quran.catalog import CORPUS
 from app.rag.citation_validator import CitationValidator
 from app.rag.pipeline import QalbuRAG
 from app.rag.retriever import QuranRetriever
@@ -22,7 +23,7 @@ async def get_rag() -> QalbuRAG:
             },
         )
     supabase = await get_supabase(settings)
-    repository = SupabaseQuranRepository(supabase, "qalbu-seed-v1")
+    repository = SupabaseQuranRepository(supabase, CORPUS)
     embeddings = JinaEmbeddingProvider(
         settings.jina_api_key or "",
         settings.jina_embedding_model,

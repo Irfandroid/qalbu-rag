@@ -12,11 +12,15 @@ import httpx
 
 from app.core.config import get_settings
 from app.providers.embeddings.jina import JinaEmbeddingProvider, embedding_fingerprint
+from app.quran.catalog import CHUNK_TYPES, child_id, expand_ranges, parent_id
 from supabase import acreate_client
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "data/manifests/kemenag_reflection_verses.json"
-RAW_CACHE = ROOT / "data/raw/kemenag_reflection_scrape.json"
+DEFAULT_MANIFEST = ROOT / "data/manifests/kemenag_reflection_verses.json"
+DEFAULT_RAW_CACHE = ROOT / "data/raw/kemenag_reflection_scrape.json"
+# Kept as aliases for callers and tests that use the original MVP manifest.
+MANIFEST = DEFAULT_MANIFEST
+RAW_CACHE = DEFAULT_RAW_CACHE
 DEFAULT_BASE_URL = "https://quran-api.lpmqkemenag.id/alquran/data"
 SURAH_NAMES = {
     19: "Maryam",
@@ -28,15 +32,6 @@ SURAH_NAMES = {
     109: "Al-Kafirun",
     112: "Al-Ikhlas",
 }
-
-
-def expand_ranges(ranges: list[str]) -> list[str]:
-    keys: list[str] = []
-    for item in ranges:
-        surah, ayahs = item.split(":", 1)
-        bounds = [int(value) for value in ayahs.split("-", 1)]
-        keys.extend(f"{int(surah)}:{ayah}" for ayah in range(bounds[0], bounds[-1] + 1))
-    return list(dict.fromkeys(keys))
 
 
 class _TableParser(HTMLParser):
@@ -192,21 +187,21 @@ class KemenagPortalClient:
         return parse_payload(response)[0]
 
 
-def load_cache() -> dict[str, dict[str, Any]]:
-    if not RAW_CACHE.exists():
+def load_cache(path: Path = RAW_CACHE) -> dict[str, dict[str, Any]]:
+    if not path.exists():
         return {}
-    data = json.loads(RAW_CACHE.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
     return {row["verse_key"]: row for row in data.get("responses", [])}
 
 
-def save_cache(rows: list[dict[str, Any]]) -> None:
-    RAW_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    RAW_CACHE.write_text(
+def save_cache(rows: list[dict[str, Any]], path: Path, manifest_path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
         json.dumps(
             {
                 "provider": "Quran Kemenag",
                 "authority": "LPMQ Kementerian Agama RI",
-                "manifest": str(MANIFEST.relative_to(ROOT)),
+                "manifest": str(manifest_path.relative_to(ROOT)),
                 "responses": rows,
             },
             ensure_ascii=False,
@@ -217,8 +212,11 @@ def save_cache(rows: list[dict[str, Any]]) -> None:
 
 
 def payload_to_document(
-    key: str, row: dict[str, Any], manifest: dict[str, Any]
-) -> tuple[dict[str, Any], dict[str, Any]]:
+    key: str,
+    row: dict[str, Any],
+    manifest: dict[str, Any],
+    categories: list[str] | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     surah, ayah = (int(part) for part in key.split(":"))
     arabic = _text(row["surah_payload"], "Text MSI Usmani", "Arabic", "arabic")
     translation = _text(row["surah_payload"], "Terjemahan", "Translation", "translation")
@@ -231,7 +229,8 @@ def payload_to_document(
         )
         if value
     )
-    parent_id = f"qalbu-kemenag-{surah:03d}-{ayah:03d}-{ayah:03d}"
+    document_id = parent_id(manifest["corpus"], key)
+    categories = sorted(categories or [])
     metadata = {
         "corpus": manifest["corpus"],
         "official": True,
@@ -242,9 +241,10 @@ def payload_to_document(
         "translation_verified_source": True,
         "translation_provenance_status": "official_portal",
         "source_manifest_version": manifest["version"],
+        "mental_health_categories": categories,
     }
     document = {
-        "id": parent_id,
+        "id": document_id,
         "surah_number": surah,
         "surah_name": _text(
             row["surah_payload"], "Nama Surah", "Nama Surat", "Surah Name"
@@ -255,7 +255,7 @@ def payload_to_document(
         "arabic_text": arabic,
         "translation": translation,
         "tafsir": tafsir_text,
-        "themes": [],
+        "themes": categories,
         "source": {
             "quran": "Quran Kemenag",
             "translation": "Terjemahan Kemenag",
@@ -264,19 +264,34 @@ def payload_to_document(
         "metadata": metadata,
         "corpus": manifest["corpus"],
     }
-    content = (
-        f"Surah {surah}, ayat {ayah}\n\nArab:\n{arabic}\n\n"
-        f"Terjemahan Kemenag:\n{translation}\n\nTafsir Kemenag:\n{tafsir_text}"
-    )
-    child = {
-        "id": f"child:kemenag:{surah}:{ayah}",
-        "parent_id": parent_id,
-        "chunk_type": "themes",
-        "content": content,
-        "metadata": {**metadata, "verse_key": key, "embedding_template": manifest["version"]},
-        "corpus": manifest["corpus"],
+    field_content = {
+        "arabic": f"Surah {surah}, ayat {ayah}\nArab:\n{arabic}",
+        "translation": f"Surah {surah}, ayat {ayah}\nTerjemahan Kemenag:\n{translation}",
+        "tafsir": f"Surah {surah}, ayat {ayah}\nTafsir Kemenag:\n{tafsir_text}",
+        "themes": (
+            f"Surah {surah}, ayat {ayah}\n"
+            f"Kategori kesehatan mental: {', '.join(categories) or 'belum dipetakan'}"
+        ),
     }
-    return document, child
+    chunks = [
+        {
+            "id": child_id(document_id, chunk_type),
+            "parent_id": document_id,
+            "chunk_type": chunk_type,
+            "content": content,
+            "metadata": {
+                **metadata,
+                "verse_key": key,
+                "chunk_type": chunk_type,
+                "embedding_template": manifest["version"],
+            },
+            "corpus": manifest["corpus"],
+        }
+        for chunk_type in CHUNK_TYPES
+        for content in [field_content[chunk_type]]
+        if content.split(":\n", 1)[-1].strip()
+    ]
+    return document, chunks
 
 
 def existing_keys(documents: list[dict[str, Any]]) -> set[str]:
@@ -287,32 +302,113 @@ def existing_keys(documents: list[dict[str, Any]]) -> set[str]:
     }
 
 
-async def run(dry_run: bool) -> None:
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+async def corpus_rows(client: Any, table: str, columns: str, corpus: str) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    start = 0
+    while True:
+        batch = (
+            await client.table(table)
+            .select(columns)
+            .eq("corpus", corpus)
+            .range(start, start + 999)
+            .execute()
+        ).data or []
+        rows.extend(batch)
+        if len(batch) < 1000:
+            return rows
+        start += 1000
+
+
+def validate_chunk_rows(
+    rows: list[tuple[dict[str, Any], list[dict[str, Any]]]], requested: list[str]
+) -> dict[str, int]:
+    requested_keys = set(requested)
+    parent_keys = [
+        key
+        for parent, _ in rows
+        for key in parent.get("metadata", {}).get("verse_keys", [])
+    ]
+    if len(parent_keys) != len(set(parent_keys)) or set(parent_keys) != requested_keys:
+        raise RuntimeError("Kemenag parent rows do not match the requested verse inventory")
+    parent_ids = {parent["id"] for parent, _ in rows}
+    children = [child for _, chunks in rows for child in chunks]
+    pairs = [(child["parent_id"], child["chunk_type"]) for child in children]
+    if any(child["parent_id"] not in parent_ids for child in children):
+        raise RuntimeError("Kemenag child row references an unknown parent")
+    if len(pairs) != len(set(pairs)):
+        raise RuntimeError("Kemenag child rows contain duplicate parent/type pairs")
+    if any(child["chunk_type"] not in CHUNK_TYPES for child in children):
+        raise RuntimeError("Kemenag child row contains an unsupported chunk type")
+    if any(
+        parent.get("metadata", {}).get("source_provider") != "official_portal"
+        or "kementerian agama"
+        not in parent.get("metadata", {}).get("source_authority", "").casefold()
+        for parent, _ in rows
+    ):
+        raise RuntimeError("Kemenag parent row is missing official provenance")
+    if any(
+        child.get("metadata", {}).get("source_provider") != "official_portal"
+        or "kementerian agama"
+        not in child.get("metadata", {}).get("source_authority", "").casefold()
+        for child in children
+    ):
+        raise RuntimeError("Kemenag child row is missing official provenance")
+    return {
+        chunk_type: sum(child["chunk_type"] == chunk_type for child in children)
+        for chunk_type in CHUNK_TYPES
+    }
+
+
+def _category_index() -> dict[str, list[str]]:
+    path = ROOT / "data/manifests/mental_health_categories.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    result: dict[str, list[str]] = {}
+    for category in data["categories"]:
+        if category.get("guardrail_only"):
+            continue
+        for key in category.get("verse_keys", []):
+            result.setdefault(key, []).append(category["id"])
+    return result
+
+
+async def run(dry_run: bool, manifest_path: Path = MANIFEST) -> None:
+    manifest_path = manifest_path.resolve()
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    raw_cache = ROOT / "data/raw" / f"{manifest_path.stem}_scrape.json"
     requested = expand_ranges(manifest["ranges"])
     settings = get_settings()
     if not settings.supabase_url or not settings.supabase_server_key:
         raise RuntimeError("SUPABASE_URL dan Supabase server key wajib dikonfigurasi")
     supabase = await acreate_client(settings.supabase_url, settings.supabase_server_key)
-    documents = (
-        await supabase.table("quran_documents")
-        .select("metadata")
-        .eq("corpus", manifest["corpus"])
-        .execute()
-    ).data
+    documents = await corpus_rows(supabase, "quran_documents", "metadata", manifest["corpus"])
     missing = [key for key in requested if key not in existing_keys(documents)]
+    existing_chunks = await corpus_rows(
+        supabase, "quran_chunks", "parent_id,chunk_type", manifest["corpus"]
+    )
+    expected_pairs = {
+        (parent_id(manifest["corpus"], key), chunk_type)
+        for key in requested
+        for chunk_type in CHUNK_TYPES
+    }
+    existing_pairs = {
+        (chunk["parent_id"], chunk["chunk_type"]) for chunk in existing_chunks
+    }
+    complete = not missing and expected_pairs == existing_pairs
     print(f"Manifest: {len(manifest['ranges'])} ranges, {len(requested)} ayat")
     print(f"Already in corpus: {len(requested) - len(missing)}; missing: {len(missing)}")
     if dry_run:
         print("Missing keys:", ", ".join(missing) or "none")
         return
-    if not missing:
-        print("Tidak ada ayat baru untuk diambil.")
+    if complete:
+        print("Corpus dan parent-child chunks sudah lengkap.")
         return
 
-    cache = load_cache()
-    fetched: dict[str, dict[str, Any]] = {key: cache[key] for key in missing if key in cache}
-    api_missing = [key for key in missing if key not in fetched]
+    cache = load_cache(raw_cache)
+    required_keys = requested
+    fetched: dict[str, dict[str, Any]] = {
+        key: cache[key] for key in required_keys if key in cache
+    }
+    api_missing = [key for key in required_keys if key not in fetched]
     username = settings.kemenag_username or ""
     password = settings.kemenag_password or ""
     token = settings.kemenag_token or ""
@@ -356,9 +452,18 @@ async def run(dry_run: bool) -> None:
                     }
         finally:
             client.close()
-    save_cache(list(fetched.values()))
+    save_cache(list(fetched.values()), raw_cache, manifest_path)
 
-    rows = [payload_to_document(key, fetched[key], manifest) for key in missing if key in fetched]
+    categories = _category_index()
+    rows = [
+        payload_to_document(key, fetched[key], manifest, categories.get(key, []))
+        for key in requested
+        if key in fetched
+    ]
+    if len(rows) != len(requested):
+        raise RuntimeError("Kemenag fetch did not return every requested verse")
+    child_counts = validate_chunk_rows(rows, requested)
+    chunks = [child for _, row_chunks in rows for child in row_chunks]
     provider = JinaEmbeddingProvider(
         settings.jina_api_key or "",
         settings.jina_embedding_model,
@@ -366,13 +471,12 @@ async def run(dry_run: bool) -> None:
         settings.request_timeout_seconds,
     )
     embeddings: list[list[float]] = []
-    for start in range(0, len(rows), 16):
-        batch = [child["content"] for _, child in rows[start : start + 16]]
+    for start in range(0, len(chunks), 16):
+        batch = [child["content"] for child in chunks[start : start + 16]]
         embeddings.extend(
             await provider.embed_documents(batch)
         )
-    children = []
-    for (_, child), vector in zip(rows, embeddings, strict=True):
+    for child, vector in zip(chunks, embeddings, strict=True):
         child.update(
             {
                 "embedding": vector,
@@ -385,21 +489,32 @@ async def run(dry_run: bool) -> None:
                 ),
             }
         )
-        children.append(child)
-    await supabase.table("quran_documents").upsert(
-        [parent for parent, _ in rows], on_conflict="id"
-    ).execute()
-    await supabase.table("quran_chunks").upsert(children, on_conflict="id").execute()
-    print(f"Inserted Kemenag documents: {len(rows)}; embedded chunks: {len(children)}")
+    parents = [parent for parent, _ in rows]
+    for start in range(0, len(parents), 64):
+        await supabase.table("quran_documents").upsert(
+            parents[start : start + 64], on_conflict="id"
+        ).execute()
+    for start in range(0, len(chunks), 32):
+        await supabase.table("quran_chunks").upsert(
+            chunks[start : start + 32], on_conflict="id"
+        ).execute()
+    print(f"Inserted Kemenag documents: {len(rows)}; embedded chunks: {len(chunks)}")
+    print("Child counts:", ", ".join(f"{key}={value}" for key, value in child_counts.items()))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=MANIFEST,
+        help="Manifest path, defaulting to the reflection subset manifest.",
+    )
     args = parser.parse_args()
     import asyncio
 
-    asyncio.run(run(args.dry_run))
+    asyncio.run(run(args.dry_run, args.manifest))
 
 
 if __name__ == "__main__":
