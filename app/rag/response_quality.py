@@ -118,13 +118,14 @@ def assess_contextual_response(
     matched_group = next(
         (group for group in _CONTEXT_GROUPS if any(term in query_text for term in group)), ()
     )
-    if matched_group and not (
-        any(term in answer for term in matched_group)
-        or any(marker in answer for marker in _EMPATHY_MARKERS)
-    ):
+    context_acknowledged = bool(matched_group and any(term in answer for term in matched_group))
+    empathy_acknowledged = context_acknowledged or any(
+        marker in answer for marker in _EMPATHY_MARKERS
+    )
+    if matched_group and not empathy_acknowledged:
         issues.append("missing_context_ack")
 
-    if not any(marker in answer for marker in _EMPATHY_MARKERS):
+    if not empathy_acknowledged:
         issues.append("missing_empathy")
     if any(pattern in answer for pattern in _DISMISSIVE_PATTERNS):
         issues.append("dismissive_or_preachy")

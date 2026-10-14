@@ -52,6 +52,22 @@ def test_contextual_grounded_answer_passes():
     assert report.passed
 
 
+def test_contextual_acknowledgement_without_legacy_empathy_marker_passes():
+    response = QalbuResponse(
+        answer=(
+            "Kecemasan tentang masa depan tidak selalu mudah dijalani. Ayat ini mengajak hati "
+            "mengingat Allah. Dalam tafsir yang tersedia, zikir mencakup tasbih dan tahmid."
+        ),
+        references=[QuranReference(parent_id="qalbu-seed-013-028")],
+    )
+
+    report = assess_contextual_response(
+        "Aku sedang cemas tentang masa depan", response, [source()], max_tokens=72
+    )
+
+    assert report.passed
+
+
 def test_repair_query_contains_failures_without_fixed_answer():
     response = QalbuResponse(answer="Jawaban generik", references=[])
     report = assess_contextual_response(
