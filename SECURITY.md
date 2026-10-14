@@ -13,6 +13,14 @@ Do not open a public issue containing API keys, personal conversations, database
 - Rotate any credential pasted into chat, logs, screenshots, issues, or commits.
 - Review staged changes for tokens before every push.
 
+## Public repository hygiene
+
+- Use placeholders such as `SERVER_IP`, `example.com`, and `<PROJECT_REF>` in README, issues, and screenshots.
+- Do not publish VPS addresses, SSH commands containing private paths, `.env` contents, deployment logs,
+  database dumps, backups, or personal conversations.
+- Run a staged diff review before pushing and redact sensitive values from any diagnostic output.
+- A secret found in Git history must be revoked and rotated; deleting it from the latest file is not enough.
+
 ## Known non-production properties
 
 - Rate limiting and caches are process-local.

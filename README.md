@@ -78,6 +78,27 @@ Invoke-WebRequest http://127.0.0.1:8000/api/health
 `status=ok` berarti proses hidup. `rag=configured` hanya berarti credential server terbaca; field
 `corpus` menunjukkan corpus aktif. Keduanya belum membuktikan corpus Supabase berisi data.
 
+## Deploy VPS
+
+Dokumentasi publik ini sengaja tidak menyimpan IP VPS, hostname internal, port database, atau
+credential. Ganti `SERVER_IP` hanya di terminal lokal; jangan commit nilai aslinya.
+
+Di VPS yang sudah memiliki Docker Compose dan checkout repository:
+
+```bash
+cd /path/to/qalbu
+git pull --ff-only origin main
+docker compose up -d --build --force-recreate
+docker compose ps
+curl http://127.0.0.1:8000/api/health
+```
+
+Service Compose bernama `qalbu-api`. Jika port 8000 dibuka oleh firewall, aplikasi dapat diuji dari
+browser melalui `http://SERVER_IP:8000`; untuk deployment publik, gunakan reverse proxy dan TLS.
+Jangan membuka port Supabase, Jina, atau Gemini ke internet. Saat mendiagnosis, kirim hanya log yang
+sudah disensor dan jangan pernah menyalin `.env`, API key, token, atau password ke issue, chat, atau
+commit.
+
 ## Konfigurasi
 
 Salin [`.env.example`](.env.example) menjadi `.env`. Isi secret hanya di `.env` atau secret

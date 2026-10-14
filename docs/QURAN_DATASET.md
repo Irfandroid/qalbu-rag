@@ -10,9 +10,13 @@ Inventaris ini adalah daftar referensi ayat pada corpus aktif `qalbu-kemenag-v1`
 | Child `arabic` | 282 |
 | Child `translation` | 282 |
 | Child `tafsir` | 282 |
-| Child `themes` | 282 |
+| Child `themes` | 225 |
 | Subset manifest refleksi | 201 |
 | Surah tercakup | 84 |
+
+Jumlah child `themes` lebih kecil dari parent karena child hanya dibuat saat field tema sumber
+memiliki isi. Endpoint katalog dataset menghitung jumlah aktual dari `quran_chunks`; angka di atas
+adalah snapshot manifest corpus yang diverifikasi pada 2026-10-13.
 
 ## Daftar ayat
 
