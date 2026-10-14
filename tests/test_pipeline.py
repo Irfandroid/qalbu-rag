@@ -139,6 +139,23 @@ async def test_generator_failure_returns_retrieved_sources():
 
 
 @pytest.mark.asyncio
+async def test_grounded_empathic_response_is_not_rejected_for_missing_exact_query_words():
+    answer = (
+        "Perasaan seperti ini bisa terasa berat. Ayat ini mengajak hati mencari ketenteraman. "
+        "Dalam tafsir yang tersedia, zikir mencakup tasbih dan tahmid."
+    )
+    llm = SequenceLLM(
+        [QalbuResponse(answer=answer, references=[QuranReference(parent_id=SOURCE_ID)])] * 2
+    )
+    rag = build_rag(VectorRetriever(Repository()), llm)
+
+    response = await rag.ask("Aku merasa hidup tidak bermakna", "test-quality-gate")
+
+    assert response.answer == answer
+    assert llm.calls == 1
+
+
+@pytest.mark.asyncio
 async def test_out_of_scope_query_is_rejected_before_external_retrieval():
     rag = build_rag(ExplodingRetriever(), FailingLLM())  # type: ignore[arg-type]
 

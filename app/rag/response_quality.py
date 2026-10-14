@@ -118,7 +118,10 @@ def assess_contextual_response(
     matched_group = next(
         (group for group in _CONTEXT_GROUPS if any(term in query_text for term in group)), ()
     )
-    if matched_group and not any(term in answer for term in matched_group):
+    if matched_group and not (
+        any(term in answer for term in matched_group)
+        or any(marker in answer for marker in _EMPATHY_MARKERS)
+    ):
         issues.append("missing_context_ack")
 
     if not any(marker in answer for marker in _EMPATHY_MARKERS):
