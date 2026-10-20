@@ -301,7 +301,70 @@ embedding manifest membantu mendeteksi vector lama.
 Repo menyimpan migration schema/index/RPC, tetapi tidak menjalankan indexing otomatis saat server
 boot. Startup chat tidak mengulang embedding atau mengubah database.
 
-### 3.4 Urutan migration penting
+### 3.4 Mengapa parent–child dan bagaimana klasifikasinya
+
+Parent–child dipakai karena kebutuhan pencarian dan kebutuhan jawaban berbeda:
+
+- **Child untuk precision/recall retrieval.** Arab, terjemahan, tafsir, dan tema di-embed
+  terpisah. Query berbahasa Indonesia dapat cocok ke terjemahan, tafsir, atau tema tanpa
+  tertutup oleh teks field lain.
+- **Parent untuk konteks lengkap.** Setelah child ditemukan, `parent_id` dipakai untuk mengambil
+  satu ayat lengkap beserta provenance. Child tidak langsung dikirim sebagai jawaban.
+- **Dedup dan context budget.** Beberapa child dari ayat yang sama hanya dihitung sebagai satu
+  parent; child dengan skor tertinggi menjadi wakilnya.
+- **Perubahan lebih terlokalisasi.** Perubahan label kategori cukup memperbarui child `themes`
+  dan metadata terkait, tanpa mengubah struktur parent atau child lain.
+
+Klasifikasi dilakukan secara deterministik dan multi-label, bukan oleh LLM:
+
+1. **Klasifikasi struktur:** setiap field non-kosong menjadi satu `chunk_type`: `arabic`,
+   `translation`, `tafsir`, atau `themes`. Field kosong dilewati.
+2. **Klasifikasi kategori ayat:** `verse_key` dicocokkan ke
+   `data/manifests/mental_health_categories.json`. Satu ayat dapat memiliki beberapa kategori;
+   kategori `guardrail_only` seperti self-harm dan krisis tidak masuk ke retrieval themes.
+3. **Klasifikasi query:** saat runtime, keyword dari `app/quran/themes.py` dicocokkan dengan
+   pesan pengguna. Hasilnya menjadi `possible_themes` dan `retrieval_hints` untuk memperkaya
+   embedding query. Ini adalah bantuan retrieval, bukan diagnosis.
+
+```mermaid
+flowchart TD
+    A[Manifest ayat + manifest kategori] --> B[Fetch dan normalisasi sumber Kemenag]
+    A --> C[Lookup verse_key ke kategori multi-label]
+    B --> D[Bangun 1 ayat sebagai parent]
+    C --> D
+    D --> E{Field tersedia?}
+    E -->|ya| F[Buat child dengan chunk_type + parent_id]
+    E -->|tidak| G[Lewati field]
+    F --> H[Embedding retrieval.passage]
+    H --> I[Simpan quran_chunks + provenance]
+    I --> J[Vector index / RPC]
+```
+
+```mermaid
+flowchart TD
+    Q[Pesan pengguna] --> S[Safety guardrails]
+    S -->|Immediate danger| X[Respons krisis tetap]
+    S -->|aman| U[Normalisasi + keyword theme]
+    U --> E[Embedding retrieval.query]
+    E --> R[Search child chunks]
+    R --> T[Threshold + ranking + oversampling]
+    T --> D[Dedup parent_id; pilih child terkuat]
+    D --> P[Fetch quran_documents]
+    P --> L[Build context dan panggil LLM]
+    L --> V[Citation validator + quality gate]
+    V -->|lulus| O[Refleksi + references]
+    V -->|gagal| F[Sources-only / fallback]
+```
+
+Contoh `QS. 39:53`: satu parent dapat memiliki child `:arabic`, `:translation`, `:tafsir`,
+dan `:themes` dengan kategori seperti `rasa_bersalah`, `taubat`, dan `harapan_rahmat`. Jika
+retrieval menemukan `:themes`, respons tetap mengambil parent yang sama agar teks dan provenance
+lengkap tersedia.
+
+> Batas desain saat ini: child adalah satu field per ayat, bukan pemotongan token bertingkat.
+> Jika tafsir menjadi sangat panjang, child tersebut perlu dipecah lagi menjadi sub-child.
+
+### 3.5 Urutan migration penting
 
 Migration di `supabase/migrations/` membangun schema secara bertahap:
 
