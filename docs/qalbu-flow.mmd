@@ -1,0 +1,26 @@
+flowchart TD
+    subgraph INDEX["Indexing corpus (sekali saat data disiapkan)"]
+        SOURCE["Sumber Quran + manifest kategori"] --> NORMALIZE["Normalisasi + klasifikasi verse_key"]
+        NORMALIZE --> PARENT["Parent: quran_documents"]
+        PARENT --> CHILD["Child non-kosong: arabic / translation / tafsir / themes"]
+        CHILD --> PASSAGE["Jina embedding: retrieval.passage"]
+        PASSAGE --> VECTOR["Supabase quran_chunks + vector index"]
+    end
+
+    subgraph RUNTIME["Runtime chat"]
+        USER["Pesan user"] --> SAFETY{"Safety guardrails"}
+        SAFETY -->|krisis segera| CRISIS["Respons krisis tetap"]
+        SAFETY -->|aman| QUERY["Normalisasi + klasifikasi tema + enrichment"]
+        QUERY --> QUERY_EMBED["Jina embedding: retrieval.query"]
+        QUERY_EMBED --> SEARCH["Vector search child"]
+        SEARCH --> RANK["Threshold + ranking + oversampling"]
+        RANK --> DEDUP["Dedup berdasarkan parent_id"]
+        DEDUP --> FETCH["Fetch parent lengkap"]
+        FETCH --> CONTEXT["Build context"]
+        CONTEXT --> LLM["Gemini membuat refleksi"]
+        LLM --> GATE{"Citation + quality gate"}
+        GATE -->|lulus| RESPONSE["Refleksi + evidence"]
+        GATE -->|gagal| FALLBACK["Sources-only / fallback"]
+    end
+
+    VECTOR --> SEARCH
