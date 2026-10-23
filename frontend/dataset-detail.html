@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173A31">
+  <title>Detail Ayat — Qalbu</title>
+  <style>
+    :root{--canvas:#f4f1e9;--paper:#fffdf8;--ink:#173a31;--moss:#55724e;--mist:#e8efe2;--line:#d8d8cc;--muted:#6b776f;--alert:#8a4a44}*{box-sizing:border-box}html{background:var(--canvas)}body{margin:0;color:var(--ink);font:16px/1.55 Geist,ui-sans-serif,sans-serif}.shell{width:min(860px,calc(100% - 32px));margin:0 auto;padding:2.5rem 0 4rem}.topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:3rem}.brand{display:flex;align-items:center;gap:.65rem;color:var(--ink);font-weight:700;font-size:1.1rem;text-decoration:none}.mark{display:grid;place-items:center;width:2.15rem;height:2.15rem;border-radius:50%;background:var(--ink);color:var(--paper);font-size:.78rem}.back{color:var(--moss);font-size:.82rem;font-weight:700;text-decoration:none}.back:hover{text-decoration:underline}.eyebrow{margin:0 0 .55rem;color:var(--moss);font-family:ui-monospace,monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}.hero h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.35rem,6vw,4.8rem);font-weight:400;letter-spacing:-.055em;line-height:.98}.hero p{margin:1rem 0 0;color:var(--muted)}.status{margin:2rem 0;padding:1rem;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--muted)}.status.error{border-color:#be857e;color:var(--alert)}.retry{margin-top:.75rem;min-height:36px;border:1px solid #be857e;border-radius:9px;background:transparent;color:var(--alert);padding:.35rem .7rem;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}.verse-card{margin-top:2rem;border:1px solid var(--line);background:var(--paper)}.verse-head{display:flex;justify-content:space-between;gap:1rem;padding:1rem 1.1rem;border-bottom:1px solid var(--line)}.verse-head h2{margin:0;font-size:1rem}.verse-head span{color:var(--muted);font-family:ui-monospace,monospace;font-size:.78rem}.arabic{margin:0;padding:1.3rem 1.1rem;border-bottom:1px solid var(--line);font-family:"Noto Naskh Arabic",Amiri,serif;font-size:2rem;line-height:2.1;text-align:right}.translation{margin:0;padding:1rem 1.1rem;color:#30483f;line-height:1.8}.section{padding:1rem 1.1rem;border-top:1px solid var(--line)}.section summary{cursor:pointer;color:var(--muted);font-size:.82rem;font-weight:700}.section p{margin:.65rem 0 0;color:#30483f;line-height:1.8}.source{padding:.8rem 1.1rem;border-top:1px solid var(--line);background:#f2f1eb;color:var(--muted);font-size:.74rem}@media(max-width:600px){.shell{width:min(100% - 24px,860px);padding-top:1.25rem}.topbar{margin-bottom:2.5rem}.verse-head{display:block}.verse-head span{display:block;margin-top:.3rem}.arabic{font-size:1.65rem}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <nav class="topbar" aria-label="Navigasi utama"><a class="brand" href="/"><span class="mark">Q</span>Qalbu</a><a class="back" href="/dataset">← Kembali ke katalog</a></nav>
+    <header class="hero"><p class="eyebrow">Detail Ayat</p><h1 id="title">Memuat ayat…</h1><p>Data ditampilkan dari corpus aktif Qalbu dan provenance sumber yang tersedia.</p></header>
+    <div class="status" id="status" role="status" aria-live="polite">Memuat detail ayat…</div>
+    <article class="verse-card" id="verse-card" hidden></article>
+  </main>
+  <script>
+    const statusNode=document.querySelector('#status'),card=document.querySelector('#verse-card'),title=document.querySelector('#title');
+    const parts=location.pathname.split('/').filter(Boolean),surah=parts.at(-2),ayah=parts.at(-1),endpoint='/api/v1/dataset/verses/'+encodeURIComponent(surah)+'/'+encodeURIComponent(ayah);
+    const text=(tag,value,className)=>{const node=document.createElement(tag);node.textContent=value||'';if(className)node.className=className;return node};
+    function showError(message){statusNode.className='status error';statusNode.replaceChildren(text('span',message));const retry=document.createElement('button');retry.type='button';retry.className='retry';retry.textContent='Coba lagi';retry.onclick=load;statusNode.append(retry)}
+    function render(data){title.textContent=data.surah_name+' '+data.surah_number+':'+data.ayah_start;statusNode.hidden=true;const head=document.createElement('header');head.className='verse-head';head.append(text('h2',data.surah_name),text('span',data.surah_number+':'+data.ayah_start));const arabic=text('blockquote',data.arabic_text||'Teks Arab belum tersedia','arabic');arabic.lang='ar';arabic.dir='rtl';const translation=text('p',data.translation||'Terjemahan belum tersedia','translation');card.append(head,arabic,translation);if(data.tafsir){const section=document.createElement('details');section.className='section';section.append(text('summary','Baca tafsir sumber'),text('p',data.tafsir));card.append(section)}card.append(text('small',data.source_status,'source'));card.hidden=false}
+    async function load(){statusNode.hidden=false;statusNode.className='status';statusNode.textContent='Memuat detail ayat…';card.replaceChildren();card.hidden=true;try{const response=await fetch(endpoint);let body={};try{body=await response.json()}catch(_){ }if(!response.ok)throw new Error(body.detail?.message||'Detail ayat belum dapat dimuat.');render(body)}catch(error){showError(error.message)}}
+    load();
+  </script>
+</body>
+</html>

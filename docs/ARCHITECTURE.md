@@ -14,7 +14,9 @@ flowchart LR
     U[User menulis kondisi] --> API[FastAPI]
     API --> SAFE{Safety deterministik}
     SAFE -->|krisis| FIXED[Respons tetap + kontak bantuan]
-    SAFE -->|aman| RET[Retrieval]
+    SAFE -->|aman| ROUTE{Intent lokal}
+    ROUTE -->|Quran/refleksi| RET[Retrieval]
+    ROUTE -->|non-Quran/ambigu| LIMIT[Scope limit]
     RET --> SRC[Parent ayat dari Supabase]
     SRC --> LLM[Gemini dengan konteks terbatas]
     LLM --> GATE[Citation validator + quality gate]
@@ -22,6 +24,7 @@ flowchart LR
     GATE -->|gagal| FALLBACK[Fallback jujur / sources-only]
     SRC -->|kosong / skor rendah| FALLBACK
     FIXED --> SSE[SSE ke browser]
+    LIMIT --> SSE
     OUT --> SSE
     FALLBACK --> SSE
 ```
@@ -91,14 +94,22 @@ flowchart TD
 Safety check bukan penilaian klinis. Pattern hanya guardrail MVP dan dapat memiliki false positive
 atau false negative.
 
-### 2.4 Query dipersempit ke ruang refleksi
+### 2.4 Safety dan routing intent deterministik
 
-`app/rag/query_processing.py` mencocokkan kata/tema dari `app/quran/themes.py`, lalu menambahkan
-hint retrieval seperti konsep kesedihan, kecemasan, beban, atau makna hidup. Ini hanya membantu
-pencarian; sistem tidak menyimpulkan diagnosis.
+Setelah safety aman, `app/rag/query_processing.py` memakai pencocokan lokal deterministik untuk
+enam intent: `emotional_reflection`, `quranic_information`, `islamic_guidance`,
+`practical_life_guidance`, `general_information`, dan `out_of_scope`. Tidak ada classifier LLM.
+Intent emosional, informasi Al-Qur'an, dan panduan Islam boleh lanjut ke retrieval; intent lain
+mendapat `scope_limit` sebelum Jina, Supabase retrieval, atau Gemini. Query campuran yang punya
+tema emosional tetap memprioritaskan kebutuhan emosional; query ambigu meminta penjelasan.
+
+Untuk intent yang lanjut, fungsi yang sama juga mencocokkan kata/tema dari `app/quran/themes.py`,
+lalu menambahkan hint retrieval seperti konsep kesedihan, kecemasan, beban, atau makna hidup.
+Ini hanya membantu pencarian; sistem tidak menyimpulkan diagnosis.
 
 Pertanyaan yang jelas-jelas bukan refleksi (misalnya harga kripto, cuaca, atau kode Python) ditolak
-dengan respons di luar ruang Qalbu sebelum embedding.
+dengan respons di luar ruang Qalbu sebelum embedding. Respons pipeline memakai `mode` dan
+`reason_code` terstruktur agar UI/API tidak perlu menebak dari teks.
 
 ### 2.5 Embedding query
 
@@ -226,6 +237,27 @@ data: {"timings":{...},"profile":"...","request_id":"..."}
 
 Event krisis hanya berisi respons tetap dan label/kontak yang dikonfigurasi. Event error tidak
 membocorkan exception provider ke user.
+
+### 2.11 Ayat Hari Ini dan katalog detail
+
+Homepage juga memuat bar kecil **Ayat Hari Ini**. Jalurnya terpisah dari chat:
+
+```text
+tanggal Asia/Jakarta → verse keys manifest → pilihan deterministik
+→ parent aktif Supabase → terjemahan + provenance → bar homepage
+```
+
+Endpoint `GET /api/v1/dataset/verse-of-day` memilih dari seluruh 282 verse key corpus aktif.
+Tanggal produk berganti pukul 00:00 Asia/Jakarta; hasil sama untuk semua pengguna pada tanggal
+yang sama. Endpoint ini tidak memanggil embedding, vector search, atau Gemini.
+
+Jika parent tidak tersedia atau provenance resmi tidak valid, endpoint mengembalikan error yang
+jelas. UI tidak memakai ayat hardcoded.
+
+Item katalog menjadi link keyboard-accessible ke `/dataset/verse/{surah}/{ayah}`. Endpoint detail
+mengambil satu parent aktif dan mengembalikan Arab, terjemahan, tafsir jika ada, themes, source,
+metadata, dan status provenance. Katalog tetap hanya menampilkan metadata referensi; halaman detail
+menampilkan isi sumber yang benar-benar tersedia.
 
 ## 3. Data dan parent-child chunking
 

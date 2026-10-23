@@ -1,8 +1,10 @@
 """Canonical metadata for the public Quran dataset catalog."""
 
 import json
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, cast
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[2]
 CORPUS = "qalbu-kemenag-v1"
@@ -10,6 +12,8 @@ CHUNK_TYPES = ("arabic", "translation", "tafsir", "themes")
 MANIFEST_PATH = ROOT / "data/manifests/kemenag_corpus_verses.json"
 REFLECTION_MANIFEST_PATH = ROOT / "data/manifests/kemenag_reflection_verses.json"
 CATEGORY_MANIFEST_PATH = ROOT / "data/manifests/mental_health_categories.json"
+DAILY_TIMEZONE = ZoneInfo("Asia/Jakarta")
+DAILY_VERSE_EPOCH = date(2026, 1, 1)
 
 
 def expand_ranges(ranges: list[str]) -> list[str]:
@@ -30,6 +34,26 @@ def child_id(parent: str, chunk_type: str) -> str:
     if chunk_type not in CHUNK_TYPES:
         raise ValueError(f"Unsupported Quran chunk type: {chunk_type}")
     return f"{parent}:{chunk_type}"
+
+
+def daily_date_in_timezone(moment: datetime | None = None) -> date:
+    """Return current product date, consistently using Asia/Jakarta."""
+    current = moment or datetime.now(DAILY_TIMEZONE)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=UTC)
+    return current.astimezone(DAILY_TIMEZONE).date()
+
+
+def select_verse_of_day(verse_keys: list[str], day: date) -> str:
+    """Select one stable verse from a sorted, deduplicated corpus inventory."""
+    keys = sorted(
+        set(verse_keys),
+        key=lambda value: tuple(int(part) for part in value.split(":", 1)),
+    )
+    if not keys:
+        raise ValueError("Cannot select a daily verse from an empty corpus")
+    offset = (day - DAILY_VERSE_EPOCH).days % len(keys)
+    return keys[offset]
 
 
 def load_json(path: Path) -> dict[str, Any]:

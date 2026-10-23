@@ -23,8 +23,9 @@ browser; server tidak menyimpan percakapan.
 
 | Path | Tanggung jawab |
 |---|---|
-| `frontend/index.html` | UI chat, pembaca SSE, evidence Quran, history lokal |
+| `frontend/index.html` | UI chat, Ayat Hari Ini, pembaca SSE, evidence Quran, history lokal |
 | `frontend/dataset.html` | Katalog referensi ayat corpus aktif |
+| `frontend/dataset-detail.html` | Detail ayat, terjemahan, tafsir, dan provenance |
 | `app/main.py` | Bootstrap FastAPI dan static frontend |
 | `app/api/routes/chat.py` | Endpoint chat, SSE, timeout, rate limit |
 | `app/safety/guardrails.py` | Safety gate sebelum network call |
@@ -106,6 +107,23 @@ Request:
 ```
 
 Response berupa Server-Sent Events dengan event `response`, `crisis`, `error`, dan `done`.
+Routing intent deterministik membedakan refleksi emosional, informasi Al-Qur'an, panduan Islam,
+panduan praktis, informasi umum, dan out-of-scope. Safety selalu dijalankan lebih dulu; intent
+non-Quran berhenti sebelum Jina, Supabase retrieval, atau Gemini. Event `response` membawa
+`mode` (`grounded_reflection`, `sources_only`, `scope_limit`, atau `crisis`) dan `reason_code`
+bila jalur tidak normal.
+
+### `GET /api/v1/dataset/verse-of-day`
+
+Mengembalikan satu ayat deterministik dari seluruh corpus aktif. Pemilihan memakai tanggal
+`Asia/Jakarta`, sehingga ayat berganti pukul 00:00 WIB dan sama untuk semua pengguna pada hari
+yang sama. Endpoint ini hanya membaca Supabase; tidak memanggil Gemini, Jina, atau retrieval.
+
+Homepage menampilkan hasilnya sebagai bar ringkas **Ayat Hari Ini**. Link `Buka ayat` menuju
+`/dataset/verse/{surah}/{ayah}` dan halaman detail mengambil teks dari corpus aktif.
+
+Jika database atau provenance sumber tidak tersedia, UI menampilkan error kecil dengan tombol
+retry. Tidak ada ayat hardcoded sebagai fallback.
 
 ## Data dan provenance
 
@@ -123,6 +141,11 @@ dianggap sebagai sumber resmi.
 Inventaris referensi lengkap tersedia di [`docs/QURAN_DATASET.md`](docs/QURAN_DATASET.md) dan
 halaman web [`/dataset`](http://127.0.0.1:8000/dataset). Setiap ayat adalah satu parent;
 field Arab, terjemahan, tafsir, dan tema dibuat sebagai child embedding terpisah.
+Hasil verifikasi live Supabase dan status ingestion tercatat di
+[`docs/AUDIT_REPORT.md`](docs/AUDIT_REPORT.md).
+
+Detail satu ayat tersedia melalui halaman `/dataset/verse/{surah}/{ayah}`. Halaman tersebut hanya
+menampilkan record aktif yang memiliki provenance resmi Kemenag.
 
 Indexing corpus dilakukan terpisah dan tidak dijalankan otomatis saat server boot. Endpoint katalog
 menghitung child dari row Supabase aktual ketika credential server tersedia; tanpa koneksi database,

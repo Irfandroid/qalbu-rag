@@ -10,7 +10,7 @@ from app.models.quran import QuranDocument
 from app.providers.llm.base import LLMProvider
 from app.rag.citation_validator import CitationValidator
 from app.rag.context_builder import build_context
-from app.rag.query_processing import is_out_of_scope
+from app.rag.query_processing import Intent, IntentDecision, classify_intent
 from app.rag.response_quality import (
     assess_contextual_response,
     build_repair_query,
@@ -46,7 +46,7 @@ class QalbuRAG:
         self.max_answer_tokens = 72
 
     async def retrieve(self, query: str, request_id: str):
-        if is_out_of_scope(query):
+        if not classify_intent(query).requires_quran:
             return [], []
         matches = await self.retriever.search(query, request_id)
         candidates = await self.retriever.repository.get_documents(
@@ -67,9 +67,12 @@ class QalbuRAG:
                 or "Jika ada bahaya segera, hubungi layanan darurat setempat.",
                 references=[],
                 safety_note="Dukungan segera disarankan.",
+                mode="crisis",
+                reason_code="immediate_danger",
             )
-        if is_out_of_scope(query):
-            return self._out_of_scope_response()
+        intent = classify_intent(query)
+        if not intent.requires_quran:
+            return self._out_of_scope_response(intent)
         started = time.perf_counter()
         cache_key = sha256(f"{self.cache_version}\0{query.strip().lower()}".encode()).hexdigest()
         cached = rag_response_cache.get(cache_key)
@@ -82,6 +85,8 @@ class QalbuRAG:
                 answer=self._no_context_response(),
                 references=[],
                 safety_note=None,
+                mode="sources_only",
+                reason_code="no_relevant_context",
             )
         if self._missing_verified_translation(documents):
             draft = QalbuResponse(
@@ -92,6 +97,8 @@ class QalbuRAG:
                 ),
                 references=[QuranReference(parent_id=document.id) for document in documents],
                 safety_note="Dataset aktif adalah sumber komunitas, bukan sumber resmi Kemenag.",
+                mode="sources_only",
+                reason_code="verified_translation_unavailable",
             )
             return self._with_distress_note(
                 self.validator.validate(draft, documents), decision.level
@@ -141,8 +148,9 @@ class QalbuRAG:
             yield "done", self._done_payload(started, request_id)
             return
 
-        if is_out_of_scope(request.message):
-            yield "response", self._out_of_scope_response().model_dump(mode="json")
+        intent = classify_intent(request.message)
+        if not intent.requires_quran:
+            yield "response", self._out_of_scope_response(intent).model_dump(mode="json")
             yield "done", self._done_payload(started, request_id)
             return
 
@@ -153,6 +161,8 @@ class QalbuRAG:
             fallback = QalbuResponse(
                 answer=self._no_context_response(),
                 references=[],
+                mode="sources_only",
+                reason_code="no_relevant_context",
             )
             yield "response", fallback.model_dump(mode="json")
             yield "done", self._done_payload(started, request_id, retrieval_ms=retrieval_ms)
@@ -165,6 +175,8 @@ class QalbuRAG:
                     "Qalbu tidak akan menerjemahkan atau membuat refleksi dari model."
                 ),
                 references=[QuranReference(parent_id=document.id) for document in documents[:3]],
+                mode="sources_only",
+                reason_code="verified_translation_unavailable",
             )
             unavailable_response = self._with_distress_note(
                 self.validator.validate(unavailable, documents[:3]), decision.level
@@ -268,7 +280,28 @@ class QalbuRAG:
         }
 
     @staticmethod
-    def _out_of_scope_response() -> QalbuResponse:
+    def _out_of_scope_response(intent: IntentDecision | None = None) -> QalbuResponse:
+        if intent and intent.needs_clarification:
+            return QalbuResponse(
+                answer=(
+                    "Bisa ceritakan sedikit lebih spesifik tentang hal yang ingin kamu pahami? "
+                    "Qalbu dapat membantu refleksi dan mencari sumber Al-Qur'an yang relevan."
+                ),
+                references=[],
+                mode="scope_limit",
+                reason_code="needs_clarification",
+            )
+        if intent and intent.primary_intent != Intent.OUT_OF_SCOPE:
+            return QalbuResponse(
+                answer=(
+                    "Qalbu saat ini berfokus pada ruang refleksi dan informasi berbasis sumber "
+                    "Al-Qur'an. Untuk pertanyaan praktis atau umum, gunakan sumber yang "
+                    "sesuai; Qalbu dapat membantu bila kamu ingin membahas sisi reflektifnya."
+                ),
+                references=[],
+                mode="scope_limit",
+                reason_code="scope_limit",
+            )
         return QalbuResponse(
             answer=(
                 "Pertanyaan itu berada di luar ruang refleksi Qalbu. "
@@ -277,6 +310,8 @@ class QalbuRAG:
             ),
             references=[],
             safety_note=None,
+            mode="scope_limit",
+            reason_code="out_of_scope",
         )
 
     @staticmethod
@@ -297,6 +332,8 @@ class QalbuRAG:
                 "tetap ditampilkan agar kamu dapat membacanya dan menilainya sendiri dengan tenang."
             ),
             references=[QuranReference(parent_id=document.id) for document in documents],
+            mode="sources_only",
+            reason_code="generation_unavailable",
         )
         return self._with_distress_note(
             self.validator.validate(draft, documents), safety_level

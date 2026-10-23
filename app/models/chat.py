@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -35,6 +37,10 @@ class QalbuDraft(BaseModel):
 
 class QalbuResponse(QalbuDraft):
     evidence: list[QuranEvidence] = Field(default_factory=list)
+    mode: Literal["grounded_reflection", "sources_only", "scope_limit", "crisis"] = (
+        "grounded_reflection"
+    )
+    reason_code: str | None = None
 
 
 class ErrorDetail(BaseModel):

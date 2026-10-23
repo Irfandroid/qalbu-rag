@@ -1,10 +1,46 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.api.dependencies import get_dataset_child_counts
+from app.api.dependencies import (
+    get_daily_verse_document,
+    get_dataset_child_counts,
+    get_dataset_document,
+)
 from app.core.config import get_settings
-from app.quran.catalog import CORPUS, build_catalog
+from app.quran.catalog import CORPUS, build_catalog, daily_date_in_timezone
+from app.rag.citation_validator import CitationValidator
 
 router = APIRouter(tags=["dataset"])
+
+
+def _document_payload(document) -> dict:
+    verse_key = f"{document.surah_number}:{document.ayah_start}"
+    return {
+        **document.model_dump(mode="json"),
+        "verse_key": verse_key,
+        "detail_url": f"/dataset/verse/{document.surah_number}/{document.ayah_start}",
+        "source_status": CitationValidator._source_status(document),
+    }
+
+
+@router.get("/api/v1/dataset/verse-of-day")
+async def verse_of_day(document=Depends(get_daily_verse_document)) -> dict:  # noqa: B008
+    payload = _document_payload(document)
+    return {
+        "date": daily_date_in_timezone().isoformat(),
+        "timezone": "Asia/Jakarta",
+        "verse_key": payload["verse_key"],
+        "surah_number": payload["surah_number"],
+        "surah_name": payload["surah_name"],
+        "ayah_number": payload["ayah_start"],
+        "translation": payload["translation"],
+        "detail_url": payload["detail_url"],
+        "source_status": payload["source_status"],
+    }
+
+
+@router.get("/api/v1/dataset/verses/{surah}/{ayah}")
+async def dataset_verse_detail(document=Depends(get_dataset_document)) -> dict:  # noqa: B008
+    return _document_payload(document)
 
 
 @router.get("/api/v1/dataset/verses")

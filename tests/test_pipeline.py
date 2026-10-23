@@ -165,6 +165,25 @@ async def test_out_of_scope_query_is_rejected_before_external_retrieval():
     assert response.references == []
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "query",
+    [
+        "Jelaskan recursion di Python",
+        "Bagaimana membuat anggaran keuangan bulanan?",
+    ],
+)
+async def test_non_quran_intents_do_not_call_external_retrieval(query):
+    rag = build_rag(ExplodingRetriever(), FailingLLM())  # type: ignore[arg-type]
+
+    response = await rag.ask(query, "test-non-quran")
+
+    assert response.references == []
+    assert "ruang refleksi" in response.answer
+    assert response.mode == "scope_limit"
+    assert response.reason_code == "scope_limit"
+
+
 def test_high_distress_adds_human_support_note():
     response = QalbuRAG._with_distress_note(
         QalbuResponse(answer="Refleksi", references=[]),

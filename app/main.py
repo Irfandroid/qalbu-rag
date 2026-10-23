@@ -41,4 +41,9 @@ async def dataset_page() -> FileResponse:
     return FileResponse(Path("frontend/dataset.html"))
 
 
+@app.get("/dataset/verse/{surah}/{ayah}", include_in_schema=False)
+async def dataset_verse_page(surah: int, ayah: int) -> FileResponse:
+    return FileResponse(Path("frontend/dataset-detail.html"))
+
+
 app.mount("/", StaticFiles(directory=Path("frontend"), html=True), name="frontend")

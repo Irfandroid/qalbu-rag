@@ -18,6 +18,23 @@ Jumlah child `themes` lebih kecil dari parent karena child hanya dibuat saat fie
 memiliki isi. Endpoint katalog dataset menghitung jumlah aktual dari `quran_chunks`; angka di atas
 adalah snapshot manifest corpus yang diverifikasi pada 2026-10-13.
 
+## Ayat Hari Ini
+
+Homepage menyediakan bar **Ayat Hari Ini** untuk kunjungan ringan tanpa harus mengirim curhat.
+Pemilihan bersifat deterministik dari seluruh 282 verse key aktif:
+
+- daftar ayat diurutkan berdasarkan nomor surah dan ayat;
+- tanggal memakai `Asia/Jakarta`;
+- satu ayat berlaku dari 00:00 sampai 23:59 WIB;
+- pengguna melihat ayat yang sama pada tanggal yang sama;
+- teks dan terjemahan diambil dari parent aktif Supabase, bukan hardcoded di frontend;
+- jika source atau provenance tidak tersedia, UI menampilkan error dan retry.
+
+Endpoint: `GET /api/v1/dataset/verse-of-day`.
+
+Detail ayat: `/dataset/verse/{surah}/{ayah}`. Halaman detail menampilkan teks Arab, terjemahan,
+tafsir bila tersedia, dan provenance dari record aktif.
+
 ## Daftar ayat
 
 | Surah | Ayat yang tersedia | Jumlah |
