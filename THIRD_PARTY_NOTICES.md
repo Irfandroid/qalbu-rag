@@ -1,8 +1,9 @@
 # Third-party notices
 
-- Gemini API generates the grounded reflection; review Google terms before deployment.
-- Jina Embeddings API generates query vectors; review Jina terms and quotas.
-- Supabase hosts the `qalbu-seed-v1` database/vector index.
-- Quran Arabic, Indonesian translation, and tafsir provenance belong to their upstream
-  publishers. Do not claim material is official Kemenag unless source metadata proves it.
-- Review redistribution/licensing terms before publishing the dataset or a public demo.
+- FastAPI serves the API and the dataset fallback pages; lighttpd fronts it in the Compose stack.
+- PostgreSQL + pgvector stores the Quran corpus and performs cosine search locally.
+- Ollama runs the local embedding (EmbeddingGemma) and chat (Qwen) models; review the model
+  licenses before deployment.
+- The Quran corpus is sourced from the LPMQ Kementerian Agama RI portal; attribution is shown in
+  the UI and stored in document metadata.
+- The frontend is plain HTML/CSS/ES modules; no third-party runtime is bundled.

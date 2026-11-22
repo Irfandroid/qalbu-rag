@@ -27,7 +27,7 @@ Pemilihan bersifat deterministik dari seluruh 282 verse key aktif:
 - tanggal memakai `Asia/Jakarta`;
 - satu ayat berlaku dari 00:00 sampai 23:59 WIB;
 - pengguna melihat ayat yang sama pada tanggal yang sama;
-- teks dan terjemahan diambil dari parent aktif Supabase, bukan hardcoded di frontend;
+- teks dan terjemahan diambil dari parent aktif PostgreSQL, bukan hardcoded di frontend;
 - jika source atau provenance tidak tersedia, UI menampilkan error dan retry.
 
 Endpoint: `GET /api/v1/dataset/verse-of-day`.

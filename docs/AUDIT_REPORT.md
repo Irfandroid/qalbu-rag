@@ -1,5 +1,9 @@
 # Laporan Audit Live Qalbu
 
+> Snapshot historis sebelum migrasi ke stack lokal (PostgreSQL + Ollama + lighttpd).
+> Angka corpus dan provenance di bawah tetap relevan; referensi Supabase/Render tidak lagi
+> menggambarkan deployment saat ini.
+
 Tanggal verifikasi: 2026-10-23 (Asia/Jakarta).
 
 ## Supabase dan provenance

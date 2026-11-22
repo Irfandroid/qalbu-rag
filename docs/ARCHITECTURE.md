@@ -17,8 +17,8 @@ flowchart LR
     SAFE -->|aman| ROUTE{Intent lokal}
     ROUTE -->|Quran/refleksi| RET[Retrieval]
     ROUTE -->|non-Quran/ambigu| LIMIT[Scope limit]
-    RET --> SRC[Parent ayat dari Supabase]
-    SRC --> LLM[Gemini dengan konteks terbatas]
+    RET --> SRC[Parent ayat dari PostgreSQL lokal]
+    SRC --> LLM[Ollama Qwen dengan konteks terbatas]
     LLM --> GATE[Citation validator + quality gate]
     GATE -->|lulus| OUT[Refleksi + evidence + provenance]
     GATE -->|gagal| FALLBACK[Fallback jujur / sources-only]
@@ -33,14 +33,14 @@ Komponen aktif hanya satu jalur MVP:
 
 | Bagian | Implementasi | Tugas |
 |---|---|---|
-| UI | `frontend/index.html` | Chat satu halaman, SSE reader, ayat/evidence, riwayat lokal |
+| UI | `frontend/index.html` + `frontend/assets/js/` | Chat satu halaman, SSE reader, ayat/evidence, riwayat lokal |
 | HTTP | `app/main.py`, `app/api/routes/chat.py` | Static files, CORS, rate limit, timeout, endpoint chat |
 | Safety | `app/safety/guardrails.py` | Deteksi deterministik sebelum network call |
 | Query | `app/rag/query_processing.py` | Normalisasi dan tema retrieval, bukan diagnosis |
-| Embedding | `app/providers/embeddings/jina.py` | Query embedding dengan task `retrieval.query` |
-| Vector DB | Supabase pgvector + `match_quran_chunks` | Cari child chunk corpus aktif |
+| Embedding | `app/providers/embeddings/ollama.py` | Query embedding lokal dengan prefix retrieval |
+| Vector DB | PostgreSQL + pgvector, fungsi `match_quran_chunks` | Cari child chunk corpus aktif |
 | Parent store | `app/database/queries.py` | Ambil dokumen ayat lengkap dari `quran_documents` |
-| LLM | `app/providers/llm/gemini.py` | Buat JSON refleksi berdasarkan konteks retrieval |
+| LLM | `app/providers/llm/ollama.py` | Buat JSON refleksi berdasarkan konteks retrieval |
 | Guard output | `app/rag/citation_validator.py`, `response_quality.py` | Buang sitasi palsu, cek relevansi, tafsir, nada, panjang |
 
 ## 2. Jalur request dari awal sampai akhir
@@ -64,7 +64,7 @@ Komponen aktif hanya satu jalur MVP:
 
 - validasi Pydantic: `message` wajib 1–500 karakter;
 - fixed-window rate limit berbasis IP, default 10 request/menit per proses;
-- timeout request, default 30 detik, lalu event `error` dan `done` jika terlampaui.
+- timeout request, default 240 detik, lalu event `error` dan `done` jika terlampaui.
 
 Setiap request mendapat `request_id` untuk log dan payload `done`.
 
@@ -85,7 +85,7 @@ flowchart TD
     L -->|tidak| R[Retrieval normal]
 ```
 
-- `IMMEDIATE_DANGER`: respons tetap; pesan tidak dikirim ke Jina atau Gemini.
+- `IMMEDIATE_DANGER`: respons tetap; pesan tidak dikirim ke embedding atau LLM.
 - `HIGH_DISTRESS`: retrieval boleh jalan, tetapi respons mendapat anjuran menghubungi orang
   tepercaya/tenaga profesional bila keadaan makin berat.
 - `DISTRESS`: retrieval normal dengan nada nonmenghakimi.
@@ -100,7 +100,7 @@ Setelah safety aman, `app/rag/query_processing.py` memakai pencocokan lokal dete
 enam intent: `emotional_reflection`, `quranic_information`, `islamic_guidance`,
 `practical_life_guidance`, `general_information`, dan `out_of_scope`. Tidak ada classifier LLM.
 Intent emosional, informasi Al-Qur'an, dan panduan Islam boleh lanjut ke retrieval; intent lain
-mendapat `scope_limit` sebelum Jina, Supabase retrieval, atau Gemini. Query campuran yang punya
+mendapat `scope_limit` sebelum embedding, database retrieval, atau LLM. Query campuran yang punya
 tema emosional tetap memprioritaskan kebutuhan emosional; query ambigu meminta penjelasan.
 
 Untuk intent yang lanjut, fungsi yang sama juga mencocokkan kata/tema dari `app/quran/themes.py`,
@@ -113,31 +113,32 @@ dengan respons di luar ruang Qalbu sebelum embedding. Respons pipeline memakai `
 
 ### 2.5 Embedding query
 
-`JinaEmbeddingProvider` mengirim satu query ke endpoint Jina:
+`OllamaEmbeddingProvider` mengirim satu query ke Ollama lokal:
 
 ```text
-POST https://api.jina.ai/v1/embeddings
-model      = JINA_EMBEDDING_MODEL
-task       = retrieval.query
+POST http://ollama:11434/api/embed
+model = OLLAMA_EMBEDDING_MODEL (default embeddinggemma)
+input = "task: search result | query: <teks>"
 dimensions = 768
-normalized = true
 ```
 
 Embedding query disimpan di cache in-memory 15 menit. Cache memakai hash model, dimensi, dan teks;
 tidak menyimpan prompt ke disk.
 
 Embedding **dokumen** bukan pekerjaan runtime chat. Dokumen harus sudah di-embed saat indexing dan
-vector-nya sudah ada di Supabase sebelum aplikasi dipakai.
+vector-nya sudah ada di PostgreSQL sebelum aplikasi dipakai. Embedding dokumen memakai prefix
+`title: none | text: <isi chunk>`.
 
 ### 2.6 Vector search dan parent lookup
 
 `QuranRetriever` menjalankan:
 
-1. Jina query embedding.
-2. RPC Supabase `match_quran_chunks(embedding, match_count, corpus_filter)` pada corpus
+1. Ollama query embedding.
+2. SQL `match_quran_chunks(embedding, match_count, corpus_filter)` pada corpus
    `qalbu-kemenag-v1`, dengan `match_count` child minimal `TOP_K_RETRIEVAL` dan di-oversample
    menjadi `max(TOP_K_RETRIEVAL, RETRIEVAL_PARENT_K * 4)`.
-3. Buang result dengan skor cosine di bawah `MIN_RETRIEVAL_SCORE` (default `0.32`).
+3. Buang result dengan skor cosine di bawah `MIN_RETRIEVAL_SCORE` (default `0.32`; hasil evaluasi
+   corpus saat ini ada di bagian evaluasi README).
 4. Deduplicate berdasarkan `parent_id`; child terkuat mewakili satu parent.
 5. Batasi parent ke `RETRIEVAL_PARENT_K` (default `4`).
 6. Ambil row lengkap dari `quran_documents`.
@@ -183,14 +184,15 @@ Source status: ...
 ```
 
 Budget default `MAX_CONTEXT_TOKENS=1800`. Translation dan tafsir dipotong per parent agar context
-tetap bounded. Arab sengaja tidak diberikan sebagai teks yang harus ditulis ulang Gemini; UI
+tetap bounded. Arab sengaja tidak diberikan sebagai teks yang harus ditulis ulang model; UI
 menampilkan Arab langsung dari `evidence` sumber.
 
-### 2.8 Gemini menghasilkan refleksi terstruktur
+### 2.8 Ollama menghasilkan refleksi terstruktur
 
-`GeminiProvider` mengirim system prompt Qalbu, query user, context retrieval, dan JSON schema
-`answer`, `references[parent_id]`, `safety_note`. Temperature `0.2`; natural-language answer
-dibatasi sekitar 72 token. Provider retry maksimal tiga kali dengan backoff eksponensial.
+`OllamaProvider` mengirim system prompt Qalbu, query user, context retrieval, dan JSON schema
+`answer`, `references[parent_id]`, `safety_note` ke `/api/chat` dengan `stream=false`. Temperature
+`0.2`; natural-language answer dibatasi sekitar 72 token. Provider retry maksimal tiga kali dengan
+backoff eksponensial.
 
 Aturan prompt penting:
 
@@ -202,7 +204,7 @@ Aturan prompt penting:
 - jangan mendiagnosis, menggurui, menjanjikan kesembuhan, atau menyebut Qalbu sebagai satu-satunya
   bantuan.
 
-Response Gemini dicache in-memory 1 jam berdasarkan model, query, context, dan token budget.
+Response Ollama dicache in-memory 1 jam berdasarkan model, query, context, dan token budget.
 
 ### 2.9 Validasi sitasi dan kualitas
 
@@ -211,7 +213,7 @@ Response Gemini dicache in-memory 1 jam berdasarkan model, query, context, dan t
 1. Hanya `parent_id` yang benar-benar ada di hasil retrieval yang boleh dipakai.
 2. Field surah/ayat yang kosong dilengkapi dari parent retrieved.
 3. Field yang bertentangan dengan parent membuat sitasi dibuang.
-4. Evidence (Arab, translation, tafsir, status sumber) disalin dari row Supabase, bukan dari LLM.
+4. Evidence (Arab, translation, tafsir, status sumber) disalin dari row PostgreSQL, bukan dari LLM.
 5. Metadata komunitas menambahkan peringatan provenance.
 
 `assess_contextual_response` menolak draft jika tidak mengakui konteks user, tidak menunjukkan
@@ -219,7 +221,7 @@ empati, tidak mencantumkan parent utama, tidak menghubungkan answer ke gagasan n
 Translation/Tafsir/Themes, tidak mengatribusikan tafsir, memakai bahasa menggurui atau janji hasil,
 menyisipkan Arab/kutipan/nama surah/nomor ayat/wording Inggris, atau melebihi budget.
 
-Jika gagal, Gemini mendapat satu repair prompt. Jika percobaan kedua tetap gagal, UI menerima
+Jika gagal, model mendapat satu repair prompt. Jika percobaan kedua tetap gagal, UI menerima
 `sources-only response`: teks singkat bahwa refleksi AI tidak tersedia, tetapi evidence sumber tetap
 ditampilkan.
 
@@ -244,12 +246,12 @@ Homepage juga memuat bar kecil **Ayat Hari Ini**. Jalurnya terpisah dari chat:
 
 ```text
 tanggal Asia/Jakarta → verse keys manifest → pilihan deterministik
-→ parent aktif Supabase → terjemahan + provenance → bar homepage
+→ parent aktif PostgreSQL → terjemahan + provenance → bar homepage
 ```
 
 Endpoint `GET /api/v1/dataset/verse-of-day` memilih dari seluruh 282 verse key corpus aktif.
 Tanggal produk berganti pukul 00:00 Asia/Jakarta; hasil sama untuk semua pengguna pada tanggal
-yang sama. Endpoint ini tidak memanggil embedding, vector search, atau Gemini.
+yang sama. Endpoint ini tidak memanggil embedding, vector search, atau LLM.
 
 Jika parent tidak tersedia atau provenance resmi tidak valid, endpoint mengembalikan error yang
 jelas. UI tidak memakai ayat hardcoded.
@@ -264,8 +266,8 @@ menampilkan isi sumber yang benar-benar tersedia.
 ### 3.1 Sumber data
 
 Folder `data/external/indonesian-quran/` menyimpan snapshot Indonesia sebagai artefak referensi.
-Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus yang dipilih oleh `QALBU_CORPUS`
-dari Supabase. Nilai defaultnya `qalbu-kemenag-v1`; `qalbu-seed-v1` dipakai untuk rollback.
+Runtime **tidak** membaca JSON itu langsung. Runtime membaca corpus yang dipilih oleh `QALBU_CORPUS` dari PostgreSQL lokal. Nilai defaultnya
+`qalbu-kemenag-v1`; `qalbu-seed-v1` dipakai untuk rollback.
 
 Sumber aktif corpus `qalbu-kemenag-v1` adalah [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data)
 dari LPMQ Kementerian Agama RI. Row aktif menyimpan `source_provider=official_portal` dan
@@ -319,7 +321,7 @@ flowchart TD
     FILE[Snapshot/source Quran] --> N[Normalisasi metadata]
     N --> P[Upsert quran_documents parent]
     P --> C[Split child per field]
-    C --> E[Jina task retrieval.passage]
+    C --> E[Ollama search_document embedding]
     E --> F[Fingerprint model + dimensi + content]
     F --> V[Insert quran_chunks vector(768)]
     V --> I[HNSW cosine index + RPC]
@@ -396,25 +398,24 @@ lengkap tersedia.
 > Batas desain saat ini: child adalah satu field per ayat, bukan pemotongan token bertingkat.
 > Jika tafsir menjadi sangat panjang, child tersebut perlu dipecah lagi menjadi sub-child.
 
-### 3.5 Urutan migration penting
+### 3.5 Schema database
 
-Migration di `supabase/migrations/` membangun schema secara bertahap:
+`db/init/001_schema.sql` membuat schema sekali saat volume PostgreSQL pertama kali dibuat:
 
 1. tabel parent/child dan vector column;
 2. corpus partition `qalbu-kemenag-v1` + filter RPC;
 3. HNSW index dan tuning `ef_search`;
-4. manifest provider/model/dimensi/fingerprint;
-5. revoke akses publik ke RPC dan tabel, hanya `service_role`.
+4. kolom provider/model/dimensi/fingerprint embedding.
 
-Migration lama jangan dihapus meskipun fitur yang dibuatnya tidak dipanggil langsung. Database
-production mungkin sudah pernah menjalankannya.
+Database lokal hanya dipakai satu service, jadi tidak ada RLS/role database eksternal. Jika schema berubah
+setelah volume terisi, tulis migration baru dan jalankan manual; init script tidak diulang otomatis.
 
 ## 4. Cache, privacy, dan batas proses
 
 ```mermaid
 flowchart LR
     Q[Query] --> QC[Query embedding cache<br/>15 menit / 500 entry]
-    C[Context + prompt] --> LC[Gemini cache<br/>1 jam / 500 entry]
+    C[Context + prompt] --> LC[Ollama cache<br/>1 jam / 500 entry]
     R[Validated response] --> RC[RAG cache<br/>15 menit / 500 entry]
     QC --> MEM[Process memory]
     LC --> MEM
@@ -425,20 +426,20 @@ flowchart LR
 - Cache process-local, TTL, LRU; tidak persisten ke disk.
 - Riwayat chat hanya `localStorage` browser untuk fitur Chat Baru; server tidak menyimpan
   percakapan.
-- Secret Gemini, Jina, dan Supabase hanya dibaca backend dari environment.
+- Credential database dan konfigurasi Ollama hanya dibaca backend dari environment.
 - Rate limiter juga process-local. Jika nanti multi-instance, gunakan shared rate limiter/store.
-- Free host dapat sleep; cold start dan latency provider eksternal adalah normal.
+- CPU lokal bisa lambat; cold start model dan latensi inference adalah normal.
 
 ## 5. Fallback dan failure matrix
 
 | Kondisi | Yang dilakukan | Yang tidak dilakukan |
 |---|---|---|
-| Risiko krisis | Respons tetap + kontak terkonfigurasi | Tidak memanggil Gemini/Jina |
+| Risiko krisis | Respons tetap + kontak terkonfigurasi | Tidak memanggil LLM/embedding |
 | Query out-of-scope | Pesan di luar ruang refleksi | Tidak melakukan retrieval |
 | Tidak ada parent / skor rendah | Fallback relevansi jujur | Tidak mengarang ayat |
 | Terjemahan komunitas belum ada | Tampilkan sumber tanpa refleksi buatan | Tidak menerjemahkan dengan LLM |
-| Jina/Supabase gagal | Error/fallback sources-only | Tidak membocorkan exception |
-| Gemini gagal | Tampilkan evidence sumber | Tidak mengarang refleksi |
+| Ollama/PostgreSQL gagal | Error/fallback sources-only | Tidak membocorkan exception |
+| LLM gagal | Tampilkan evidence sumber | Tidak mengarang refleksi |
 | Sitasi tidak valid | Buang sitasi dan retry/fallback | Tidak meneruskan parent palsu |
 | Quality gate gagal dua kali | Sources-only response | Tidak memaksa output generik |
 | Rate limit | HTTP 429 | Tidak memproses request |
@@ -451,25 +452,27 @@ Mulai dari sini jika ingin memahami project tanpa membaca semua file:
 2. `app/api/routes/chat.py` — kontrak HTTP/SSE.
 3. `app/api/dependencies.py` — wiring provider dan corpus aktif.
 4. `app/rag/pipeline.py` — orkestrator safety → retrieval → generation → fallback.
-5. `app/rag/retriever.py` — embedding, threshold, dedup parent.
-6. `app/database/queries.py` — RPC vector search dan parent lookup.
-7. `app/providers/embeddings/jina.py` — adapter embedding + cache query.
-8. `app/providers/llm/gemini.py` — adapter Gemini + JSON schema + cache.
-9. `app/rag/citation_validator.py` — provenance/evidence dari sumber.
-10. `app/rag/response_quality.py` — quality gate dan repair prompt.
-11. `app/safety/guardrails.py` — safety gate deterministik.
-12. `frontend/index.html` — UI, SSE parser, evidence renderer, local history.
-13. `supabase/migrations/` — schema, RPC, index, dan akses database.
-14. `tests/` — kontrak safety, retrieval, citation, provider, API, dan UI history.
+5. `app/rag/responses.py`, `messages.py` — pembentuk response dan teks fallback.
+6. `app/rag/retriever.py` — embedding, threshold, dedup parent.
+7. `app/database/queries.py` — SQL vector search dan parent lookup.
+8. `app/providers/embeddings/ollama.py` — adapter embedding lokal + cache query.
+9. `app/providers/llm/ollama.py` — adapter Ollama + JSON schema + cache.
+10. `app/rag/citation_validator.py` — provenance/evidence dari sumber.
+11. `app/rag/response_quality.py` — quality gate dan repair prompt.
+12. `app/safety/guardrails.py` — safety gate deterministik.
+13. `frontend/index.html`, `frontend/assets/js/` — UI, SSE parser, evidence renderer, local history.
+14. `scripts/kemenag/` — parser portal, dokumen, cache, DB, dan sinkronisasi Kemenag.
+15. `db/init/001_schema.sql` — schema, RPC, dan index database.
+16. `tests/` — kontrak safety, retrieval, citation, provider, API, dan UI history.
 
 ## 7. Cara menjalankan dan memverifikasi
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
 Copy-Item .env.example .env
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+docker compose -f compose.yaml -f compose.dev.yaml up -d --build
+docker compose exec ollama ollama pull embeddinggemma
+docker compose exec ollama ollama pull qwen2.5:3b-instruct
+docker compose run --rm qalbu-api python -m scripts.kemenag.sync --manifest data/manifests/kemenag_corpus_verses.json
 ```
 
 Buka `http://127.0.0.1:8000/`, lalu cek:
@@ -486,8 +489,8 @@ python -m ruff check app tests
 python -m mypy app
 ```
 
-Health `status=ok` hanya berarti proses hidup. Status `rag=configured` berarti tiga dependency
-server-side (Gemini, Jina, Supabase) terbaca; itu belum membuktikan corpus berisi data.
+Health `status=ok` hanya berarti proses hidup. Status `rag=configured` berarti `DATABASE_URL`
+terbaca; itu belum membuktikan corpus berisi data atau Ollama siap.
 
 ## 8. Audit arsitektur: nilai, biaya, dampak
 
@@ -495,7 +498,7 @@ server-side (Gemini, Jina, Supabase) terbaca; itu belum membuktikan corpus beris
 
 Jalur pendek ini cukup untuk MVP portfolio: satu bahasa, satu corpus, satu embedding provider, satu
 LLM provider, evidence yang bisa diaudit, dan fallback yang jujur. Guardrail paling penting berada
-sebelum provider eksternal dan sitasi tidak dipercayakan kepada model.
+sebelum model dan sitasi tidak dipercayakan kepada model.
 
 ### Biaya yang sengaja diterima
 
@@ -515,11 +518,12 @@ multi-instance, kebutuhan audit, atau evaluasi relevansi yang terukur.
 - Kualitas jawaban dibatasi kualitas/coverage corpus `qalbu-kemenag-v1` dan metadata provenance.
 - Snapshot Indonesia saat ini belum otomatis berarti resmi Kemenag.
 - Kontak krisis harus diisi dan diverifikasi sebelum deployment publik.
-- Provider eksternal menentukan latency dan availability.
+- Kapasitas CPU/RAM VPS menentukan latency dan availability model lokal.
+- Akses publik tanpa TLS tidak terenkripsi.
 - History lokal dapat hilang saat data situs dibersihkan dan tidak cocok untuk perangkat bersama.
 
 ### Keputusan pemeliharaan
 
-Jangan menghapus migration lama hanya karena bukan jalur chat aktif. Jangan menambah abstraction
-provider, reranker, atau database history tanpa kebutuhan terukur. Untuk perubahan berikutnya, mulai
-dari test yang gagal atau metrik yang menunjukkan batasan di atas.
+Jangan menghapus schema init lama tanpa memikirkan volume database yang sudah terisi. Jangan
+menambah abstraction provider, reranker, atau database history tanpa kebutuhan terukur. Untuk
+perubahan berikutnya, mulai dari test yang gagal atau metrik yang menunjukkan batasan di atas.
