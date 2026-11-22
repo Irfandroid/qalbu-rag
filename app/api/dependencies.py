@@ -1,13 +1,13 @@
-from collections.abc import Mapping
+"""FastAPI dependency wiring: RAG pipeline and read-only dataset lookups."""
 
 from fastapi import HTTPException, Path
 
 from app.core.config import get_settings
-from app.database.queries import SupabaseQuranRepository
-from app.database.supabase import get_supabase
+from app.database.postgres import get_pool
+from app.database.queries import PostgresQuranRepository, chunk_type_counts
 from app.models.quran import QuranDocument
-from app.providers.embeddings.jina import JinaEmbeddingProvider
-from app.providers.llm.gemini import GeminiProvider
+from app.providers.embeddings.ollama import OllamaEmbeddingProvider
+from app.providers.llm.ollama import OllamaProvider
 from app.quran.catalog import (
     CHUNK_TYPES,
     CORPUS,
@@ -16,44 +16,47 @@ from app.quran.catalog import (
     parent_id,
     select_verse_of_day,
 )
-from app.rag.citation_validator import CitationValidator
+from app.rag.citation_validator import CitationValidator, is_official_kemenag
 from app.rag.pipeline import QalbuRAG
 from app.rag.retriever import QuranRetriever
 from app.safety.guardrails import SafetyGuardrails
 
 
 async def get_rag() -> QalbuRAG:
+    """Build the full chat pipeline; reject requests without a database."""
     settings = get_settings()
     if not settings.configured_for_rag:
         raise HTTPException(
             status_code=503,
             detail={
                 "code": "RAG_UNAVAILABLE",
-                "message": "Gemini, Jina, dan Supabase server wajib dikonfigurasi.",
+                "message": "DATABASE_URL wajib dikonfigurasi.",
             },
         )
-    supabase = await get_supabase(settings)
-    repository = SupabaseQuranRepository(supabase, settings.quran_corpus)
-    embeddings = JinaEmbeddingProvider(
-        settings.jina_api_key or "",
-        settings.jina_embedding_model,
+    pool = await get_pool(settings)
+    repository = PostgresQuranRepository(pool, settings.quran_corpus)
+    embeddings = OllamaEmbeddingProvider(
+        settings.ollama_base_url,
+        settings.ollama_embedding_model,
         settings.embedding_dimensions,
         settings.request_timeout_seconds,
     )
-    llm = GeminiProvider(
-        settings.gemini_api_key or "",
-        settings.gemini_model,
+    llm = OllamaProvider(
+        settings.ollama_base_url,
+        settings.ollama_model,
         settings.request_timeout_seconds,
+        num_ctx=settings.ollama_num_ctx,
+    )
+    retriever = QuranRetriever(
+        embeddings,
+        repository,
+        settings.min_retrieval_score,
+        settings.top_k_retrieval,
+        settings.retrieval_parent_k,
     )
     return QalbuRAG(
         SafetyGuardrails(),
-        QuranRetriever(
-            embeddings,
-            repository,
-            settings.min_retrieval_score,
-            settings.top_k_retrieval,
-            settings.retrieval_parent_k,
-        ),
+        retriever,
         llm,
         CitationValidator(),
         settings.rag_cache_version,
@@ -65,32 +68,15 @@ async def get_rag() -> QalbuRAG:
 
 
 async def get_dataset_child_counts() -> dict[str, int] | None:
+    """Count chunk types for the active corpus, or ``None`` when unavailable."""
     settings = get_settings()
-    if settings.quran_corpus != CORPUS:
+    if settings.quran_corpus != CORPUS or not settings.configured_for_rag:
         return None
-    if not settings.supabase_url or not settings.supabase_server_key:
-        return None
-    supabase = await get_supabase(settings)
     counts = {chunk_type: 0 for chunk_type in CHUNK_TYPES}
-    start = 0
-    while True:
-        response = await (
-            supabase.table("quran_chunks")
-            .select("chunk_type")
-            .eq("corpus", settings.quran_corpus)
-            .range(start, start + 999)
-            .execute()
-        )
-        rows = response.data or []
-        for row in rows:
-            if not isinstance(row, Mapping):
-                continue
-            chunk_type = row.get("chunk_type")
-            if isinstance(chunk_type, str) and chunk_type in counts:
-                counts[chunk_type] += 1
-        if len(rows) < 1000:
-            return counts
-        start += 1000
+    counts.update(
+        await chunk_type_counts(await get_pool(settings), settings.quran_corpus)
+    )
+    return counts
 
 
 def _dataset_unavailable(message: str) -> HTTPException:
@@ -101,30 +87,30 @@ def _dataset_unavailable(message: str) -> HTTPException:
 
 
 async def _get_active_document(verse_key: str) -> QuranDocument:
+    """Fetch one verse and require official Kemenag provenance."""
     settings = get_settings()
     if settings.quran_corpus != CORPUS:
         raise _dataset_unavailable(f"Dataset detail requires active corpus {CORPUS}.")
-    if not settings.supabase_url or not settings.supabase_server_key:
+    if not settings.configured_for_rag:
         raise _dataset_unavailable("Active Quran source is not configured.")
+
     try:
-        supabase = await get_supabase(settings)
-        repository = SupabaseQuranRepository(supabase, settings.quran_corpus)
+        pool = await get_pool(settings)
+        repository = PostgresQuranRepository(pool, settings.quran_corpus)
         documents = await repository.get_documents(
             [parent_id(settings.quran_corpus, verse_key)]
         )
     except Exception as exc:
         raise _dataset_unavailable("Active Quran source is temporarily unavailable.") from exc
+
     if not documents:
         raise HTTPException(
             status_code=404,
             detail={"code": "VERSE_NOT_FOUND", "message": "Ayat tidak ditemukan."},
         )
+
     document = documents[0]
-    metadata = document.metadata
-    if not (
-        metadata.get("source_provider") == "official_portal"
-        and "kementerian agama" in str(metadata.get("source_authority", "")).casefold()
-    ):
+    if not is_official_kemenag(document.metadata):
         raise _dataset_unavailable("Ayat belum memiliki provenance sumber resmi yang valid.")
     return document
 
@@ -137,6 +123,7 @@ async def get_dataset_document(
 
 
 async def get_daily_verse_document() -> QuranDocument:
+    """Resolve today's manifest-selected verse through the official source."""
     try:
         catalog = build_catalog()
     except Exception as exc:

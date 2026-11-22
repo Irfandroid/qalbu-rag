@@ -13,7 +13,6 @@ deploy ssh*
 .codex-plugins
 .vscode
 .idea
-supabase/.temp
 .pytest_cache
 .mypy_cache
 .ruff_cache

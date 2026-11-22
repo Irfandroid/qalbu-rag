@@ -46,11 +46,7 @@ def test_removed_non_mvp_routes_are_not_registered():
 
 
 def test_chat_reports_missing_configuration_as_503(monkeypatch):
-    monkeypatch.setenv("GEMINI_API_KEY", "")
-    monkeypatch.setenv("JINA_API_KEY", "")
-    monkeypatch.setenv("SUPABASE_URL", "")
-    monkeypatch.setenv("SUPABASE_SECRET_KEY", "")
-    monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "")
+    monkeypatch.setenv("DATABASE_URL", "")
     get_settings.cache_clear()
     response = TestClient(app).post("/api/v1/chat", json={"message": "Aku sedang sedih"})
     assert response.status_code == 503

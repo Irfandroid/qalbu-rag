@@ -1,3 +1,10 @@
+"""Orchestration for the Qalbu reflection path.
+
+Order is fixed and safety-critical: safety gate -> intent routing -> retrieval ->
+grounded generation -> citation/quality validation -> fallback. No user prompt
+reaches an external provider before the safety gate and intent router agree.
+"""
+
 import logging
 import time
 from collections.abc import AsyncIterator
@@ -5,20 +12,25 @@ from hashlib import sha256
 from typing import Any
 
 from app.core.cache import rag_response_cache
-from app.models.chat import ChatRequest, QalbuResponse, QuranReference
+from app.models.chat import ChatRequest, QalbuResponse
 from app.models.quran import QuranDocument
+from app.models.rag import RetrievalResult
 from app.providers.llm.base import LLMProvider
+from app.rag import responses
 from app.rag.citation_validator import CitationValidator
 from app.rag.context_builder import build_context
-from app.rag.query_processing import Intent, IntentDecision, classify_intent
-from app.rag.response_quality import (
-    assess_contextual_response,
-    build_repair_query,
-)
+from app.rag.query_processing import IntentDecision, classify_intent
+from app.rag.response_quality import assess_contextual_response, build_repair_query
 from app.rag.retriever import QuranRetriever
 from app.safety.guardrails import SafetyGuardrails, SafetyLevel
 
 logger = logging.getLogger(__name__)
+
+# The SSE path deliberately keeps the context small so the first useful answer
+# arrives quickly; the non-streaming path may use every retrieved parent.
+MAX_GENERATION_SOURCES = 3
+# One initial draft plus one repair attempt driven by concrete quality issues.
+MAX_GENERATION_ATTEMPTS = 2
 
 
 class QalbuRAG:
@@ -45,64 +57,33 @@ class QalbuRAG:
         self.max_context_tokens = max_context_tokens
         self.max_answer_tokens = 72
 
-    async def retrieve(self, query: str, request_id: str):
-        if not classify_intent(query).requires_quran:
-            return [], []
-        matches = await self.retriever.search(query, request_id)
-        candidates = await self.retriever.repository.get_documents(
-            [result.parent_id for result in matches]
-        )
-        documents = [
-            document
-            for document in candidates
-            if not bool(document.metadata.get("accusatory", False))
-        ][: self.retriever.parent_k]
-        return matches, documents
+    async def retrieve(
+        self, query: str, request_id: str
+    ) -> tuple[list[RetrievalResult], list[QuranDocument]]:
+        """Retrieve parents for callers that only need search results."""
+        return await self._retrieve(query, request_id, classify_intent(query))
 
     async def ask(self, query: str, request_id: str) -> QalbuResponse:
         decision = self.safety.check(query)
         if decision.level == SafetyLevel.IMMEDIATE_DANGER:
-            return QalbuResponse(
-                answer=decision.response
-                or "Jika ada bahaya segera, hubungi layanan darurat setempat.",
-                references=[],
-                safety_note="Dukungan segera disarankan.",
-                mode="crisis",
-                reason_code="immediate_danger",
-            )
+            return responses.crisis_response(decision)
+
         intent = classify_intent(query)
         if not intent.requires_quran:
-            return self._out_of_scope_response(intent)
-        started = time.perf_counter()
-        cache_key = sha256(f"{self.cache_version}\0{query.strip().lower()}".encode()).hexdigest()
+            return responses.scope_limit_response(intent)
+
+        cache_key = self._cache_key(query)
         cached = rag_response_cache.get(cache_key)
         if cached is not None:
             logger.info("rag_cache_hit request_id=%s", request_id)
             return QalbuResponse.model_validate(cached)
-        matches, documents = await self.retrieve(query, request_id)
-        if not documents:
-            return QalbuResponse(
-                answer=self._no_context_response(),
-                references=[],
-                safety_note=None,
-                mode="sources_only",
-                reason_code="no_relevant_context",
-            )
-        if self._missing_verified_translation(documents):
-            draft = QalbuResponse(
-                answer=(
-                    "Terjemahan Indonesia terverifikasi belum tersedia pada sumber aktif. "
-                    "Teks Arab dan tafsir sumber tetap ditampilkan tanpa dibuatkan terjemahan "
-                    "atau refleksi oleh model."
-                ),
-                references=[QuranReference(parent_id=document.id) for document in documents],
-                safety_note="Dataset aktif adalah sumber komunitas, bukan sumber resmi Kemenag.",
-                mode="sources_only",
-                reason_code="verified_translation_unavailable",
-            )
-            return self._with_distress_note(
-                self.validator.validate(draft, documents), decision.level
-            )
+
+        started = time.perf_counter()
+        matches, documents = await self._retrieve(query, request_id, intent)
+        fallback = self._fallback_before_generation(documents, decision.level)
+        if fallback is not None:
+            return fallback
+
         try:
             validated = await self._generate_validated(
                 user_query=query,
@@ -113,16 +94,18 @@ class QalbuRAG:
             )
         except Exception:
             logger.exception("generation_failed_sources_only request_id=%s", request_id)
-            return self._sources_only_response(documents, decision.level)
+            return self._sources_only(documents, decision.level)
+
         if validated is None:
             logger.warning("ungrounded_llm_response request_id=%s", request_id)
-            return self._sources_only_response(documents, decision.level)
+            return self._sources_only(documents, decision.level)
+
         logger.info(
             "rag_complete request_id=%s matches=%s parents=%s latency_ms=%s citations=%s",
             request_id,
             len(matches),
-            [doc.id for doc in documents],
-            round((time.perf_counter() - started) * 1000),
+            [document.id for document in documents],
+            self._elapsed_ms(started),
             len(validated.references),
         )
         validated = self._with_distress_note(validated, decision.level)
@@ -138,74 +121,53 @@ class QalbuRAG:
         if decision.level == SafetyLevel.IMMEDIATE_DANGER:
             yield (
                 "crisis",
-                {
-                    "message": decision.response
-                    or "Jika ada bahaya segera, hubungi layanan darurat setempat.",
-                    "crisis_line": self.crisis_line_label,
-                    "tel": f"tel:{self.crisis_line}" if self.crisis_line else None,
-                },
+                responses.crisis_event(
+                    decision, self.crisis_line, self.crisis_line_label
+                ),
             )
             yield "done", self._done_payload(started, request_id)
             return
 
         intent = classify_intent(request.message)
         if not intent.requires_quran:
-            yield "response", self._out_of_scope_response(intent).model_dump(mode="json")
+            yield "response", responses.scope_limit_response(intent).model_dump(mode="json")
             yield "done", self._done_payload(started, request_id)
             return
 
         retrieval_started = time.perf_counter()
-        _matches, documents = await self.retrieve(request.message, request_id)
-        retrieval_ms = round((time.perf_counter() - retrieval_started) * 1000, 2)
+        _matches, documents = await self._retrieve(request.message, request_id, intent)
+        retrieval_ms = self._elapsed_ms(retrieval_started)
+
         if not documents:
-            fallback = QalbuResponse(
-                answer=self._no_context_response(),
-                references=[],
-                mode="sources_only",
-                reason_code="no_relevant_context",
-            )
-            yield "response", fallback.model_dump(mode="json")
+            yield "response", responses.no_context_response().model_dump(mode="json")
             yield "done", self._done_payload(started, request_id, retrieval_ms=retrieval_ms)
             return
 
-        if self._missing_verified_translation(documents[:3]):
-            unavailable = QalbuResponse(
-                answer=(
-                    "Terjemahan Indonesia terverifikasi belum tersedia. "
-                    "Qalbu tidak akan menerjemahkan atau membuat refleksi dari model."
-                ),
-                references=[QuranReference(parent_id=document.id) for document in documents[:3]],
-                mode="sources_only",
-                reason_code="verified_translation_unavailable",
-            )
-            unavailable_response = self._with_distress_note(
-                self.validator.validate(unavailable, documents[:3]), decision.level
-            )
-            yield "response", unavailable_response.model_dump(mode="json")
+        sources = documents[:MAX_GENERATION_SOURCES]
+        if responses.has_no_verified_translation(sources):
+            fallback = self._brief_translation_unavailable(sources, decision.level)
+            yield "response", fallback.model_dump(mode="json")
             yield "done", self._done_payload(started, request_id, retrieval_ms=retrieval_ms)
             return
 
         generation_started = time.perf_counter()
         try:
-            generation_query = f"Pesan pengguna: {request.message}"
             validated = await self._generate_validated(
                 user_query=request.message,
-                generation_query=generation_query,
-                documents=documents[:3],
+                generation_query=f"Pesan pengguna: {request.message}",
+                documents=sources,
                 max_tokens=self.max_answer_tokens,
                 request_id=request_id,
             )
         except Exception:
             logger.exception("stream_generation_failed request_id=%s", request_id)
-            fallback = self._sources_only_response(documents[:3], decision.level)
-            yield "response", fallback.model_dump(mode="json")
+            yield "response", self._sources_only(sources, decision.level).model_dump(mode="json")
             yield "done", self._done_payload(started, request_id, retrieval_ms=retrieval_ms)
             return
 
-        generation_ms = round((time.perf_counter() - generation_started) * 1000, 2)
+        generation_ms = self._elapsed_ms(generation_started)
         if validated is None:
-            fallback = self._sources_only_response(documents[:3], decision.level)
-            yield "response", fallback.model_dump(mode="json")
+            yield "response", self._sources_only(sources, decision.level).model_dump(mode="json")
             yield (
                 "done",
                 self._done_payload(
@@ -229,6 +191,25 @@ class QalbuRAG:
             ),
         )
 
+    async def _retrieve(
+        self,
+        query: str,
+        request_id: str,
+        intent: IntentDecision,
+    ) -> tuple[list[RetrievalResult], list[QuranDocument]]:
+        if not intent.requires_quran:
+            return [], []
+        matches = await self.retriever.search(query, request_id)
+        candidates = await self.retriever.repository.get_documents(
+            [result.parent_id for result in matches]
+        )
+        documents = [
+            document
+            for document in candidates
+            if not bool(document.metadata.get("accusatory", False))
+        ][: self.retriever.parent_k]
+        return matches, documents
+
     async def _generate_validated(
         self,
         *,
@@ -241,7 +222,7 @@ class QalbuRAG:
         """Generate dynamically, then retry once with concrete quality failures."""
         context = build_context(documents, self.max_context_tokens)
         prompt = generation_query
-        for attempt in range(2):
+        for attempt in range(MAX_GENERATION_ATTEMPTS):
             response = await self.llm.generate(prompt, context, max_tokens)
             response = response.model_copy(update={"safety_note": None})
             validated = self.validator.validate(response, documents)
@@ -262,6 +243,45 @@ class QalbuRAG:
             prompt = build_repair_query(generation_query, validated, report)
         return None
 
+    def _fallback_before_generation(
+        self,
+        documents: list[QuranDocument],
+        safety_level: SafetyLevel,
+    ) -> QalbuResponse | None:
+        """Return a non-generated response when retrieval cannot ground an answer."""
+        if not documents:
+            return responses.no_context_response()
+        if responses.has_no_verified_translation(documents):
+            draft = responses.translation_unavailable_response(documents)
+            return self._with_distress_note(
+                self.validator.validate(draft, documents), safety_level
+            )
+        return None
+
+    def _sources_only(
+        self,
+        documents: list[QuranDocument],
+        safety_level: SafetyLevel,
+    ) -> QalbuResponse:
+        draft = responses.sources_only_response(documents)
+        return self._with_distress_note(
+            self.validator.validate(draft, documents), safety_level
+        )
+
+    def _brief_translation_unavailable(
+        self,
+        documents: list[QuranDocument],
+        safety_level: SafetyLevel,
+    ) -> QalbuResponse:
+        draft = responses.brief_translation_unavailable_response(documents)
+        return self._with_distress_note(
+            self.validator.validate(draft, documents), safety_level
+        )
+
+    def _cache_key(self, query: str) -> str:
+        versioned_query = f"{self.cache_version}\0{query.strip().lower()}"
+        return sha256(versioned_query.encode()).hexdigest()
+
     def _done_payload(
         self,
         started: float,
@@ -271,7 +291,7 @@ class QalbuRAG:
     ) -> dict[str, Any]:
         return {
             "timings": {
-                "total_ms": round((time.perf_counter() - started) * 1000, 2),
+                "total_ms": self._elapsed_ms(started),
                 "retrieval_ms": retrieval_ms,
                 "generation_ms": generation_ms,
             },
@@ -280,82 +300,12 @@ class QalbuRAG:
         }
 
     @staticmethod
-    def _out_of_scope_response(intent: IntentDecision | None = None) -> QalbuResponse:
-        if intent and intent.needs_clarification:
-            return QalbuResponse(
-                answer=(
-                    "Bisa ceritakan sedikit lebih spesifik tentang hal yang ingin kamu pahami? "
-                    "Qalbu dapat membantu refleksi dan mencari sumber Al-Qur'an yang relevan."
-                ),
-                references=[],
-                mode="scope_limit",
-                reason_code="needs_clarification",
-            )
-        if intent and intent.primary_intent != Intent.OUT_OF_SCOPE:
-            return QalbuResponse(
-                answer=(
-                    "Qalbu saat ini berfokus pada ruang refleksi dan informasi berbasis sumber "
-                    "Al-Qur'an. Untuk pertanyaan praktis atau umum, gunakan sumber yang "
-                    "sesuai; Qalbu dapat membantu bila kamu ingin membahas sisi reflektifnya."
-                ),
-                references=[],
-                mode="scope_limit",
-                reason_code="scope_limit",
-            )
-        return QalbuResponse(
-            answer=(
-                "Pertanyaan itu berada di luar ruang refleksi Qalbu. "
-                "Ceritakan perasaan atau keadaan yang sedang kamu hadapi agar Qalbu "
-                "dapat mencari sumber Al-Qur'an yang relevan."
-            ),
-            references=[],
-            safety_note=None,
-            mode="scope_limit",
-            reason_code="out_of_scope",
-        )
-
-    @staticmethod
-    def _no_context_response() -> str:
-        return (
-            "Aku belum menemukan ayat yang cukup relevan. "
-            "Coba ceritakan kembali dengan kata yang lebih spesifik."
-        )
-
-    def _sources_only_response(
-        self,
-        documents: list[QuranDocument],
-        safety_level: SafetyLevel,
-    ) -> QalbuResponse:
-        draft = QalbuResponse(
-            answer=(
-                "Refleksi AI sedang tidak tersedia saat ini. Sumber Al-Qur'an hasil pencarian "
-                "tetap ditampilkan agar kamu dapat membacanya dan menilainya sendiri dengan tenang."
-            ),
-            references=[QuranReference(parent_id=document.id) for document in documents],
-            mode="sources_only",
-            reason_code="generation_unavailable",
-        )
-        return self._with_distress_note(
-            self.validator.validate(draft, documents), safety_level
-        )
+    def _elapsed_ms(started: float) -> float:
+        return round((time.perf_counter() - started) * 1000, 2)
 
     @staticmethod
     def _with_distress_note(
         response: QalbuResponse,
         safety_level: SafetyLevel,
     ) -> QalbuResponse:
-        if safety_level != SafetyLevel.HIGH_DISTRESS:
-            return response
-        support = (
-            "Jika keadaan terasa makin berat, hubungi orang tepercaya atau tenaga "
-            "kesehatan mental yang dapat mendampingi secara langsung."
-        )
-        note = f"{response.safety_note} {support}" if response.safety_note else support
-        return response.model_copy(update={"safety_note": note})
-
-    @staticmethod
-    def _missing_verified_translation(documents: list[QuranDocument]) -> bool:
-        return bool(documents) and all(
-            not document.translation and bool(document.metadata.get("unverified_community_source"))
-            for document in documents
-        )
+        return responses.with_human_support_note(response, safety_level)

@@ -54,6 +54,29 @@ class Intent(StrEnum):
     OUT_OF_SCOPE = "out_of_scope"
 
 
+# Only these intents may reach Ollama embedding, database retrieval, or the LLM.
+GROUNDED_INTENTS = frozenset(
+    {
+        Intent.EMOTIONAL_REFLECTION,
+        Intent.QURANIC_INFORMATION,
+        Intent.ISLAMIC_GUIDANCE,
+    }
+)
+INTENT_PRECEDENCE = (
+    Intent.EMOTIONAL_REFLECTION,
+    Intent.QURANIC_INFORMATION,
+    Intent.ISLAMIC_GUIDANCE,
+    Intent.PRACTICAL_LIFE_GUIDANCE,
+    Intent.GENERAL_INFORMATION,
+    Intent.OUT_OF_SCOPE,
+)
+THEME_WEIGHT = 2
+EMOTIONAL_TERM_WEIGHT = 3
+STRONG_INTENT_WEIGHT = 4
+DEFAULT_INTENT_WEIGHT = 2
+REAL_TIME_WEIGHT = 3
+
+
 _INTENT_TERMS: dict[Intent, tuple[str, ...]] = {
     Intent.QURANIC_INFORMATION: (
         "ayat",
@@ -193,33 +216,11 @@ def enrich_query(query: str) -> tuple[str, list[str]]:
 def classify_intent(query: str) -> IntentDecision:
     """Classify routing needs locally without diagnosing or calling a provider."""
     understanding = understand_query(query)
-    normalized = understanding.normalized_query
-    scores = {intent: 0 for intent in Intent}
-
-    if understanding.possible_themes:
-        scores[Intent.EMOTIONAL_REFLECTION] += 2
-    if any(term in normalized for term in _EMOTIONAL_TERMS):
-        scores[Intent.EMOTIONAL_REFLECTION] += 3
-    for intent, terms in _INTENT_TERMS.items():
-        weight = 4 if intent in {
-            Intent.QURANIC_INFORMATION,
-            Intent.ISLAMIC_GUIDANCE,
-        } else 2
-        scores[intent] += weight * sum(1 for term in terms if term in normalized)
-    if any(term in normalized for term in _REAL_TIME_TERMS):
-        scores[Intent.OUT_OF_SCOPE] += 3
-
-    precedence = (
-        Intent.EMOTIONAL_REFLECTION,
-        Intent.QURANIC_INFORMATION,
-        Intent.ISLAMIC_GUIDANCE,
-        Intent.PRACTICAL_LIFE_GUIDANCE,
-        Intent.GENERAL_INFORMATION,
-        Intent.OUT_OF_SCOPE,
-    )
-    ranked = sorted(scores, key=lambda intent: (-scores[intent], precedence.index(intent)))
+    scores = _score_intents(understanding)
+    ranked = sorted(scores, key=lambda intent: (-scores[intent], INTENT_PRECEDENCE.index(intent)))
     top = ranked[0]
     top_score = scores[top]
+
     if top_score == 0:
         return IntentDecision(
             primary_intent=Intent.GENERAL_INFORMATION,
@@ -227,23 +228,38 @@ def classify_intent(query: str) -> IntentDecision:
             requires_quran=False,
             needs_clarification=True,
         )
+
     nonzero = [intent for intent in ranked if scores[intent] > 0]
-    total = sum(scores.values())
-    secondary = [intent for intent in nonzero[1:3] if intent != top]
-    confidence = min(1.0, top_score / max(total, 1))
-    needs_clarification = len(nonzero) > 1 and top_score == scores[nonzero[1]]
+    ambiguous = len(nonzero) > 1 and top_score == scores[nonzero[1]]
     return IntentDecision(
         primary_intent=top,
-        secondary_intents=secondary,
-        confidence=confidence,
-        requires_quran=top
-        in {
-            Intent.EMOTIONAL_REFLECTION,
-            Intent.QURANIC_INFORMATION,
-            Intent.ISLAMIC_GUIDANCE,
-        },
-        needs_clarification=needs_clarification,
+        secondary_intents=[intent for intent in nonzero[1:3] if intent != top],
+        confidence=min(1.0, top_score / max(sum(scores.values()), 1)),
+        requires_quran=top in GROUNDED_INTENTS,
+        needs_clarification=ambiguous,
     )
+
+
+def _score_intents(understanding: QueryUnderstanding) -> dict[Intent, int]:
+    normalized = understanding.normalized_query
+    scores = {intent: 0 for intent in Intent}
+
+    if understanding.possible_themes:
+        scores[Intent.EMOTIONAL_REFLECTION] += THEME_WEIGHT
+    if any(term in normalized for term in _EMOTIONAL_TERMS):
+        scores[Intent.EMOTIONAL_REFLECTION] += EMOTIONAL_TERM_WEIGHT
+
+    for intent, terms in _INTENT_TERMS.items():
+        weight = (
+            STRONG_INTENT_WEIGHT
+            if intent in {Intent.QURANIC_INFORMATION, Intent.ISLAMIC_GUIDANCE}
+            else DEFAULT_INTENT_WEIGHT
+        )
+        scores[intent] += weight * sum(1 for term in terms if term in normalized)
+
+    if any(term in normalized for term in _REAL_TIME_TERMS):
+        scores[Intent.OUT_OF_SCOPE] += REAL_TIME_WEIGHT
+    return scores
 
 
 def is_out_of_scope(query: str) -> bool:

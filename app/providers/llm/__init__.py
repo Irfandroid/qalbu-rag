@@ -1,3 +1,3 @@
-from app.providers.llm.gemini import GeminiProvider
+from app.providers.llm.ollama import OllamaProvider
 
-__all__ = ["GeminiProvider"]
+__all__ = ["OllamaProvider"]

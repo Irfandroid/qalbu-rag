@@ -1,34 +1,62 @@
+name: qalbu
+
 services:
-  qalbu-api:
-    build:
-      context: .
+  postgres:
+    image: pgvector/pgvector:pg16
     environment:
-      APP_ENV: ${APP_ENV:-development}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
-      SUPABASE_URL: ${SUPABASE_URL:-}
-      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY:-}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
-      QALBU_CORPUS: ${QALBU_CORPUS:-qalbu-kemenag-v1}
-      JINA_API_KEY: ${JINA_API_KEY:-}
-      JINA_EMBEDDING_MODEL: ${JINA_EMBEDDING_MODEL:-jina-embeddings-v5-text-small}
-      EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-768}
-      MIN_RETRIEVAL_SCORE: ${MIN_RETRIEVAL_SCORE:-0.32}
-      TOP_K_RETRIEVAL: ${TOP_K_RETRIEVAL:-15}
-      RETRIEVAL_PARENT_K: ${RETRIEVAL_PARENT_K:-4}
-      CHAT_RATE_LIMIT_PER_MINUTE: ${CHAT_RATE_LIMIT_PER_MINUTE:-10}
-      RAG_CACHE_VERSION: ${RAG_CACHE_VERSION:-qalbu-mvp-v1}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8000}
-      QALBU_PROFILE: ${QALBU_PROFILE:-local}
-      CRISIS_LINE: ${CRISIS_LINE:-}
-      CRISIS_LINE_LABEL: ${CRISIS_LINE_LABEL:-Layanan darurat setempat}
-      REQUEST_TIMEOUT_SECONDS: ${REQUEST_TIMEOUT_SECONDS:-30}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
-    ports:
-      - "8000:8000"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      POSTGRES_DB: qalbu
+      POSTGRES_USER: qalbu
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD wajib diisi}
     volumes:
-      - .:/service
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - work_mem=8MB
+      - -c
+      - max_connections=20
+      - -c
+      - effective_cache_size=256MB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qalbu -d qalbu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    environment:
+      # Query embedding + chat model both stay resident on a 4 GB VPS.
+      OLLAMA_MAX_LOADED_MODELS: "2"
+      OLLAMA_KEEP_ALIVE: "30m"
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  qalbu-api:
+    build: .
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://qalbu:${POSTGRES_PASSWORD}@postgres:5432/qalbu
+      OLLAMA_BASE_URL: http://ollama:11434
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
     healthcheck:
       test:
         - CMD
@@ -37,5 +65,26 @@ services:
         - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"
       interval: 15s
       timeout: 5s
-      retries: 3
-      start_period: 10s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  qalbu-web:
+    build:
+      context: .
+      dockerfile: deploy/lighttpd/Dockerfile
+    ports:
+      - "${QALBU_HTTP_PORT:-8000}:8000"
+    depends_on:
+      qalbu-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  ollama:

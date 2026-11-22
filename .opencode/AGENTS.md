@@ -1,7 +1,7 @@
 # Qalbu — Agent Rules
 
 Project: FastAPI + Pydantic backend (`app/`), static frontend (`frontend/`),
-Postgres/Supabase (`supabase/`), pytest/ruff/mypy. Python 3.11.
+local Postgres/pgvector (`db/`), Ollama providers, pytest/ruff/mypy. Python 3.11.
 
 ## Response style
 

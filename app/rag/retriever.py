@@ -1,3 +1,5 @@
+"""Embedding search, parent de-duplication, and score thresholding."""
+
 import logging
 import time
 
@@ -5,6 +7,12 @@ from app.models.rag import RetrievalResult
 from app.providers.embeddings.base import EmbeddingProvider
 from app.quran.repository import QuranRepository
 from app.rag.query_processing import enrich_query
+
+logger = logging.getLogger(__name__)
+
+# One verse can produce several children (arabic/translation/tafsir/themes).
+# Oversample children so repeated parents cannot consume every retrieval slot.
+PARENT_OVERSAMPLE_FACTOR = 4
 
 
 class QuranRetriever:
@@ -24,27 +32,20 @@ class QuranRetriever:
 
     async def search(self, query: str, request_id: str | None = None) -> list[RetrievalResult]:
         processed_query, themes = enrich_query(query)
+
         embedding_started = time.perf_counter()
         embedding = await self.embeddings.embed_query(processed_query)
-        embedding_ms = round((time.perf_counter() - embedding_started) * 1000, 2)
+        embedding_ms = _elapsed_ms(embedding_started)
+
+        child_candidate_k = max(self.candidate_k, self.parent_k * PARENT_OVERSAMPLE_FACTOR)
         vector_started = time.perf_counter()
-        child_candidate_k = max(self.candidate_k, self.parent_k * 4)
         results = await self.repository.match_chunks(embedding, child_candidate_k)
-        vector_ms = round((time.perf_counter() - vector_started) * 1000, 2)
+        vector_ms = _elapsed_ms(vector_started)
+
         accepted = [result for result in results if result.score >= self.min_score]
-        # Keep only the strongest child for each parent. This prevents repeated
-        # tafsir/translation children from consuming the whole LLM context.
-        by_parent: dict[str, RetrievalResult] = {}
-        for result in accepted:
-            current = by_parent.get(result.parent_id)
-            if current is None or result.score > current.score:
-                by_parent[result.parent_id] = result
-        parents = sorted(
-            by_parent.values(),
-            key=lambda result: result.score,
-            reverse=True,
-        )[: self.parent_k]
-        logging.getLogger(__name__).info(
+        parents = _rank_parents(_strongest_child_per_parent(accepted), self.parent_k)
+
+        logger.info(
             "retrieval request_id=%s themes=%s vector_threshold=%s "
             "embedding_ms=%s vector_ms=%s scores=%s parent_scores=%s "
             "parents=%s child_candidate_k=%s embedding_model=%s",
@@ -60,3 +61,23 @@ class QuranRetriever:
             getattr(self.embeddings, "model", "unknown"),
         )
         return parents
+
+
+def _strongest_child_per_parent(
+    results: list[RetrievalResult],
+) -> list[RetrievalResult]:
+    """Keep the best-scoring child for each parent to bound LLM context."""
+    by_parent: dict[str, RetrievalResult] = {}
+    for result in results:
+        current = by_parent.get(result.parent_id)
+        if current is None or result.score > current.score:
+            by_parent[result.parent_id] = result
+    return list(by_parent.values())
+
+
+def _rank_parents(results: list[RetrievalResult], limit: int) -> list[RetrievalResult]:
+    return sorted(results, key=lambda result: result.score, reverse=True)[:limit]
+
+
+def _elapsed_ms(started: float) -> float:
+    return round((time.perf_counter() - started) * 1000, 2)

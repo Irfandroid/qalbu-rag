@@ -1,3 +1,3 @@
-from app.providers.embeddings.jina import JinaEmbeddingProvider
+from app.providers.embeddings.ollama import OllamaEmbeddingProvider
 
-__all__ = ["JinaEmbeddingProvider"]
+__all__ = ["OllamaEmbeddingProvider"]

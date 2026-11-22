@@ -1,0 +1,41 @@
+/* Design tokens and base resets shared by every Qalbu page. */
+
+:root {
+  --canvas: #f4f1e9;
+  --paper: #fffdf8;
+  --ink: #173a31;
+  --moss: #55724e;
+  --mist: #e8efe2;
+  --line: #d8d8cc;
+  --muted: #6b776f;
+  --alert: #8a4a44;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--canvas);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font:
+    16px/1.55 Geist,
+    ui-sans-serif,
+    sans-serif;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

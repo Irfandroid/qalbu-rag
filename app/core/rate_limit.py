@@ -4,9 +4,11 @@ from threading import Lock
 
 
 class InMemoryRateLimiter:
-    """Fixed-window IP limiter for one FastAPI process.
+    """Sliding-window IP limiter for one FastAPI process.
 
-    Deploy behind a shared store/rate limiter before running multiple API replicas.
+    Keeps timestamps of accepted requests, so it enforces at most
+    ``max_requests`` per ``window_seconds`` per key. Deploy behind a shared
+    store/rate limiter before running multiple API replicas.
     """
 
     def __init__(self, max_requests: int, window_seconds: int = 60) -> None:

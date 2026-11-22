@@ -2,7 +2,7 @@
 
 `external/indonesian-quran/` menyimpan snapshot ayat Indonesia yang dipakai sebagai artefak
 referensi/seed. Runtime chat tidak membaca file ini langsung; runtime mengambil corpus
-`qalbu-kemenag-v1` dari Supabase.
+`qalbu-kemenag-v1` dari PostgreSQL lokal.
 
 Corpus aktif `qalbu-kemenag-v1` mengambil ayat, terjemahan, dan tafsir dari
 [API Al-Qur'an Kemenag](https://quran-api.lpmqkemenag.id/alquran/data), LPMQ Kementerian Agama RI.
@@ -12,13 +12,13 @@ Parent corpus baru berisi satu ayat per `quran_documents`. Setiap field yang ter
 sebagai child embedding terpisah (`arabic`, `translation`, `tafsir`, atau `themes`) di
 `quran_chunks`. Corpus lama `qalbu-seed-v1` dipertahankan sebagai rollback.
 
-Setiap respons tetap menampilkan Arab, terjemahan, tafsir, dan provenance dari row Supabase.
+Setiap respons tetap menampilkan Arab, terjemahan, tafsir, dan provenance dari row PostgreSQL.
 Jangan menaruh credential atau percakapan pengguna di folder data.
 
 ## Taxonomy kesehatan mental
 
 `manifests/mental_health_categories.json` memetakan kondisi emosional ke ayat yang sudah
-terverifikasi di corpus aktif Kemenag. Sinkronkan label ke corpus Supabase dan re-embed chunk yang
+terverifikasi di corpus aktif Kemenag. Sinkronkan label ke corpus PostgreSQL dan re-embed chunk yang
 berubah dengan:
 
 ```powershell
@@ -52,5 +52,5 @@ python -m scripts.scrape_kemenag_manifest --manifest data/manifests/kemenag_corp
 ```
 
 Script memakai endpoint `getAyat` dan `getAyatTafsir`, menyimpan cache mentah lokal yang di-ignore
-Git, memvalidasi provenance Kemenag, membuat embedding Jina, lalu memasukkan parent document dan
+Git, memvalidasi provenance Kemenag, membuat embedding Ollama, lalu memasukkan parent document dan
 child chunk ke corpus `qalbu-kemenag-v1`.

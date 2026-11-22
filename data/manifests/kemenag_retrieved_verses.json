@@ -12,7 +12,7 @@
     "missing_verses": 0
   },
   "dataset_location": {
-    "primary": "Supabase tables quran_documents and quran_chunks",
+    "primary": "PostgreSQL tables quran_documents and quran_chunks",
     "corpus_filter": "qalbu-kemenag-v1",
     "local_raw_cache": "data/raw/kemenag_reflection_scrape.json",
     "request_manifest": "data/manifests/kemenag_reflection_verses.json"

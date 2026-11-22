@@ -1,0 +1,16 @@
+services:
+  qalbu-api:
+    volumes:
+      - ./:/service
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
+
+  qalbu-web:
+    volumes:
+      - ./frontend:/srv/frontend:ro

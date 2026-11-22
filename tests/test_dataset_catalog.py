@@ -197,9 +197,7 @@ def test_daily_verse_api_returns_source_and_detail_link():
 
 
 def test_daily_verse_api_reports_missing_source(monkeypatch):
-    monkeypatch.setenv("SUPABASE_URL", "")
-    monkeypatch.setenv("SUPABASE_SECRET_KEY", "")
-    monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "")
+    monkeypatch.setenv("DATABASE_URL", "")
     get_settings.cache_clear()
     try:
         response = TestClient(app).get("/api/v1/dataset/verse-of-day")
@@ -214,9 +212,8 @@ def test_daily_verse_api_reports_database_failure(monkeypatch):
     async def unavailable(_settings):
         raise RuntimeError("database unavailable")
 
-    monkeypatch.setattr(dataset_dependencies, "get_supabase", unavailable)
-    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
-    monkeypatch.setenv("SUPABASE_SECRET_KEY", "service-key")
+    monkeypatch.setattr(dataset_dependencies, "get_pool", unavailable)
+    monkeypatch.setenv("DATABASE_URL", "postgresql://qalbu:qalbu@localhost:5432/qalbu")
     get_settings.cache_clear()
     try:
         response = TestClient(app).get("/api/v1/dataset/verse-of-day")
@@ -255,20 +252,23 @@ def test_catalog_links_to_detail_page():
         response = TestClient(app).get("/dataset")
     finally:
         app.dependency_overrides.clear()
+    script = Path("frontend/assets/js/dataset.js").read_text(encoding="utf-8")
 
     assert response.status_code == 200
-    assert "/dataset/verse/" in response.text
+    assert "/assets/js/dataset.js" in response.text
+    assert "/dataset/verse/" in script
 
 
 def test_dataset_page_contains_manual_request_form():
     response = TestClient(app).get("/dataset")
+    script = Path("frontend/assets/js/dataset.js").read_text(encoding="utf-8")
 
     assert response.status_code == 200
     assert 'id="request-dataset"' in response.text
     assert 'id="request-reference"' in response.text
     assert 'id="request-reason"' in response.text
-    assert "navigator.clipboard" in response.text
-    assert "Clipboard tidak tersedia" in response.text
+    assert "navigator.clipboard" in script
+    assert "Clipboard tidak tersedia" in script
 
 
 def test_homepage_links_to_manual_dataset_request():
@@ -280,8 +280,9 @@ def test_homepage_links_to_manual_dataset_request():
 
 def test_homepage_contains_daily_verse_region():
     response = TestClient(app).get("/")
+    script = Path("frontend/assets/js/daily-verse.js").read_text(encoding="utf-8")
 
     assert response.status_code == 200
     assert 'id="daily-verse"' in response.text
-    assert "/api/v1/dataset/verse-of-day" in response.text
-    assert "source_status" in response.text
+    assert "/api/v1/dataset/verse-of-day" in script
+    assert "source_status" in script

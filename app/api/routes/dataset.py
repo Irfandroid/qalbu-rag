@@ -6,24 +6,26 @@ from app.api.dependencies import (
     get_dataset_document,
 )
 from app.core.config import get_settings
+from app.models.quran import QuranDocument
 from app.quran.catalog import CORPUS, build_catalog, daily_date_in_timezone
-from app.rag.citation_validator import CitationValidator
+from app.rag.citation_validator import source_status
 
 router = APIRouter(tags=["dataset"])
 
 
-def _document_payload(document) -> dict:
-    verse_key = f"{document.surah_number}:{document.ayah_start}"
+def _document_payload(document: QuranDocument) -> dict:
     return {
         **document.model_dump(mode="json"),
-        "verse_key": verse_key,
+        "verse_key": f"{document.surah_number}:{document.ayah_start}",
         "detail_url": f"/dataset/verse/{document.surah_number}/{document.ayah_start}",
-        "source_status": CitationValidator._source_status(document),
+        "source_status": source_status(document),
     }
 
 
 @router.get("/api/v1/dataset/verse-of-day")
-async def verse_of_day(document=Depends(get_daily_verse_document)) -> dict:  # noqa: B008
+async def verse_of_day(
+    document: QuranDocument = Depends(get_daily_verse_document),  # noqa: B008
+) -> dict:
     payload = _document_payload(document)
     return {
         "date": daily_date_in_timezone().isoformat(),
@@ -39,7 +41,9 @@ async def verse_of_day(document=Depends(get_daily_verse_document)) -> dict:  # n
 
 
 @router.get("/api/v1/dataset/verses/{surah}/{ayah}")
-async def dataset_verse_detail(document=Depends(get_dataset_document)) -> dict:  # noqa: B008
+async def dataset_verse_detail(
+    document: QuranDocument = Depends(get_dataset_document),  # noqa: B008
+) -> dict:
     return _document_payload(document)
 
 

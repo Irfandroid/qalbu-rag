@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from collections.abc import AsyncIterator, Mapping
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -29,8 +30,16 @@ def _check_rate_limit(request: Request) -> None:
         )
 
 
-def _sse(event: str, payload: dict) -> str:
+def _sse(event: str, payload: Mapping[str, object]) -> str:
     return f"event: {event}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
+
+
+def _error_event(code: str, message: str, request_id: str) -> str:
+    return _sse("error", {"code": code, "message": message, "request_id": request_id})
+
+
+def _done_event(request_id: str) -> str:
+    return _sse("done", {"request_id": request_id, "profile": "unknown"})
 
 
 @router.post("/api/v1/chat", response_class=StreamingResponse)
@@ -42,33 +51,27 @@ async def stream_chat(
     _check_rate_limit(http_request)
     request_id = str(uuid4())
 
-    async def events():
+    async def events() -> AsyncIterator[str]:
         try:
             async with asyncio.timeout(get_settings().request_timeout_seconds):
                 async for event, payload in rag.stream_events(request, request_id):
                     yield _sse(event, payload)
         except TimeoutError:
             logger.warning("stream_chat_timeout request_id=%s", request_id)
-            yield _sse(
-                "error",
-                {
-                    "code": "REQUEST_TIMEOUT",
-                    "message": "Proses refleksi melewati batas waktu. Coba lagi.",
-                    "request_id": request_id,
-                },
+            yield _error_event(
+                "REQUEST_TIMEOUT",
+                "Proses refleksi melewati batas waktu. Coba lagi.",
+                request_id,
             )
-            yield _sse("done", {"request_id": request_id, "profile": "unknown"})
+            yield _done_event(request_id)
         except Exception:
             logger.exception("stream_chat_failed request_id=%s", request_id)
-            yield _sse(
-                "error",
-                {
-                    "code": "RAG_UNAVAILABLE",
-                    "message": "Layanan refleksi belum dapat dihubungi.",
-                    "request_id": request_id,
-                },
+            yield _error_event(
+                "RAG_UNAVAILABLE",
+                "Layanan refleksi belum dapat dihubungi.",
+                request_id,
             )
-            yield _sse("done", {"request_id": request_id, "profile": "unknown"})
+            yield _done_event(request_id)
 
     return StreamingResponse(
         events(),

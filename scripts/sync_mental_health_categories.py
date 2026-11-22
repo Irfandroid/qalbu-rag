@@ -3,75 +3,27 @@
 import argparse
 import asyncio
 import json
-import re
-from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
-from app.core.config import get_settings
-from app.providers.embeddings.jina import JinaEmbeddingProvider, embedding_fingerprint
-from supabase import acreate_client
+from app.core.config import Settings, get_settings
+from app.database.postgres import close_pool, get_pool
+from app.database.queries import vector_literal
+from app.providers.embeddings.ollama import (
+    OllamaEmbeddingProvider,
+    embedding_fingerprint,
+)
+from scripts.kemenag.categories import (
+    category_index,
+    labelled_content,
+    load_category_manifest,
+    parent_categories,
+)
+from scripts.kemenag.config import ROOT
+from scripts.kemenag.db import corpus_rows
+from scripts.kemenag.documents import is_official_provenance
 
-ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "data/manifests/mental_health_categories.json"
 LOCAL_CHILDREN = ROOT / "data/processed/kemenag_portal_seed_children.json"
-
-
-def load_manifest() -> dict[str, Any]:
-    return cast(dict[str, Any], json.loads(MANIFEST.read_text(encoding="utf-8")))
-
-
-def category_index(manifest: dict[str, Any]) -> tuple[dict[str, list[str]], list[str]]:
-    by_verse: dict[str, list[str]] = {}
-    pending: list[str] = []
-    for category in manifest["categories"]:
-        if category.get("guardrail_only"):
-            continue
-        keys = category.get("verse_keys", [])
-        if not keys:
-            pending.append(category["id"])
-        for key in keys:
-            by_verse.setdefault(key, []).append(category["id"])
-    return by_verse, pending
-
-
-def parent_categories(
-    chunks: list[dict[str, Any]], by_verse: dict[str, list[str]]
-) -> dict[str, list[str]]:
-    result: dict[str, set[str]] = {}
-    for chunk in chunks:
-        verse_keys = str(chunk.get("metadata", {}).get("verse_key", "")).split(",")
-        for verse_key in (key.strip() for key in verse_keys):
-            for category in by_verse.get(verse_key, []):
-                result.setdefault(chunk["parent_id"], set()).add(category)
-    return {parent_id: sorted(categories) for parent_id, categories in result.items()}
-
-
-def labelled_content(content: str, categories: list[str]) -> str:
-    clean = re.sub(
-        r"\nKategori (?:kesehatan mental|refleksi):.*$", "", content, flags=re.DOTALL
-    )
-    return (
-        f"{clean}\n\nKategori kesehatan mental: "
-        f"{', '.join(categories) or 'belum dipetakan'}"
-    )
-
-
-async def corpus_rows(client: Any, table: str, corpus: str) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    start = 0
-    while True:
-        response = await (
-            client.table(table)
-            .select("*")
-            .eq("corpus", corpus)
-            .range(start, start + 999)
-            .execute()
-        )
-        batch = cast(list[dict[str, Any]], response.data or [])
-        rows.extend(batch)
-        if len(batch) < 1000:
-            return rows
-        start += 1000
+EMBEDDING_BATCH_SIZE = 16
 
 
 def local_dry_run(manifest: dict[str, Any]) -> None:
@@ -89,31 +41,47 @@ def local_dry_run(manifest: dict[str, Any]) -> None:
 
 async def sync() -> None:
     settings = get_settings()
-    if not settings.supabase_url or not settings.supabase_server_key or not settings.jina_api_key:
-        raise RuntimeError("SUPABASE_URL, Supabase server key, and JINA_API_KEY are required")
+    if not settings.database_url:
+        raise RuntimeError("DATABASE_URL is required")
 
-    manifest = load_manifest()
+    manifest = load_category_manifest()
     by_verse, pending = category_index(manifest)
-    client = await acreate_client(settings.supabase_url, settings.supabase_server_key)
-    documents = await corpus_rows(client, "quran_documents", manifest["corpus"])
-    chunks = await corpus_rows(client, "quran_chunks", manifest["corpus"])
-    if any(
-        (document.get("metadata") or {}).get("source_provider") != "official_portal"
-        or "kementerian agama" not in str(
-            (document.get("metadata") or {}).get("source_authority", "")
-        ).casefold()
-        for document in documents
-    ):
-        raise RuntimeError("Active corpus contains a non-Kemenag source; refusing to relabel it")
+    pool = await get_pool(settings)
+    try:
+        documents = await corpus_rows(pool, "quran_documents", manifest["corpus"])
+        chunks = await corpus_rows(pool, "quran_chunks", manifest["corpus"])
+        if any(
+            not is_official_provenance(document.get("metadata") or {})
+            for document in documents
+        ):
+            raise RuntimeError(
+                "Active corpus contains a non-Kemenag source; refusing to relabel it"
+            )
 
-    grouped = parent_categories(chunks, by_verse)
-    available_keys = {
-        key.strip()
-        for chunk in chunks
-        for key in str(chunk.get("metadata", {}).get("verse_key", "")).split(",")
-    }
-    missing_keys = sorted(key for key in by_verse if key not in available_keys)
-    changed_documents = 0
+        grouped = parent_categories(chunks, by_verse)
+        available_keys = {
+            key.strip()
+            for chunk in chunks
+            for key in str(chunk.get("metadata", {}).get("verse_key", "")).split(",")
+        }
+        missing_keys = sorted(key for key in by_verse if key not in available_keys)
+        changed_documents = await _update_documents(pool, documents, grouped, manifest)
+        to_embed = _chunks_to_reembed(chunks, grouped, manifest)
+        await _reembed_chunks(pool, to_embed, settings, manifest)
+    finally:
+        await close_pool()
+    print(f"Updated documents: {changed_documents}; re-embedded chunks: {len(to_embed)}")
+    print(f"Verse keys pending API fetch: {', '.join(missing_keys) or 'none'}")
+    print(f"Categories with no configured keys: {', '.join(pending) or 'none'}")
+
+
+async def _update_documents(
+    pool: Any,
+    documents: list[dict[str, Any]],
+    grouped: dict[str, list[str]],
+    manifest: dict[str, Any],
+) -> int:
+    updates: list[tuple[Any, Any, str]] = []
     for document in documents:
         categories = grouped.get(document["id"], [])
         if not categories:
@@ -127,12 +95,27 @@ async def sync() -> None:
             }
         )
         if themes != document.get("themes") or metadata != document.get("metadata"):
-            await client.table("quran_documents").update(
-                {"themes": themes, "metadata": metadata}
-            ).eq("id", document["id"]).execute()
-            changed_documents += 1
+            updates.append((themes, metadata, document["id"]))
+    if not updates:
+        return 0
+    await pool.executemany(
+        """
+        update public.quran_documents
+        set themes = $1, metadata = $2, updated_at = now()
+        where id = $3
+        """,
+        updates,
+    )
+    return len(updates)
 
-    to_embed: list[tuple[dict[str, Any], str, dict[str, Any]]] = []
+
+def _chunks_to_reembed(
+    chunks: list[dict[str, Any]],
+    grouped: dict[str, list[str]],
+    manifest: dict[str, Any],
+) -> list[tuple[dict[str, Any], str, dict[str, Any]]]:
+    """Return theme chunks whose content or metadata changed."""
+    pending: list[tuple[dict[str, Any], str, dict[str, Any]]] = []
     for chunk in chunks:
         if chunk.get("chunk_type") != "themes":
             continue
@@ -146,37 +129,59 @@ async def sync() -> None:
             }
         )
         if content != chunk["content"] or metadata != chunk.get("metadata"):
-            to_embed.append((chunk, content, metadata))
+            pending.append((chunk, content, metadata))
+    return pending
 
-    embeddings = []
-    provider = JinaEmbeddingProvider(
-        settings.jina_api_key,
-        settings.jina_embedding_model,
+
+async def _reembed_chunks(
+    pool: Any,
+    to_embed: list[tuple[dict[str, Any], str, dict[str, Any]]],
+    settings: Settings,
+    manifest: dict[str, Any],
+) -> None:
+    provider = OllamaEmbeddingProvider(
+        settings.ollama_base_url,
+        settings.ollama_embedding_model,
         settings.embedding_dimensions,
         settings.request_timeout_seconds,
     )
-    for start in range(0, len(to_embed), 16):
-        batch = [item[1] for item in to_embed[start : start + 16]]
+    embeddings: list[list[float]] = []
+    for start in range(0, len(to_embed), EMBEDDING_BATCH_SIZE):
+        batch = [item[1] for item in to_embed[start : start + EMBEDDING_BATCH_SIZE]]
         embeddings.extend(await provider.embed_documents(batch))
+    if not to_embed:
+        return
 
-    for (chunk, content, metadata), vector in zip(to_embed, embeddings, strict=True):
-        await client.table("quran_chunks").update(
-            {
-                "content": content,
-                "metadata": metadata,
-                "embedding": vector,
-                "embedding_provider": "jina",
-                "embedding_model": settings.jina_embedding_model,
-                "embedding_version": manifest["version"],
-                "embedding_dimensions": settings.embedding_dimensions,
-                "embedding_fingerprint": embedding_fingerprint(
-                    settings.jina_embedding_model, settings.embedding_dimensions, content
+    await pool.executemany(
+        """
+        update public.quran_chunks
+        set content = $1, metadata = $2, embedding = $3::vector,
+            embedding_provider = $4, embedding_model = $5,
+            embedding_version = $6, embedding_dimensions = $7,
+            embedding_fingerprint = $8
+        where id = $9
+        """,
+        [
+            (
+                content,
+                metadata,
+                vector_literal(vector),
+                "ollama",
+                settings.ollama_embedding_model,
+                manifest["version"],
+                settings.embedding_dimensions,
+                embedding_fingerprint(
+                    settings.ollama_embedding_model,
+                    settings.embedding_dimensions,
+                    content,
                 ),
-            }
-        ).eq("id", chunk["id"]).execute()
-    print(f"Updated documents: {changed_documents}; re-embedded chunks: {len(to_embed)}")
-    print(f"Verse keys pending API fetch: {', '.join(missing_keys) or 'none'}")
-    print(f"Categories with no configured keys: {', '.join(pending) or 'none'}")
+                chunk["id"],
+            )
+            for (chunk, content, metadata), vector in zip(
+                to_embed, embeddings, strict=True
+            )
+        ],
+    )
 
 
 def main() -> None:
@@ -186,7 +191,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     if args.dry_run:
-        local_dry_run(load_manifest())
+        local_dry_run(load_category_manifest())
     else:
         asyncio.run(sync())
 
